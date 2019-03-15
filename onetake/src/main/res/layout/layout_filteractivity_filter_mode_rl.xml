@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/filter_select_mode_rl"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@id/filter_all_effect_root_el"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="65.0dip"
+    android:orientation="horizontal"
+    android:visibility="gone">
+
+    <RelativeLayout
+        android:id="@id/filter_select_mode_global_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/_10dp"
+        android:paddingRight="@dimen/_10dp">
+
+        <TextView
+            android:id="@id/filter_select_mode_global_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:includeFontPadding="false"
+            android:shadowColor="@color/color60Black"
+            android:shadowRadius="15.0"
+            android:text="@string/BUTTON_PRESET_GLOBAL"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular14" />
+
+        <ImageView
+            android:id="@id/filter_select_mode_global_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/filter_select_mode_global_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10.0dip"
+            android:contentDescription="@null"
+            android:src="@drawable/shape_drafts_bottom"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/filter_select_mode_current_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/_10dp"
+        android:paddingRight="@dimen/_10dp">
+
+        <TextView
+            android:id="@id/filter_select_mode_current_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:includeFontPadding="false"
+            android:shadowColor="@color/color60Black"
+            android:shadowRadius="15.0"
+            android:text="@string/BUTTON_PRESET_CURRENT"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular14" />
+
+        <ImageView
+            android:id="@id/filter_select_mode_current_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/filter_select_mode_current_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10.0dip"
+            android:contentDescription="@null"
+            android:src="@drawable/shape_drafts_bottom"
+            android:visibility="invisible" />
+    </RelativeLayout>
+</LinearLayout>

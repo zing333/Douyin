@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/filter_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorTheme"
+    android:clipChildren="false">
+
+    <com.blink.academy.onetake.VideoTools.FilterView
+        android:id="@id/filter_surfaceview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@id/below_surface"
+        android:layout_width="fill_parent"
+        android:layout_height="180.0dip"
+        android:layout_below="@id/filter_surfaceview"
+        android:background="@color/colorTheme" />
+
+    <View
+        android:id="@id/filter_alpha_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.0"
+        android:background="@color/colorBlack" />
+
+    <RelativeLayout
+        android:id="@id/capture_filter_name_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+                android:id="@id/capture_filter_group_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:shadowColor="@color/color60Black"
+                android:shadowRadius="15.0"
+                android:text=""
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14"
+                android:visibility="visible" />
+
+            <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+                android:id="@id/capture_filter_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2.0dip"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:shadowColor="@color/color60Black"
+                android:shadowRadius="20.0"
+                android:text=""
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular25"
+                android:visibility="visible" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <include
+        android:id="@id/filter_stablize_ll"
+        layout="@layout/layout_filteractivity_stablize_rl" />
+
+    <View
+        android:id="@id/filter_max_click_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/filter_stablize_ll"
+        android:alpha="0.0" />
+
+    <RelativeLayout
+        android:id="@id/filter_title_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="63.0dip"
+        android:clipChildren="false">
+
+        <View
+            android:id="@id/title_bg_view"
+            android:layout_width="fill_parent"
+            android:layout_height="63.0dip"
+            android:background="@color/colorTheme" />
+
+        <include layout="@layout/component_back" />
+
+        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView
+            android:id="@id/filter_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingBottom="18.0dip"
+            android:paddingLeft="10.0dip"
+            android:paddingRight="20.0dip"
+            android:paddingTop="18.0dip"
+            android:text="@string/BUTTON_DONE"
+            android:textColor="@color/colorButton"
+            android:textSize="@dimen/fontRegular17" />
+    </RelativeLayout>
+
+    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+        android:id="@id/title_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="63.0dip"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular17" />
+
+    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+        android:id="@id/title_alert_out_time"
+        android:layout_width="wrap_content"
+        android:layout_height="63.0dip"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textColor="@color/colorRed"
+        android:textSize="@dimen/fontRegular12"
+        android:visibility="gone" />
+
+    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+        android:id="@id/title_add_text"
+        android:layout_width="wrap_content"
+        android:layout_height="63.0dip"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/TEXT_VIDEO_EDIT_TEXT_EDIT_MODE"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular12"
+        android:visibility="gone" />
+
+    <com.blink.academy.onetake.widgets.VideoSplitSlideView
+        android:id="@id/video_time_slide_bar_backgroud_view"
+        android:layout_width="fill_parent"
+        android:layout_height="3.0dip"
+        android:layout_above="@id/filter_all_effect_root_el"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/video_time_slide_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="3.0dip"
+        android:layout_above="@id/filter_all_effect_root_el"
+        android:alpha="0.3"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <include layout="@layout/layout_filteractivity_tabs_rl" />
+
+    <View
+        android:id="@id/filter_beauty_anim"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:alpha="0.0" />
+
+    <View
+        android:id="@id/surface_click_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@id/filter_missing_file_hint_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@id/filter_missing_file_iv"
+            android:layout_width="@dimen/_20dp"
+            android:layout_height="@dimen/_20dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@null"
+            android:src="@drawable/icon_20_warning"
+            android:tint="@color/colorWhite" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/filter_missing_file_iv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5.0dip"
+            android:includeFontPadding="false"
+            android:text="@string/LABEL_VIDEO_FOOTAGE_MISSING"
+            android:textColor="@color/colorWhite"
+            android:textSize="12.0dip" />
+    </RelativeLayout>
+
+    <com.blink.academy.onetake.widgets.Button.FilterPlayButton
+        android:id="@id/player_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_44dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@id/filter_current_clip_iv"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_20dp"
+        android:contentDescription="@null"
+        android:src="@drawable/icon_20_current_clip_preset"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@id/text_draw_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <View
+            android:id="@id/gold_line_view"
+            android:layout_width="fill_parent"
+            android:layout_height="1.0dip"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            android:background="@color/colorGold"
+            android:visibility="gone" />
+
+        <com.blink.academy.onetake.widgets.VideoText.VTContainerView
+            android:id="@id/draw_text_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@id/text_finger_iv"
+            android:layout_width="25.0dip"
+            android:layout_height="25.0dip"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <include layout="@layout/layout_filteractivity_filter_mode_rl" />
+
+    <ViewStub
+        android:id="@id/mirror_seek_bar_vs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/filter_stablize_ll"
+        android:layout_below="@id/filter_title_bar"
+        android:layout="@layout/layout_mirror_seek_bar" />
+
+    <ViewStub
+        android:id="@id/filter_crop_ccav_vs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/filter_stablize_ll"
+        android:layout_below="@id/filter_title_bar"
+        android:layout="@layout/layout_filter_crop_ccav" />
+
+    <com.blink.academy.onetake.widgets.CropView.CustomCropView
+        android:id="@id/custom_crop_View"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
+
+    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+        android:id="@id/save_bottom_effect"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:alpha="0.5"
+        android:background="@color/colorBlack"
+        android:visibility="invisible" />
+
+    <ViewStub
+        android:id="@id/video_edit_text_parent_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="114.0dip"
+        android:layout="@layout/layout_video_edit_text_vs" />
+
+    <ViewStub
+        android:id="@id/order_video_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="140.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/layout_order_video_rv" />
+
+    <ViewStub
+        android:id="@id/video_edit_effects_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/viewstub_video_edit_effects" />
+
+    <ViewStub
+        android:id="@id/audio_trim_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="160.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/viewstub_audio_trim_vs" />
+
+    <ViewStub
+        android:id="@id/video_filter_add_text_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="140.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/layout_filter_add_text" />
+
+    <ViewStub
+        android:id="@id/video_music_volume_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="205.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/layout_video_music_volume" />
+
+    <ViewStub
+        android:id="@id/video_music_split_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="140.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/layout_music_split_vs" />
+
+    <ViewStub
+        android:id="@id/video_edit_add_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="140.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout="@layout/layout_video_edit_add_vs" />
+</RelativeLayout>

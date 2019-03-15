@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/filter_loop_root_rl"
+    android:layout_width="fill_parent"
+    android:layout_height="70.0dip"
+    android:layout_above="@id/filter_tab_ll"
+    android:layout_marginTop="15.0dip"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:id="@id/stack_frame_switch_rl"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/_20dp"
+        android:alpha="0.4"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2.0dip"
+            android:background="@color/colorTransparent" />
+
+        <ImageView
+            android:id="@id/stack_frame_switch_off_iv"
+            android:layout_width="20.0dip"
+            android:layout_height="20.0dip"
+            android:src="@drawable/icon_20_loop_blend"
+            android:tint="@color/colorWhite" />
+
+        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView
+            android:id="@id/stack_frame_switch_rl_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5.0dip"
+            android:includeFontPadding="false"
+            android:text="@string/BUTTON_LOOP_OVERLAY"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular14" />
+    </LinearLayout>
+
+    <com.blink.academy.onetake.widgets.RoundLinnearlayout
+        android:id="@id/filter_loop_preview_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="84.0dip"
+        android:layout_marginRight="84.0dip"
+        android:background="@color/colorBlack"
+        android:orientation="horizontal" />
+
+    <RelativeLayout
+        android:id="@id/filter_unloop_root_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip"
+        android:layout_centerVertical="true"
+        android:visibility="visible">
+
+        <View
+            android:id="@id/filter_unloop_gesture"
+            android:layout_width="fill_parent"
+            android:layout_height="44.0dip"
+            android:layout_marginLeft="64.0dip"
+            android:layout_marginRight="64.0dip" />
+
+        <RelativeLayout
+            android:id="@id/filter_unloop_slider_root_rl"
+            android:layout_width="fill_parent"
+            android:layout_height="44.0dip"
+            android:layout_marginLeft="84.0dip"
+            android:layout_marginRight="84.0dip"
+            android:background="@drawable/shape_loop_slider_bg">
+
+            <ImageView
+                android:id="@id/filter_unloop_slider_left_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="44.0dip"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:scaleX="-1.0"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <ImageView
+                android:id="@id/filter_unloop_slider_right_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="44.0dip"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <View
+                android:id="@id/player_unloop__corner_ccv"
+                android:layout_width="fill_parent"
+                android:layout_height="44.0dip"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="7.0dip"
+                android:layout_marginRight="7.0dip"
+                android:background="@drawable/shape_loop_slider_bg1" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/filter_loop_slider_root_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip"
+        android:layout_centerVertical="true"
+        android:visibility="invisible">
+
+        <View
+            android:id="@id/filter_loop_gesture"
+            android:layout_width="fill_parent"
+            android:layout_height="44.0dip"
+            android:layout_marginLeft="64.0dip"
+            android:layout_marginRight="64.0dip" />
+
+        <RelativeLayout
+            android:id="@id/filter_loop_slider_root_rll"
+            android:layout_width="fill_parent"
+            android:layout_height="44.0dip"
+            android:layout_marginLeft="84.0dip"
+            android:layout_marginRight="84.0dip"
+            android:background="@drawable/shape_loop_slider_bg">
+
+            <ImageView
+                android:id="@id/filter_loop_slider_left_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="44.0dip"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:scaleX="-1.0"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <ImageView
+                android:id="@id/filter_loop_slider_right_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="44.0dip"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <View
+                android:id="@id/player_loop_corner_ccv"
+                android:layout_width="fill_parent"
+                android:layout_height="44.0dip"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="7.0dip"
+                android:layout_marginRight="7.0dip"
+                android:background="@drawable/shape_loop_slider_bg1" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@id/filter_loop_toggle_ll"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20.0dip"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2.0dip"
+            android:background="@color/colorTransparent" />
+
+        <ImageView
+            android:id="@id/filter_loop_toggle_img"
+            android:layout_width="20.0dip"
+            android:layout_height="20.0dip"
+            android:src="@drawable/icon_20_loop_forward"
+            android:tint="@color/colorWhite" />
+
+        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView
+            android:id="@id/filter_loop_toggle_ancrt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5.0dip"
+            android:includeFontPadding="false"
+            android:text="@string/BUTTON_LOOP_FORWARD"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular14" />
+    </LinearLayout>
+</RelativeLayout>

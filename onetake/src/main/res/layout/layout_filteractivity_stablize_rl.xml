@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:greason="http://schemas.android.com/apk/res-auto"
+    android:id="@id/filter_stablize_root_rl"
+    android:layout_width="fill_parent"
+    android:layout_height="65.0dip"
+    android:layout_above="@id/video_time_slide_bar_backgroud_view"
+    android:layout_centerHorizontal="true"
+    android:background="@color/colorTheme"
+    android:gravity="center"
+    android:visibility="visible">
+
+    <RelativeLayout
+        android:id="@id/filter_stablize_ra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <RelativeLayout
+            android:id="@id/filter_stablize_rl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:alpha="0.4"
+            android:padding="10.0dip"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@id/filter_stablize_iv"
+                android:layout_width="25.0dip"
+                android:layout_height="25.0dip"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_25_stable_off"
+                android:tint="@color/colorWhite"
+                android:visibility="visible" />
+
+            <com.blink.academy.onetake.widgets.CircularProgressBar.CircleProgressBar
+                android:id="@id/filter_stablize_cpb"
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="2.5dip"
+                android:visibility="gone"
+                greason:cpb_background_progressbar_color="@color/colorWhite_3"
+                greason:cpb_background_progressbar_width="1.0dip"
+                greason:cpb_progressbar_color="@color/colorWhite"
+                greason:cpb_progressbar_width="1.0dip" />
+
+            <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="30.0dip"
+                android:text="@string/BUTTON_STABILIZATION"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/fontRegular14" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/filter_group_name_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="65.0dip"
+        android:layout_centerInParent="true"
+        android:overScrollMode="never" />
+
+    <ViewStub
+        android:id="@id/specific_combination_stub"
+        android:layout_width="wrap_content"
+        android:layout_height="65.0dip"
+        android:layout_centerInParent="true"
+        android:layout="@layout/layout_specific_combination" />
+
+    <LinearLayout
+        android:id="@id/filter_effect_rotation_rotate90"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:padding="10.0dip"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@id/filter_effect_rotation_rotate90_iv"
+            android:layout_width="25.0dip"
+            android:layout_height="25.0dip"
+            android:layout_centerVertical="true"
+            android:padding="2.5dip"
+            android:src="@drawable/icon_20_effect_new_rotate_90"
+            android:tint="@color/colorWhite" />
+
+        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView
+            android:id="@id/filter_effect_rotation_rotate90_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="2.5dip"
+            android:text="@string/BUTTON_EFFECT_ROTATE_90_DEGREES"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/fontRegular14" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/filter_effect_leak_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@id/filter_effect_leak1"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_centerVertical="true"
+            android:alpha="0.4"
+            android:padding="10.0dip"
+            android:src="@drawable/icon_20_effect_new_option_01"
+            android:tint="@color/colorWhite" />
+
+        <ImageView
+            android:id="@id/filter_effect_leak2"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_centerVertical="true"
+            android:alpha="0.4"
+            android:padding="10.0dip"
+            android:src="@drawable/icon_20_effect_new_option_02"
+            android:tint="@color/colorWhite" />
+
+        <ImageView
+            android:id="@id/filter_effect_leak3"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_centerVertical="true"
+            android:alpha="0.4"
+            android:padding="10.0dip"
+            android:src="@drawable/icon_20_effect_new_option_03"
+            android:tint="@color/colorWhite" />
+
+        <ImageView
+            android:id="@id/filter_effect_leak4"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_centerVertical="true"
+            android:alpha="0.4"
+            android:padding="10.0dip"
+            android:src="@drawable/icon_20_effect_new_option_04"
+            android:tint="@color/colorWhite" />
+
+        <ImageView
+            android:id="@id/filter_effect_leak5"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:layout_centerVertical="true"
+            android:alpha="0.4"
+            android:padding="10.0dip"
+            android:src="@drawable/icon_20_effect_new_option_05"
+            android:tint="@color/colorWhite" />
+    </LinearLayout>
+
+    <ViewStub
+        android:id="@id/video_edit_remove_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout="@layout/layout_video_edit_remove_view" />
+
+    <RelativeLayout
+        android:id="@id/text_move_left_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20.0dip"
+        android:alpha="0.0">
+
+        <ImageView
+            android:id="@id/iv_drag_hint"
+            android:layout_width="@dimen/_12dp"
+            android:layout_height="@dimen/_12dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/icon_12_move_to_change"
+            android:tint="@color/colorWhite" />
+
+        <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+            android:id="@id/tv_drag_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5.0dip"
+            android:layout_toRightOf="@id/iv_drag_hint"
+            android:gravity="center"
+            android:text="@string/TEXT_MOVE_LEFT_RIGHT"
+            android:textColor="@color/colorWhite"
+            android:textSize="12.0sp" />
+    </RelativeLayout>
+
+    <ViewStub
+        android:id="@id/video_add_text_control_vs"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout="@layout/layout_video_add_text_control_view" />
+
+    <ViewStub
+        android:id="@id/video_music_name_vs"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout="@layout/layout_video_music_name_view" />
+
+    <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView
+        android:id="@id/video_edit_add_type_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/TEXT_VIDEO_EDIT_CHOOSE_ADD_TYPE"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular12"
+        android:visibility="gone" />
+</RelativeLayout>
