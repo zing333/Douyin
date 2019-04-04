@@ -6,7 +6,7 @@
     android:background="@color/colorTheme"
     android:clipChildren="false">
 
-    <com.blink.academy.onetake.VideoTools.FilterView
+    <cn.nineton.onetake.widget.FilterView
         android:id="@id/filter_surfaceview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -41,7 +41,8 @@
             android:clipToPadding="false"
             android:orientation="vertical">
 
-            <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
                 android:id="@id/capture_filter_group_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,7 +56,8 @@
                 android:textSize="@dimen/fontRegular14"
                 android:visibility="visible" />
 
-            <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
                 android:id="@id/capture_filter_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,7 +99,8 @@
 
         <include layout="@layout/component_back" />
 
-        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView
+        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView-->
+        <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
             android:id="@id/filter_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,7 +115,8 @@
             android:textSize="@dimen/fontRegular17" />
     </RelativeLayout>
 
-    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
         android:id="@id/title_preview"
         android:layout_width="wrap_content"
         android:layout_height="63.0dip"
@@ -122,7 +126,8 @@
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/fontRegular17" />
 
-    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
         android:id="@id/title_alert_out_time"
         android:layout_width="wrap_content"
         android:layout_height="63.0dip"
@@ -132,7 +137,8 @@
         android:textSize="@dimen/fontRegular12"
         android:visibility="gone" />
 
-    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
         android:id="@id/title_add_text"
         android:layout_width="wrap_content"
         android:layout_height="63.0dip"
@@ -141,25 +147,27 @@
         android:text="@string/TEXT_VIDEO_EDIT_TEXT_EDIT_MODE"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/fontRegular12"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
-    <com.blink.academy.onetake.widgets.VideoSplitSlideView
+    <cn.nineton.onetake.widget.VideoSplitSlideView
         android:id="@id/video_time_slide_bar_backgroud_view"
         android:layout_width="fill_parent"
         android:layout_height="3.0dip"
-        android:layout_above="@id/filter_all_effect_root_el"
+        android:layout_above="@id/filter_all_effect_root_proxy"
         android:visibility="gone" />
 
     <View
         android:id="@id/video_time_slide_bar"
         android:layout_width="fill_parent"
         android:layout_height="3.0dip"
-        android:layout_above="@id/filter_all_effect_root_el"
+        android:layout_above="@id/filter_all_effect_root_proxy"
         android:alpha="0.3"
         android:background="@color/colorWhite"
         android:visibility="gone" />
 
-    <include layout="@layout/layout_filteractivity_tabs_rl" />
+    <include
+        android:id="@+id/filter_all_effect_root_proxy"
+        layout="@layout/layout_filteractivity_tabs_rl" />
 
     <View
         android:id="@id/filter_beauty_anim"
@@ -201,7 +209,7 @@
             android:textSize="12.0dip" />
     </RelativeLayout>
 
-    <com.blink.academy.onetake.widgets.Button.FilterPlayButton
+    <cn.nineton.onetake.widget.FilterPlayButton
         android:id="@id/player_rl"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/_44dp"
@@ -231,7 +239,8 @@
             android:background="@color/colorGold"
             android:visibility="gone" />
 
-        <com.blink.academy.onetake.widgets.VideoText.VTContainerView
+        <!--<com.blink.academy.onetake.widgets.VideoText.VTContainerView-->
+        <cn.nineton.onetake.widget.VTContainerView
             android:id="@id/draw_text_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -262,13 +271,15 @@
         android:layout_below="@id/filter_title_bar"
         android:layout="@layout/layout_filter_crop_ccav" />
 
-    <com.blink.academy.onetake.widgets.CropView.CustomCropView
+    <!--<com.blink.academy.onetake.widgets.CropView.CustomCropView-->
+    <cn.nineton.onetake.widget.CustomCropView
         android:id="@id/custom_crop_View"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="gone" />
 
-    <com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
         android:id="@id/save_bottom_effect"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

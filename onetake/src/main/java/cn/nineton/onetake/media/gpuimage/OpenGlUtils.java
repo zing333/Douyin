@@ -250,7 +250,7 @@ public class OpenGlUtils {
 
     static void printUsed() {
         for (CachedProgram cp : programs.values()) {
-            for (CachedProgram cp2 = (CachedProgram) r1.next(); cp2 != null; cp2 = cp2.mNext) {
+            for (CachedProgram cp2 = (CachedProgram) cp.mNext; cp2 != null; cp2 = cp2.mNext) {
                 if (cp2.mIsUsed) {
                     Log.d(TAG, String.format("inuse program, id:%d", new Object[]{Integer.valueOf(cp2.mProgId)}));
                 }
@@ -261,7 +261,7 @@ public class OpenGlUtils {
     static int getTotalUsed() {
         int count = 0;
         for (CachedProgram cp : programs.values()) {
-            for (CachedProgram cp2 = (CachedProgram) r2.next(); cp2 != null; cp2 = cp2.mNext) {
+            for (CachedProgram cp2 = cp.mNext; cp2 != null; cp2 = cp2.mNext) {
                 if (cp2.mIsUsed) {
                     count++;
                 }
@@ -273,7 +273,7 @@ public class OpenGlUtils {
     static int getTotalFree() {
         int count = 0;
         for (CachedProgram cp : programs.values()) {
-            for (CachedProgram cp2 = (CachedProgram) r2.next(); cp2 != null; cp2 = cp2.mNext) {
+            for (CachedProgram cp2 = cp.mNext; cp2 != null; cp2 = cp2.mNext) {
                 if (!cp2.mIsUsed) {
                     count++;
                 }

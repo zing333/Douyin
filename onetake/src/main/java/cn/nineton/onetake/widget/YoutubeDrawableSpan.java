@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.text.style.DynamicDrawableSpan;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 
 public class YoutubeDrawableSpan extends DynamicDrawableSpan {

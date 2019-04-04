@@ -12,6 +12,7 @@ import android.view.View;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 
 public class MirrorSeekBar extends View {

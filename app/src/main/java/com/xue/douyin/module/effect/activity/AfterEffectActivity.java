@@ -86,7 +86,7 @@ public class AfterEffectActivity extends BaseBlankActivity<AfterEffectPresenter>
     private void initContentView() {
         surfaceView = findViewById(R.id.sv_play);
         surfaceView.setOnSurfaceCreatedCallback(this);
-//        surfaceView.setFilter(new ShakeEffectFilter());
+        surfaceView.setFilter(new ShakeEffectFilter());
 //        surfaceView.setFilter(new SoulOutFilter());
 //        surfaceView.setFilter(new VertigoFilter());
         btnBack = findViewById(R.id.btn_back);

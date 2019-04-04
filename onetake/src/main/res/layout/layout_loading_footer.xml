@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="60.0dip"
+    android:minHeight="@dimen/_60dp">
+
+    <ProgressBar
+        android:id="@id/loading_pb"
+        style="@style/ForkProgressBar"
+        android:layout_width="20.0dip"
+        android:layout_height="20.0dip"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:indeterminateOnly="false" />
+</RelativeLayout>

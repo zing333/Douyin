@@ -7,36 +7,51 @@ import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.Parcelable.Creator;
-import android.support.v4.media.TransportMediator;
-import com.blink.academy.onetake.VideoTools.FilterView.VideoSpeedup;
-import com.blink.academy.onetake.VideoTools.MediaUtils;
-import com.blink.academy.onetake.VideoTools.Ratio;
-import com.blink.academy.onetake.VideoTools.VideoTranscoder.Client;
-import com.blink.academy.onetake.VideoTools.WaveformOutput;
-import com.blink.academy.onetake.bean.VTFontDesBean;
-import com.blink.academy.onetake.bean.audio.AudioTrackBean;
-import com.blink.academy.onetake.bean.audio.AudioUpLoadInfoBean;
-import com.blink.academy.onetake.bean.audio.AudioUploadModel;
-import com.blink.academy.onetake.bean.proxy.ProxyFileInfo;
-import com.blink.academy.onetake.model.video.VideoInputRatio;
-import com.blink.academy.onetake.support.debug.LogUtil;
-import com.blink.academy.onetake.support.events.proxy.ProxyProgressEvent;
-import com.blink.academy.onetake.support.manager.ProxyVideoManager;
-import com.blink.academy.onetake.support.utils.FilterViewUtils;
-import com.blink.academy.onetake.support.utils.LocaleUtil;
-import com.blink.academy.onetake.support.utils.NumberUtil;
-import com.blink.academy.onetake.support.utils.TextUtil;
-import com.blink.academy.onetake.ui.adapter.entities.VideoEditImageEntity;
-import com.blink.academy.onetake.ui.helper.VideoEditHelper;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.AlignType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.FontSizeType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.LetterSpacingType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.LineSpacingType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.ShadowType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.TextColorType;
-import de.greenrobot.event.EventBus;
+//import android.os.Parcelable.Creator;
+//import android.support.v4.media.TransportMediator;
+//import com.blink.academy.onetake.VideoTools.FilterView.VideoSpeedup;
+//import com.blink.academy.onetake.VideoTools.MediaUtils;
+//import com.blink.academy.onetake.VideoTools.Ratio;
+//import com.blink.academy.onetake.VideoTools.VideoTranscoder.Client;
+//import com.blink.academy.onetake.VideoTools.WaveformOutput;
+//import com.blink.academy.onetake.bean.VTFontDesBean;
+//import com.blink.academy.onetake.bean.audio.AudioTrackBean;
+//import com.blink.academy.onetake.bean.audio.AudioUpLoadInfoBean;
+//import com.blink.academy.onetake.bean.audio.AudioUploadModel;
+//import com.blink.academy.onetake.bean.proxy.ProxyFileInfo;
+//import com.blink.academy.onetake.model.video.VideoInputRatio;
+//import com.blink.academy.onetake.support.debug.LogUtil;
+//import com.blink.academy.onetake.support.events.proxy.ProxyProgressEvent;
+//import com.blink.academy.onetake.support.manager.ProxyVideoManager;
+//import com.blink.academy.onetake.support.utils.FilterViewUtils;
+//import com.blink.academy.onetake.support.utils.LocaleUtil;
+//import com.blink.academy.onetake.support.utils.NumberUtil;
+//import com.blink.academy.onetake.support.utils.TextUtil;
+//import com.blink.academy.onetake.ui.adapter.entities.VideoEditImageEntity;
+//import com.blink.academy.onetake.ui.helper.VideoEditHelper;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView.AlignType;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView.FontSizeType;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView.LetterSpacingType;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView.LineSpacingType;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView.ShadowType;
+//import com.blink.academy.onetake.widgets.VideoText.VTContainerView.TextColorType;
+
+import org.greenrobot.eventbus.EventBus;
+
+import cn.nineton.onetake.event.ProxyProgressEvent;
+import cn.nineton.onetake.media.MediaUtils;
+import cn.nineton.onetake.media.Ratio;
+import cn.nineton.onetake.media.videotool.VideoTranscoder;
+import cn.nineton.onetake.util.FilterViewUtils;
+import cn.nineton.onetake.util.LocaleUtil;
+import cn.nineton.onetake.util.LogUtil;
+import cn.nineton.onetake.util.NumberUtil;
+import cn.nineton.onetake.util.ProxyVideoManager;
+import cn.nineton.onetake.util.TextUtil;
+import cn.nineton.onetake.widget.FilterView;
+import cn.nineton.onetake.widget.VTContainerView;
+import cn.nineton.onetake.widget.VideoEditHelper;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -79,11 +94,11 @@ public class LongVideosModel implements Parcelable {
     private long cacheDuration;
     private long cacheRelateStartTime;
     private long cacheStartTime;
-    private Client chaplinClient;
+    private VideoTranscoder.Client chaplinClient;
     private int circleCoverType;
     private float curStartTime;
     private long currentDuration;
-    private Client doubleClient;
+    private VideoTranscoder.Client doubleClient;
     private long endMusicDuration;
     private long endMusicStart;
     private LongVideosModel endRelateTextModel;
@@ -111,15 +126,15 @@ public class LongVideosModel implements Parcelable {
     private long musicEndTimeInTimeLine;
     private long musicStartTimeInTimeLine;
     private float[] needData;
-    private Client normalClient;
+    private VideoTranscoder.Client normalClient;
     private LongVideosModel pointToVideoModel;
     private String privateFilterName;
     private float privateIntensity;
-    private HashMap<VideoSpeedup, ProxyFileInfo> proxyFileMap;
+    private HashMap<FilterView.VideoSpeedup, ProxyFileInfo> proxyFileMap;
     private long proxyVideoCreateTime;
     private String publicFilterName;
     private float publicIntensity;
-    private Client quadrupleClient;
+    private VideoTranscoder.Client quadrupleClient;
     private float radius;
     private long relateStartTime;
     private boolean selectedForSplit;
@@ -131,18 +146,18 @@ public class LongVideosModel implements Parcelable {
     private long startTime;
     private long startTimeForTimeline;
     private int startY;
-    private AlignType textAlignType;
-    private TextColorType textColorType;
+    private VTContainerView.AlignType textAlignType;
+    private VTContainerView.TextColorType textColorType;
     private String textContent;
-    private FontSizeType textFontSizeType;
-    private LetterSpacingType textLetterSpacingType;
-    private LineSpacingType textLineSpacingType;
+    private VTContainerView.FontSizeType textFontSizeType;
+    private VTContainerView.LetterSpacingType textLetterSpacingType;
+    private VTContainerView.LineSpacingType textLineSpacingType;
     private int textPos;
-    private ShadowType textShadowType;
+    private VTContainerView.ShadowType textShadowType;
     private float textSize;
     private VTFontDesBean textTypeface;
     private int textVerticalPos;
-    private Client timelapseClient;
+    private VideoTranscoder.Client timelapseClient;
     public long totalDuration;
     private float trueStartTime;
     public UploadVideoBean uploadVideoBean;
@@ -160,7 +175,7 @@ public class LongVideosModel implements Parcelable {
     public int videoOrientation;
     private String videoPath;
     private int videoRotate;
-    public VideoSpeedup videoSpeedUp;
+    public FilterView.VideoSpeedup videoSpeedUp;
     private long videoSumTime;
     public String videoTag;
     private float videoVolume;
@@ -172,19 +187,19 @@ public class LongVideosModel implements Parcelable {
 
     /* renamed from: com.blink.academy.onetake.bean.longvideo.LongVideosModel$3 */
     static /* synthetic */ class AnonymousClass3 {
-        static final /* synthetic */ int[] $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType = new int[AlignType.values().length];
+        static final /* synthetic */ int[] $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType = new int[VTContainerView.AlignType.values().length];
 
         static {
             try {
-                $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType[AlignType.L.ordinal()] = 1;
+                $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType[VTContainerView.AlignType.L.ordinal()] = 1;
             } catch (NoSuchFieldError e) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType[AlignType.M.ordinal()] = 2;
+                $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType[VTContainerView.AlignType.M.ordinal()] = 2;
             } catch (NoSuchFieldError e2) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType[AlignType.R.ordinal()] = 3;
+                $SwitchMap$com$blink$academy$onetake$widgets$VideoText$VTContainerView$AlignType[VTContainerView.AlignType.R.ordinal()] = 3;
             } catch (NoSuchFieldError e3) {
             }
         }
@@ -287,6 +302,7 @@ public class LongVideosModel implements Parcelable {
             dest.writeByte(this.selected ? (byte) 1 : (byte) 0);
         }
 
+        public AudioVolume(){}
         protected AudioVolume(Parcel in) {
             this.userChooseStart = in.readLong();
             this.startTime = in.readLong();
@@ -691,35 +707,35 @@ public class LongVideosModel implements Parcelable {
         this.textSize = textSize;
     }
 
-    public TextColorType getTextColorType() {
+    public VTContainerView.TextColorType getTextColorType() {
         return this.textColorType;
     }
 
-    public void setTextColorType(TextColorType textColorType) {
+    public void setTextColorType(VTContainerView.TextColorType textColorType) {
         this.textColorType = textColorType;
     }
 
-    public void setTextLineSpacingType(LineSpacingType textLineSpacingType) {
+    public void setTextLineSpacingType(VTContainerView.LineSpacingType textLineSpacingType) {
         this.textLineSpacingType = textLineSpacingType;
     }
 
-    public LineSpacingType getTextLineSpacingType() {
+    public VTContainerView.LineSpacingType getTextLineSpacingType() {
         return this.textLineSpacingType;
     }
 
-    public FontSizeType getTextFontSizeType() {
+    public VTContainerView.FontSizeType getTextFontSizeType() {
         return this.textFontSizeType;
     }
 
-    public void setTextFontSizeType(FontSizeType textFontSizeType) {
+    public void setTextFontSizeType(VTContainerView.FontSizeType textFontSizeType) {
         this.textFontSizeType = textFontSizeType;
     }
 
-    public AlignType getTextAlignType() {
+    public VTContainerView.AlignType getTextAlignType() {
         return this.textAlignType;
     }
 
-    public void setTextAlignType(AlignType textAlignType) {
+    public void setTextAlignType(VTContainerView.AlignType textAlignType) {
         this.textAlignType = textAlignType;
     }
 
@@ -739,11 +755,11 @@ public class LongVideosModel implements Parcelable {
         this.textContent = textContent;
     }
 
-    public LetterSpacingType getTextLetterSpacingType() {
+    public VTContainerView.LetterSpacingType getTextLetterSpacingType() {
         return this.textLetterSpacingType;
     }
 
-    public void setTextLetterSpacingType(LetterSpacingType textLetterSpacingType) {
+    public void setTextLetterSpacingType(VTContainerView.LetterSpacingType textLetterSpacingType) {
         this.textLetterSpacingType = textLetterSpacingType;
     }
 
@@ -755,19 +771,19 @@ public class LongVideosModel implements Parcelable {
         this.textTypeface = textTypeface;
     }
 
-    public ShadowType getTextShadowType() {
+    public VTContainerView.ShadowType getTextShadowType() {
         return this.textShadowType;
     }
 
-    public void setTextShadowType(ShadowType textShadowType) {
+    public void setTextShadowType(VTContainerView.ShadowType textShadowType) {
         this.textShadowType = textShadowType;
     }
 
-    public VideoSpeedup getVideoSpeedUp() {
+    public FilterView.VideoSpeedup getVideoSpeedUp() {
         return this.videoSpeedUp;
     }
 
-    public void setVideoSpeedUp(VideoSpeedup videoSpeedUp) {
+    public void setVideoSpeedUp(FilterView.VideoSpeedup videoSpeedUp) {
         this.videoSpeedUp = videoSpeedUp;
         refreshDurationShowValue();
         refreshDurationTrueValue();
@@ -815,7 +831,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -911,7 +927,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -971,7 +987,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -1019,7 +1035,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -1059,7 +1075,7 @@ public class LongVideosModel implements Parcelable {
     }
 
     protected LongVideosModel(Parcel in) {
-        TextColorType textColorType;
+        VTContainerView.TextColorType textColorType;
         this.videoDefaultVolume = 1.0f;
         this.audioDefaultVolume = 0.5f;
         this.videoConfirmVolume = 1.0f;
@@ -1069,7 +1085,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -1130,23 +1146,23 @@ public class LongVideosModel implements Parcelable {
         this.textPos = in.readInt();
         this.vtHeight = in.readInt();
         int tmpTFST = in.readInt();
-        this.textFontSizeType = tmpTFST == -1 ? null : FontSizeType.values()[tmpTFST];
+        this.textFontSizeType = tmpTFST == -1 ? null : VTContainerView.FontSizeType.values()[tmpTFST];
         int tmpTAT = in.readInt();
-        this.textAlignType = tmpTAT == -1 ? null : AlignType.values()[tmpTAT];
+        this.textAlignType = tmpTAT == -1 ? null : VTContainerView.AlignType.values()[tmpTAT];
         this.textVerticalPos = in.readInt();
         this.textContent = in.readString();
         int tmpTLST = in.readInt();
-        this.textLetterSpacingType = tmpTLST == -1 ? null : LetterSpacingType.values()[tmpTLST];
+        this.textLetterSpacingType = tmpTLST == -1 ? null : VTContainerView.LetterSpacingType.values()[tmpTLST];
         this.textTypeface = (VTFontDesBean) in.readParcelable(VTFontDesBean.class.getClassLoader());
         int tmpST = in.readInt();
-        this.textShadowType = tmpST == -1 ? null : ShadowType.values()[tmpST];
+        this.textShadowType = tmpST == -1 ? null : VTContainerView.ShadowType.values()[tmpST];
         int tmpLST = in.readInt();
-        this.textLineSpacingType = tmpLST == -1 ? null : LineSpacingType.values()[tmpLST];
+        this.textLineSpacingType = tmpLST == -1 ? null : VTContainerView.LineSpacingType.values()[tmpLST];
         int tmpTCT = in.readInt();
         if (tmpTCT == -1) {
             textColorType = null;
         } else {
-            textColorType = TextColorType.values()[tmpTCT];
+            textColorType = VTContainerView.TextColorType.values()[tmpTCT];
         }
         this.textColorType = textColorType;
         this.textSize = in.readFloat();
@@ -1348,7 +1364,7 @@ public class LongVideosModel implements Parcelable {
 
     private void refreshDurationShowValue() {
         this.showDurationValue = dealTimeValue(displayDuration(this.currentDuration));
-        LogUtil.d(TAG, String.format("refreshDurationShowValue    currentDuration : %s , value : %s , showDurationValue : %s ", new Object[]{Long.valueOf(this.currentDuration), Long.valueOf(value), Long.valueOf(this.showDurationValue)}));
+        //LogUtil.d(TAG, String.format("refreshDurationShowValue    currentDuration : %s , value : %s , showDurationValue : %s ", new Object[]{Long.valueOf(this.currentDuration), Long.valueOf(value), Long.valueOf(this.showDurationValue)}));
     }
 
     private void refreshDurationTrueValue() {
@@ -1364,7 +1380,8 @@ public class LongVideosModel implements Parcelable {
     }
 
     public int reduceCurrentDuration(int number, boolean needMin) {
-        LogUtil.d(TAG, String.format("reduceCurrentDuration time : %s ", new Object[]{Long.valueOf(((long) (VideoEditHelper.IMAGE_SLIDE_MIN_EXPANSION.floatValue() * 1000.0f)) * ((long) number))}));
+        long time = ((long) (VideoEditHelper.IMAGE_SLIDE_MIN_EXPANSION.floatValue() * 1000.0f)) * ((long) number);
+        LogUtil.d(TAG, String.format("reduceCurrentDuration time : %s ", ((long) (VideoEditHelper.IMAGE_SLIDE_MIN_EXPANSION.floatValue() * 1000.0f)) * ((long) number)));
         long minDuration = needMin ? 500 : 0;
         long duration = this.showDurationValue + time;
         if (minDuration > duration) {
@@ -1382,7 +1399,7 @@ public class LongVideosModel implements Parcelable {
 
     public int addCurrentDuration(int number) {
         long time = ((long) (VideoEditHelper.IMAGE_SLIDE_MIN_EXPANSION.floatValue() * 1000.0f)) * ((long) number);
-        LogUtil.d(TAG, String.format("addCurrentDuration time : %s ", new Object[]{Long.valueOf(time)}));
+        LogUtil.d(TAG, String.format("addCurrentDuration time : %s ", Long.valueOf(time)));
         long duration = this.showDurationValue + time;
         long value = dealTimeValue((long) (((float) (this.totalDuration - this.startTime)) / getSpeed()));
         if (duration > value) {
@@ -1413,7 +1430,7 @@ public class LongVideosModel implements Parcelable {
 
     public boolean isCanSlideRight() {
         long value = dealTimeValue((long) (((float) (this.totalDuration - this.startTime)) / getSpeed()));
-        LogUtil.d(TAG, String.format("isCanSlideRight  totalDuration : %s , startTime : %s ,  leftDuration : %s , value : %s , current : %s ", new Object[]{Long.valueOf(this.totalDuration), Long.valueOf(this.startTime), Long.valueOf(leftDuration), Long.valueOf(value), Long.valueOf(getCurrentDuration())}));
+        //LogUtil.d(TAG, String.format("isCanSlideRight  totalDuration : %s , startTime : %s ,  leftDuration : %s , value : %s , current : %s ", new Object[]{Long.valueOf(this.totalDuration), Long.valueOf(this.startTime), Long.valueOf(leftDuration), Long.valueOf(value), Long.valueOf(getCurrentDuration())}));
         if (getCurrentDuration() < value) {
             return true;
         }
@@ -1436,30 +1453,30 @@ public class LongVideosModel implements Parcelable {
     }
 
     public int getEffectsViewShowSpeedCount() {
-        int count = VideoSpeedup.values().length;
+        int count = FilterView.VideoSpeedup.values().length;
         long currentDurationValue = getCurrentDurationValue();
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.TIMELAPSE) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.TIMELAPSE) * 500.0f) {
             return count;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.QUADRUPLE) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.QUADRUPLE) * 500.0f) {
             return count - 1;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.DOUBLE) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.DOUBLE) * 500.0f) {
             return count - 2;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.CHAPLIN) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.CHAPLIN) * 500.0f) {
             return count - 3;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.NORMAL) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.NORMAL) * 500.0f) {
             return count - 4;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.EIGHTMM) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.EIGHTMM) * 500.0f) {
             return count - 4;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.SLOW) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.SLOW) * 500.0f) {
             return count - 6;
         }
-        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(VideoSpeedup.STEP) * 500.0f) {
+        if (((float) currentDurationValue) >= getSpeedByVideoSpeedup(FilterView.VideoSpeedup.STEP) * 500.0f) {
             return count - 6;
         }
         return count;
@@ -1474,59 +1491,60 @@ public class LongVideosModel implements Parcelable {
     }
 
     public Ratio getVideoSpeed() {
-        if (VideoSpeedup.STEP == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.STEP == this.videoSpeedUp) {
             return new Ratio(50, 100);
         }
-        if (VideoSpeedup.SLOW == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.SLOW == this.videoSpeedUp) {
             return new Ratio(50, 100);
         }
-        if (VideoSpeedup.NORMAL == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.NORMAL == this.videoSpeedUp) {
             return new Ratio(100, 100);
         }
         if (getProxyFileInfo() != null) {
             return new Ratio(1, 1);
         }
-        if (VideoSpeedup.CHAPLIN == this.videoSpeedUp) {
-            return new Ratio(TransportMediator.KEYCODE_MEDIA_RECORD, 100);
+        if (FilterView.VideoSpeedup.CHAPLIN == this.videoSpeedUp) {
+            //return new Ratio(TransportMediator.KEYCODE_MEDIA_RECORD, 100);
+            return new Ratio(100,100);
         }
-        if (VideoSpeedup.EIGHTMM == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.EIGHTMM == this.videoSpeedUp) {
             return new Ratio(100, 100);
         }
-        if (VideoSpeedup.DOUBLE == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.DOUBLE == this.videoSpeedUp) {
             return new Ratio(200, 100);
         }
-        if (VideoSpeedup.QUADRUPLE == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.QUADRUPLE == this.videoSpeedUp) {
             return new Ratio(400, 100);
         }
-        if (VideoSpeedup.TIMELAPSE == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.TIMELAPSE == this.videoSpeedUp) {
             return new Ratio(1500, 100);
         }
         return new Ratio(100, 100);
     }
 
     private long getPreferFPS() {
-        if (VideoSpeedup.STEP == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.STEP == this.videoSpeedUp) {
             return 6;
         }
-        if (VideoSpeedup.SLOW == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.SLOW == this.videoSpeedUp) {
             return 30;
         }
-        if (VideoSpeedup.NORMAL == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.NORMAL == this.videoSpeedUp) {
             return 30;
         }
-        if (VideoSpeedup.CHAPLIN == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.CHAPLIN == this.videoSpeedUp) {
             return 16;
         }
-        if (VideoSpeedup.EIGHTMM == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.EIGHTMM == this.videoSpeedUp) {
             return 16;
         }
-        if (VideoSpeedup.DOUBLE == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.DOUBLE == this.videoSpeedUp) {
             return 30;
         }
-        if (VideoSpeedup.QUADRUPLE == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.QUADRUPLE == this.videoSpeedUp) {
             return 30;
         }
-        if (VideoSpeedup.TIMELAPSE == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.TIMELAPSE == this.videoSpeedUp) {
             return 30;
         }
         return 30;
@@ -1537,23 +1555,23 @@ public class LongVideosModel implements Parcelable {
 
     public long getVideoFrameRate() {
         long frameRate;
-        if (VideoSpeedup.STEP == this.videoSpeedUp) {
+        if (FilterView.VideoSpeedup.STEP == this.videoSpeedUp) {
             frameRate = 6;
-        } else if (VideoSpeedup.SLOW == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.SLOW == this.videoSpeedUp) {
             frameRate = (long) getVideoFPS();
-        } else if (VideoSpeedup.NORMAL == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.NORMAL == this.videoSpeedUp) {
             frameRate = (long) getVideoFPS();
         } else if (getProxyFileInfo() != null) {
             frameRate = 30;
-        } else if (VideoSpeedup.CHAPLIN == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.CHAPLIN == this.videoSpeedUp) {
             frameRate = (long) getVideoFPS();
-        } else if (VideoSpeedup.EIGHTMM == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.EIGHTMM == this.videoSpeedUp) {
             frameRate = 16;
-        } else if (VideoSpeedup.DOUBLE == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.DOUBLE == this.videoSpeedUp) {
             frameRate = (long) getVideoFPS();
-        } else if (VideoSpeedup.QUADRUPLE == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.QUADRUPLE == this.videoSpeedUp) {
             frameRate = (long) getVideoFPS();
-        } else if (VideoSpeedup.TIMELAPSE == this.videoSpeedUp) {
+        } else if (FilterView.VideoSpeedup.TIMELAPSE == this.videoSpeedUp) {
             frameRate = (long) getVideoFPS();
         } else {
             frameRate = (long) getVideoFPS();
@@ -1565,29 +1583,29 @@ public class LongVideosModel implements Parcelable {
         return getSpeedByVideoSpeedup(this.videoSpeedUp);
     }
 
-    private float getSpeedByVideoSpeedup(VideoSpeedup speedup) {
-        if (speedup == VideoSpeedup.STEP) {
+    private float getSpeedByVideoSpeedup(FilterView.VideoSpeedup speedup) {
+        if (speedup == FilterView.VideoSpeedup.STEP) {
             return 0.5f;
         }
-        if (speedup == VideoSpeedup.SLOW) {
+        if (speedup == FilterView.VideoSpeedup.SLOW) {
             return 0.5f;
         }
-        if (speedup == VideoSpeedup.EIGHTMM) {
+        if (speedup == FilterView.VideoSpeedup.EIGHTMM) {
             return 1.0f;
         }
-        if (speedup == VideoSpeedup.NORMAL) {
+        if (speedup == FilterView.VideoSpeedup.NORMAL) {
             return 1.0f;
         }
-        if (speedup == VideoSpeedup.CHAPLIN) {
+        if (speedup == FilterView.VideoSpeedup.CHAPLIN) {
             return 1.3f;
         }
-        if (speedup == VideoSpeedup.DOUBLE) {
+        if (speedup == FilterView.VideoSpeedup.DOUBLE) {
             return 2.0f;
         }
-        if (speedup == VideoSpeedup.QUADRUPLE) {
+        if (speedup == FilterView.VideoSpeedup.QUADRUPLE) {
             return 4.0f;
         }
-        if (speedup == VideoSpeedup.TIMELAPSE) {
+        if (speedup == FilterView.VideoSpeedup.TIMELAPSE) {
             return 15.0f;
         }
         return 1.0f;
@@ -1603,7 +1621,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -1653,7 +1671,7 @@ public class LongVideosModel implements Parcelable {
         this.proxyVideoCreateTime = 0;
         this.proxyFileMap = new HashMap();
         this.videoFPS = 30;
-        this.videoSpeedUp = VideoSpeedup.NORMAL;
+        this.videoSpeedUp = FilterView.VideoSpeedup.NORMAL;
         this.zoomStart = 1.0f;
         this.zoomEnd = 1.0f;
         this.videoExposure = 0.0f;
@@ -2274,13 +2292,13 @@ public class LongVideosModel implements Parcelable {
 
     private String getLastName() {
         String lastName = "";
-        if (this.videoSpeedUp == VideoSpeedup.CHAPLIN) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.CHAPLIN) {
             return "chaplin";
         }
-        if (this.videoSpeedUp == VideoSpeedup.DOUBLE) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.DOUBLE) {
             return "double";
         }
-        if (this.videoSpeedUp == VideoSpeedup.TIMELAPSE) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.TIMELAPSE) {
             return "timelapse";
         }
         return "quadruple";
@@ -2300,17 +2318,17 @@ public class LongVideosModel implements Parcelable {
         return proxyRootPath + preFileName + fileFormatName;
     }
 
-    private Client getProxyClient() {
-        if (this.videoSpeedUp == VideoSpeedup.CHAPLIN) {
+    private VideoTranscoder.Client getProxyClient() {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.CHAPLIN) {
             return this.chaplinClient;
         }
-        if (this.videoSpeedUp == VideoSpeedup.DOUBLE) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.DOUBLE) {
             return this.doubleClient;
         }
-        if (this.videoSpeedUp == VideoSpeedup.QUADRUPLE) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.QUADRUPLE) {
             return this.quadrupleClient;
         }
-        if (this.videoSpeedUp == VideoSpeedup.TIMELAPSE) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.TIMELAPSE) {
             return this.timelapseClient;
         }
         return this.normalClient;
@@ -2335,14 +2353,14 @@ public class LongVideosModel implements Parcelable {
         removeProxyFileInfo();
     }
 
-    public void setProxyClient(Client client) {
-        if (this.videoSpeedUp == VideoSpeedup.CHAPLIN) {
+    public void setProxyClient(VideoTranscoder.Client client) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.CHAPLIN) {
             this.chaplinClient = client;
-        } else if (this.videoSpeedUp == VideoSpeedup.DOUBLE) {
+        } else if (this.videoSpeedUp == FilterView.VideoSpeedup.DOUBLE) {
             this.doubleClient = client;
-        } else if (this.videoSpeedUp == VideoSpeedup.QUADRUPLE) {
+        } else if (this.videoSpeedUp == FilterView.VideoSpeedup.QUADRUPLE) {
             this.quadrupleClient = client;
-        } else if (this.videoSpeedUp == VideoSpeedup.TIMELAPSE) {
+        } else if (this.videoSpeedUp == FilterView.VideoSpeedup.TIMELAPSE) {
             this.timelapseClient = client;
         } else {
             this.normalClient = client;
@@ -2350,20 +2368,20 @@ public class LongVideosModel implements Parcelable {
     }
 
     public void stopCurrentClient() {
-        if (this.videoSpeedUp == VideoSpeedup.CHAPLIN) {
+        if (this.videoSpeedUp == FilterView.VideoSpeedup.CHAPLIN) {
             if (this.chaplinClient != null) {
                 this.chaplinClient.abort();
             }
-        } else if (this.videoSpeedUp == VideoSpeedup.DOUBLE) {
+        } else if (this.videoSpeedUp == FilterView.VideoSpeedup.DOUBLE) {
             if (this.doubleClient != null) {
                 this.doubleClient.abort();
             }
-        } else if (this.videoSpeedUp == VideoSpeedup.QUADRUPLE) {
+        } else if (this.videoSpeedUp == FilterView.VideoSpeedup.QUADRUPLE) {
             LogUtil.e("quadrupleClient", "quadrupleClient: " + this.quadrupleClient);
             if (this.quadrupleClient != null) {
                 this.quadrupleClient.abort();
             }
-        } else if (this.videoSpeedUp == VideoSpeedup.TIMELAPSE) {
+        } else if (this.videoSpeedUp == FilterView.VideoSpeedup.TIMELAPSE) {
             if (this.timelapseClient != null) {
                 this.timelapseClient.abort();
             }

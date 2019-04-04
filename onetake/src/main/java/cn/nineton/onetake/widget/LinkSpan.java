@@ -4,11 +4,12 @@ import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.view.View;
 import android.view.View.OnClickListener;
-import com.blink.academy.onetake.App;
-import com.blink.academy.onetake.support.utils.FontsUtil;
-import com.blink.academy.onetake.support.utils.TextUtil;
+//import com.blink.academy.onetake.App;
+//import com.blink.academy.onetake.support.utils.FontsUtil;
+//import com.blink.academy.onetake.support.utils.TextUtil;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.FontsUtil;
 import cn.nineton.onetake.util.TextUtil;
 

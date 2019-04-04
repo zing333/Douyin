@@ -90,7 +90,9 @@ public class GLRenderView extends SurfaceView implements Callback, FrameCallback
             this.mGLThread.setName("GLRenderView:" + eglUser);
             this.mGLThread.start();
             try {
-                this.mReturnQueue.take();
+                if (mReturnQueue!=null&&mReturnQueue.size()>0) {
+                    this.mReturnQueue.take();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -207,7 +209,7 @@ public class GLRenderView extends SurfaceView implements Callback, FrameCallback
             public void handleMessage(Message msg) {
             }
         };
-        this.mReturnQueue.offer(Integer.valueOf(1));
+        this.mReturnQueue.offer(1);
         Looper.loop();
         this.mHandler = null;
         onGLDestroy();

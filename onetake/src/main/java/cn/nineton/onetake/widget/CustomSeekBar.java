@@ -17,6 +17,7 @@ import android.view.View;
 import java.math.BigDecimal;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 
 public class CustomSeekBar extends View {

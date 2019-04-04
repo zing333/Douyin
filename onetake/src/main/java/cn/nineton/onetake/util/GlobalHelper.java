@@ -1,6 +1,5 @@
 package cn.nineton.onetake.util;
 
-import com.blink.academy.onetake.support.utils.SharedPrefUtil;
 
 public class GlobalHelper {
     public static void setUserId(int userId) {

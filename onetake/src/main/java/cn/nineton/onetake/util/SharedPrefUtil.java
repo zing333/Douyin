@@ -2,7 +2,6 @@ package cn.nineton.onetake.util;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import com.blink.academy.onetake.App;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

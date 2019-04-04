@@ -49,6 +49,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 import cn.nineton.onetake.util.FontsUtil;
 import cn.nineton.onetake.util.TextUtil;
@@ -133,7 +134,7 @@ public class ShareCropDialogWithFilmSubtitles implements OnClickListener {
         share_wechat_root_layout_rl.setOnClickListener((this));
         final View share_wechat_crop_layout_ll = view.findViewById(R.id.share_wechat_crop_layout_ll);
         view.findViewById(R.id.cancel_layout_fl).setOnClickListener(this);
-        view.findViewById(R.idcancel_layout_fl).setOnTouchListener(TouchFocusChange());
+        view.findViewById(R.id.cancel_layout_fl).setOnTouchListener(TouchFocusChange());
         view.findViewById(R.id.confirm_layout_fl).setOnClickListener(this);
         view.findViewById(R.id.confirm_layout_fl).setOnTouchListener(TouchFocusChange());
         view.findViewById(R.id.text_layout_btn_ll).setOnClickListener(this);
@@ -142,7 +143,7 @@ public class ShareCropDialogWithFilmSubtitles implements OnClickListener {
             view.findViewById(R.id.paint_layout_btn_ll).setOnClickListener(this);
             view.findViewById(R.id.paint_layout_btn_ll).setOnTouchListener(TouchFocusChange());
         } else {
-            view.findViewById(R.idpaint_layout_btn_ll).setVisibility(View.GONE);
+            view.findViewById(R.id.paint_layout_btn_ll).setVisibility(View.GONE);
             ((LinearLayout) view.findViewById(R.id.text_layout_btn_ll)).setGravity(17);
         }
         this.scroll_view = (ScrollView) view.findViewById(R.id.scroll_view);

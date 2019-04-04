@@ -3,6 +3,7 @@ package cn.nineton.onetake.util;
 import org.joda.time.DateTime;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 
 public class DateUtil {
     public static final long DayLong = 7;

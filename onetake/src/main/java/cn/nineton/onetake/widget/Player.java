@@ -33,9 +33,9 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import cn.nineton.glsurfacedemo.onetake.FilterActivity;
 import cn.nineton.onetake.App;
-import cn.nineton.onetake.db.IMMsgTable;
+import cn.nineton.onetake.FilterActivity;
+import cn.nineton.onetake.db.table.IMMsgTable;
 import cn.nineton.onetake.event.VideoSavingEvent;
 import cn.nineton.onetake.media.BitmapUtils;
 import cn.nineton.onetake.media.FrameRenderer;
@@ -1305,9 +1305,6 @@ public class Player {
         } catch (FileNotFoundException e5) {
             e = e5;
             App.warnException(e);
-        } catch (IOException e6) {
-            e2 = e6;
-            App.warnException(e2);
         }
     }
 }

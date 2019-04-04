@@ -1,0 +1,312 @@
+[
+  {
+    "name_chs": "胶片",
+    "name_cht": "菲林",
+    "name_en": "Analog",
+    "combination_id": 6,
+    "specifics": [
+      {
+        "Type": "Preset",
+        "Mode": "Fujisan"
+      },
+      {
+        "Type": "Exposure",
+        "Value": "+1"
+      },
+      {
+        "Type": "Grains",
+        "Value": "+4"
+      },
+      {
+        "Type": "Vignette",
+        "Value": "+3"
+      },
+      {
+        "Type": "Fade",
+        "Value": "+1"
+      },
+      {
+        "Type": "Sharpen",
+        "Value": "+4"
+      }
+    ]
+  },
+  {
+    "name_chs": "旧照",
+    "name_cht": "舊照",
+    "name_en": "Aged",
+    "combination_id": 3,
+    "specifics": [
+      {
+        "Type": "Preset",
+        "Mode": "Rocky"
+      },
+      {
+        "Type": "Contrast",
+        "Value": "+2"
+      },
+      {
+        "Type": "Exposure",
+        "Value": "+4"
+      },
+      {
+        "Type": "Saturation",
+        "Value": "-2"
+      },
+      {
+        "Type": "Tint",
+        "Value": "+2"
+      },
+      {
+        "Type": "Grains",
+        "Value": "+6"
+      },
+      {
+        "Type": "Vignette",
+        "Value": "+3"
+      },
+      {
+        "Type": "Prism",
+        "Value": "+3"
+      },
+      {
+        "Type": "Fade",
+        "Value": "+5"
+      },
+      {
+        "Type": "HighlightsSave",
+        "Value": "+3"
+      },
+      {
+        "Type": "Dust",
+        "ValueMin": "+2",
+        "ValueMax": "+4"
+      },
+      {
+        "Type": "Sharpen",
+        "Value": "+5"
+      },
+      {
+        "Type": "Date",
+        "Value": "10"
+      }
+    ]
+  },
+  {
+    "name_chs": "即可拍",
+    "name_cht": "即可拍",
+    "name_en": "Disposal",
+    "combination_id": 3,
+    "specifics": [
+      {
+        "Type": "Preset",
+        "Mode": "Fujisan"
+      },
+      {
+        "Type": "Contrast",
+        "Value": "+3"
+      },
+      {
+        "Type": "Exposure",
+        "Value": "-3"
+      },
+      {
+        "Type": "Saturation",
+        "Value": "-1"
+      },
+      {
+        "Type": "WhiteBalance",
+        "Value": "-2"
+      },
+      {
+        "Type": "Tint",
+        "Value": "+3"
+      },
+      {
+        "Type": "Grains",
+        "Value": "+7"
+      },
+      {
+        "Type": "Vignette",
+        "Value": "+4"
+      },
+      {
+        "Type": "Prism",
+        "Value": "+8"
+      },
+      {
+        "Type": "Fade",
+        "Value": "+6"
+      },
+      {
+        "Type": "HighlightsSave",
+        "Value": "+6"
+      },
+      {
+        "Type": "Leak",
+        "ValueMin": "0",
+        "ValueMax": "+1"
+      },
+      {
+        "Type": "Dust",
+        "ValueMin": "+4",
+        "ValueMax": "+7"
+      },
+      {
+        "Type": "Sharpen",
+        "Value": "+3"
+      },
+      {
+        "Type": "Date",
+        "Value": "10"
+      }
+    ]
+  },
+  {
+    "name_chs": "LOMO",
+    "name_cht": "LOMO",
+    "name_en": "LOMO",
+    "combination_id": 3,
+    "specifics": [
+      {
+        "Type": "Preset",
+        "Mode": "Blanc"
+      },
+      {
+        "Type": "Contrast",
+        "Value": "+2"
+      },
+      {
+        "Type": "Exposure",
+        "Value": "+5"
+      },
+      {
+        "Type": "Saturation",
+        "Value": "+2"
+      },
+      {
+        "Type": "WhiteBalance",
+        "Value": "-2"
+      },
+      {
+        "Type": "Tint",
+        "Value": "-2"
+      },
+      {
+        "Type": "Grains",
+        "Value": "+5"
+      },
+      {
+        "Type": "Vignette",
+        "Value": "+7"
+      },
+      {
+        "Type": "Prism",
+        "Value": "+5"
+      },
+      {
+        "Type": "Fade",
+        "Value": "+2"
+      },
+      {
+        "Type": "HighlightsSave",
+        "Value": "+4"
+      },
+      {
+        "Type": "Leak",
+        "ValueMin": "0",
+        "ValueMax": "+1"
+      },
+      {
+        "Type": "Dust",
+        "ValueMin": "+2",
+        "ValueMax": "+5"
+      },
+      {
+        "Type": "Sharpen",
+        "Value": "+5"
+      },
+      {
+        "Type": "Date",
+        "Value": "10"
+      }
+    ]
+  },
+  {
+    "name_chs": "电影",
+    "name_cht": "电影",
+    "name_en": "Movie",
+    "combination_id": 2,
+    "specifics": [
+      {
+        "Type": "Preset",
+        "Mode": "Everest"
+      },
+      {
+        "Type": "Exposure",
+        "Value": "+2"
+      },
+      {
+        "Type": "Contrast",
+        "Value": "+1"
+      },
+      {
+        "Type": "Saturation",
+        "Value": "-1"
+      },
+      {
+        "Type": "Grains",
+        "Value": "+2"
+      },
+      {
+        "Type": "Vignette",
+        "Value": "+5"
+      },
+      {
+        "Type": "Tilt",
+        "Value": "+1"
+      },
+      {
+        "Type": "Fade",
+        "Value": "+1"
+      },
+      {
+        "Type": "Sky",
+        "Value": "+5"
+      },
+      {
+        "Type": "HighlightsSave",
+        "Value": "+4"
+      },
+      {
+        "Type": "ShadowsSave",
+        "Value": "+1"
+      },
+      {
+        "Type": "Sharpen",
+        "Value": "+3"
+      },
+      {
+        "Type": "Prism",
+        "Value": "+2"
+      },
+      {
+        "Type": "Dust",
+        "ValueMin": "+1",
+        "ValueMax": "+3"
+      }
+    ]
+  },
+  {
+    "name_chs": "重置",
+    "name_cht": "重置",
+    "name_en": "Reset",
+    "combination_id": 0,
+    "specifics": [
+      {
+        "Type": "Preset",
+        "Mode": ""
+      }
+    ]
+  }
+]

@@ -3,7 +3,7 @@ package cn.nineton.onetake.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import cn.nineton.onetake.db.IMMsgTable;
+import cn.nineton.onetake.db.table.IMMsgTable;
 
 public class IMMsgBean implements Parcelable {
     public static final Creator<IMMsgBean> CREATOR = new Creator<IMMsgBean>() {

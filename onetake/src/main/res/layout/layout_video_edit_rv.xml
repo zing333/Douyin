@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/video_edit_parent_ll"
+    android:layout_width="fill_parent"
+    android:layout_height="111.0dip"
+    android:layout_above="@id/filter_tab_ll"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/video_edit_time_rv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15.0dip"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/video_edit_image_rv"
+        android:layout_width="fill_parent"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="30.0dip"
+        android:clipChildren="false"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
+
+    <View
+        android:id="@id/video_edit_mute_indicator"
+        android:layout_width="0.5dip"
+        android:layout_height="44.0dip"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="30.0dip"
+        android:alpha="0.5"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/video_edit_mute_indicator_cover"
+        android:layout_width="1.0dip"
+        android:layout_height="44.0dip"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="30.0dip"
+        android:background="@color/colorTransparent"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+        android:id="@id/video_edit_image_mute_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="30.0dip"
+        android:ellipsize="none"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:text="@string/TEXT_TRACK_MUTE"
+        android:textColor="@color/colorWhite"
+        android:textSize="10.0dip"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@id/video_edit_video_duration_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/_30dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:shadowColor="@color/colorTrueBlack"
+        android:shadowRadius="12.0"
+        android:textColor="@color/colorWhite"
+        android:textSize="11.0dip"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@id/video_edit_missing_footage_fl"
+        android:layout_width="fill_parent"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="30.0dip"
+        android:clipChildren="false"
+        android:clipToPadding="false" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/video_edit_audio_rv"
+        android:layout_width="fill_parent"
+        android:layout_height="28.0dip"
+        android:layout_gravity="bottom"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:scrollbars="none" />
+
+    <View
+        android:id="@id/video_edit_audio_mute_indicator"
+        android:layout_width="0.5dip"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom|center"
+        android:alpha="0.5"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+        android:id="@id/video_edit_audio_mute_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="28.0dip"
+        android:layout_gravity="bottom"
+        android:ellipsize="none"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:text="@string/TEXT_TRACK_MUTE"
+        android:textColor="@color/colorWhite"
+        android:textSize="10.0dip"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+        android:id="@id/video_edit_add_music_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="28.0dip"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="15.0dip"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:text="@string/BUTTON_AUDIO_TAP_TO_ADD_MUSIC"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular10"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@id/video_edit_image_volume_line"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.custom.videoedit.VolumeSlideView-->
+    <cn.nineton.onetake.widget.VolumeSlideView
+        android:id="@id/video_edit_image_volume_touch"
+        android:layout_width="40.0dip"
+        android:layout_height="@dimen/_35dp"
+        android:layout_gravity="bottom"
+        android:paddingBottom="@dimen/_10dp"
+        android:paddingTop="@dimen/_10dp"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/left_touch_view"
+        android:layout_width="40.0dip"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/right_touch_view"
+        android:layout_width="40.0dip"
+        android:layout_height="52.0dip"
+        android:layout_gravity="bottom"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/video_edit_audio_volume_line"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.custom.videoedit.VolumeSlideView-->
+    <cn.nineton.onetake.widget.VolumeSlideView
+        android:id="@id/video_edit_audio_volume_touch"
+        android:layout_width="40.0dip"
+        android:layout_height="@dimen/_35dp"
+        android:layout_gravity="bottom"
+        android:paddingBottom="@dimen/_10dp"
+        android:paddingTop="@dimen/_10dp"
+        android:visibility="gone" />
+</FrameLayout>

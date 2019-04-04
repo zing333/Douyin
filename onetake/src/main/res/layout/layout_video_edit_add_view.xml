@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/video_edit_add_parent"
+    android:layout_width="100.0dip"
+    android:layout_height="52.0dip"
+    android:gravity="center">
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center"
+        android:background="@color/colorDarkerGray">
+
+        <ImageView
+            android:layout_width="24.0dip"
+            android:layout_height="24.0dip"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_20_add_hashtags"
+            android:tint="@color/colorGray" />
+        <!--android:src="@drawable/icon_15_add_from_album"-->
+
+        <!--<com.blink.academy.onetake.custom.CircleCoverView-->
+        <cn.nineton.onetake.widget.CircleCoverView
+            android:id="@id/video_edit_add_cover_ccv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            app:circleOutColor="@color/colorGray"
+            app:outLineColor="@color/colorGray"
+            app:radius="@dimen/_5dp" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="52.0dip"
+        android:layout_gravity="center"
+        android:visibility="visible">
+
+        <View
+            android:id="@id/video_edit_top_line_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="4.0dip"
+            android:background="@color/colorGray" />
+
+        <View
+            android:id="@id/video_edit_top_line"
+            android:layout_width="fill_parent"
+            android:layout_height="2.0dip"
+            android:layout_marginTop="2.0dip"
+            android:background="@color/colorWhite" />
+
+        <View
+            android:id="@id/video_edit_bottom_line_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="2.0dip"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorGray" />
+
+        <View
+            android:id="@id/video_edit_bottom_line"
+            android:layout_width="fill_parent"
+            android:layout_height="2.0dip"
+            android:layout_marginBottom="2.0dip"
+            android:layout_marginTop="48.0dip"
+            android:background="@color/colorWhite" />
+
+        <View
+            android:id="@id/video_edit_slider_right_iv_bottom"
+            android:layout_width="12.0dip"
+            android:layout_height="52.0dip"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/round_color_gray_right_button_bottom" />
+
+        <ImageView
+            android:id="@id/video_edit_slider_right_iv"
+            android:layout_width="10.0dip"
+            android:layout_height="48.0dip"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="2.0dip"
+            android:layout_marginTop="2.0dip"
+            android:background="@drawable/round_color_white_right_button"
+            android:padding="1.0dip"
+            android:src="@drawable/icon_10_trim_video_right"
+            android:tint="@color/colorBlack" />
+
+        <View
+            android:id="@id/video_edit_right_iv_slide_view"
+            android:layout_width="@dimen/_20dp"
+            android:layout_height="52.0dip"
+            android:layout_alignParentLeft="true" />
+
+        <View
+            android:id="@id/video_edit_slider_left_iv_bottom"
+            android:layout_width="12.0dip"
+            android:layout_height="52.0dip"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/round_color_gray_right_button_bottom"
+            android:scaleX="-1.0" />
+
+        <ImageView
+            android:id="@id/video_edit_slider_left_iv"
+            android:layout_width="10.0dip"
+            android:layout_height="48.0dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="2.0dip"
+            android:layout_marginTop="2.0dip"
+            android:background="@drawable/round_color_white_left_button"
+            android:padding="1.0dip"
+            android:src="@drawable/icon_10_trim_video_right"
+            android:tint="@color/colorBlack" />
+
+        <View
+            android:id="@id/video_edit_left_iv_slide_view"
+            android:layout_width="@dimen/_20dp"
+            android:layout_height="52.0dip"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+</FrameLayout>

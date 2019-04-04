@@ -22,7 +22,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.media.MediaUtils;
+import cn.nineton.onetake.media.OutputSurfaceArray;
+import cn.nineton.onetake.media.Ratio;
 import cn.nineton.onetake.media.audiotool.AudioDecoder;
+import cn.nineton.onetake.widget.VideoDecoder18;
 
 public class VideoTranscoder {
     static final String STATUS_ACTION = "com.blink.academy.onetake.VideoTranscoder.Status";
@@ -199,7 +203,7 @@ public class VideoTranscoder {
         MP4Output mOutput;
         Progress mProgress;
         VideoDecoder18 mVideoDecoder = null;
-        private DecoderCallbacks mVideoDecoderCallbacks = new DecoderCallbacks() {
+        private VideoDecoder18.DecoderCallbacks mVideoDecoderCallbacks = new VideoDecoder18.DecoderCallbacks() {
             public void onFrameDecoded(long pts) {
                 if (Executor.this.mInputDurationUs > 0) {
                     Executor.this.mProgress.onProgress((float) (((double) pts) / ((double) Executor.this.mInputDurationUs)));
@@ -211,7 +215,7 @@ public class VideoTranscoder {
             }
         };
         boolean mVideoFinished;
-        BufferPool mVideoPool = null;
+        OutputSurfaceArray.BufferPool mVideoPool = null;
         boolean paused;
 
         Executor() {
@@ -414,7 +418,7 @@ public class VideoTranscoder {
         public void disableAudio() {
             this.mEnableAudio = false;
         }
-
+        public Request(){}
         protected Request(Intent intent) {
             setInputPath(intent.getStringExtra(INPUT_PATH));
             setInputTime(intent.getLongExtra(INPUT_STARTTIME_US, 0));
@@ -429,22 +433,22 @@ public class VideoTranscoder {
         }
 
         public Intent getIntent(Context context) {
-            Intent intent = new Intent(context, VideoService.class);
-            intent.putExtra("type", "transcode");
-            intent.putExtra(INPUT_PATH, this.mInputPath);
-            intent.putExtra(INPUT_STARTTIME_US, this.mInputStartTimeUs);
-            intent.putExtra(INPUT_DURATION_US, this.mInputDurationUs);
-            intent.putExtra(INPUT_RATIO_NUM, this.mInputRatio.num);
-            intent.putExtra(INPUT_RATIO_DEN, this.mInputRatio.den);
-            intent.putExtra(OUTPUT_PATH, this.mOutputPath);
-            intent.putExtra(OUTPUT_WIDTH, this.mOutputWidth);
-            intent.putExtra(OUTPUT_HEIGHT, this.mOutputHeight);
-            intent.putExtra(OUTPUT_RATIO_NUM, this.mOutputRatio.num);
-            intent.putExtra(OUTPUT_RATIO_DEN, this.mOutputRatio.den);
-            intent.putExtra(OUTPUT_KEYFRAME_INTERVAL, this.mOutputKeyframeInterval);
-            intent.putExtra(ENABLE_VIDEO, this.mEnableVideo);
-            intent.putExtra(ENABLE_AUDIO, this.mEnableAudio);
-            return intent;
+//            Intent intent = new Intent(context, VideoService.class);
+//            intent.putExtra("type", "transcode");
+//            intent.putExtra(INPUT_PATH, this.mInputPath);
+//            intent.putExtra(INPUT_STARTTIME_US, this.mInputStartTimeUs);
+//            intent.putExtra(INPUT_DURATION_US, this.mInputDurationUs);
+//            intent.putExtra(INPUT_RATIO_NUM, this.mInputRatio.getNum());
+//            intent.putExtra(INPUT_RATIO_DEN, this.mInputRatio.getDen());
+//            intent.putExtra(OUTPUT_PATH, this.mOutputPath);
+//            intent.putExtra(OUTPUT_WIDTH, this.mOutputWidth);
+//            intent.putExtra(OUTPUT_HEIGHT, this.mOutputHeight);
+//            intent.putExtra(OUTPUT_RATIO_NUM, this.mOutputRatio.getNum());
+//            intent.putExtra(OUTPUT_RATIO_DEN, this.mOutputRatio.getDen());
+//            intent.putExtra(OUTPUT_KEYFRAME_INTERVAL, this.mOutputKeyframeInterval);
+//            intent.putExtra(ENABLE_VIDEO, this.mEnableVideo);
+//            intent.putExtra(ENABLE_AUDIO, this.mEnableAudio);
+            return null;
         }
     }
 
@@ -503,7 +507,13 @@ public class VideoTranscoder {
 
     static final class WorkQueue {
         BlockingQueue<Client> mJobs = new LinkedBlockingQueue();
-        Thread mThread = new Thread(VideoTranscoder$WorkQueue$$Lambda$1.lambdaFactory$(this));
+        //Thread mThread = new Thread(VideoTranscoder$WorkQueue$$Lambda$1.lambdaFactory$(this));
+        Thread mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                access$lambda$0();
+            }
+        });
 
         WorkQueue() {
             this.mThread.setName("VideoTranscoder.WorkQueue");

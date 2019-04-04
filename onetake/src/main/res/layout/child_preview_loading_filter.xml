@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60.0dip"
+    android:layout_height="76.0dip">
+
+    <!--<com.blink.academy.onetake.widgets.CircularProgressBar.OneTakeProgressBar-->
+    <ProgressBar
+        android:id="@id/loading_next"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_20dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/_20dp"
+        android:layout_marginTop="41.0dip"
+        android:tint="@color/color40White" />
+
+    <View
+        android:layout_width="1.0px"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/colorDate" />
+</RelativeLayout>

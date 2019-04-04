@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:visibility="gone">
+
+    <!--<cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView-->
+    <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+        android:id="@id/add_text_controller_title"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:text="@string/BUTTON_TEXT_COMBO_TITLE"
+        android:textColor="@color/colorWhite"
+        android:textSize="14.0dip" />
+
+    <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+        android:id="@id/add_text_controller_chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="20.0dip"
+        android:layout_toRightOf="@id/add_text_controller_title"
+        android:gravity="center"
+        android:text="@string/BUTTON_TEXT_COMBO_CHAPTER"
+        android:textColor="@color/colorWhite"
+        android:textSize="14.0dip" />
+
+    <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+        android:id="@id/add_text_controller_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="20.0dip"
+        android:layout_toRightOf="@id/add_text_controller_chapter"
+        android:gravity="center"
+        android:text="@string/BUTTON_TEXT_COMBO_SUBTITLE"
+        android:textColor="@color/colorWhite"
+        android:textSize="14.0dip" />
+
+    <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+        android:id="@id/add_text_controller_info"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="20.0dip"
+        android:layout_toRightOf="@id/add_text_controller_subtitle"
+        android:gravity="center"
+        android:text="@string/BUTTON_TEXT_COMBO_INFO"
+        android:textColor="@color/colorWhite"
+        android:textSize="14.0dip" />
+
+    <ImageView
+        android:id="@id/point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20.0dip"
+        android:layout_toRightOf="@id/add_text_controller_info"
+        android:contentDescription="@null"
+        android:src="@drawable/shape_point_video_edit" />
+
+    <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+        android:id="@id/add_text_controller_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="20.0dip"
+        android:layout_toRightOf="@id/point"
+        android:gravity="center"
+        android:text="@string/BUTTON_TEXT_COMBO_RESET"
+        android:textColor="@color/colorWhite"
+        android:textSize="14.0dip" />
+</RelativeLayout>

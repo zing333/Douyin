@@ -11,19 +11,24 @@ import android.widget.ImageView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.blink.academy.onetake.VideoTools.FilterView.VideoSpeedup;
-import com.blink.academy.onetake.bean.longvideo.LongVideosModel;
-import com.blink.academy.onetake.support.utils.ColorFilterUtil;
-import com.blink.academy.onetake.support.utils.LocaleUtil;
-import com.blink.academy.onetake.support.utils.StaticLayoutUtil;
-import com.blink.academy.onetake.support.utils.TextUtil;
-import com.blink.academy.onetake.widgets.LinearLayout.VideoEditEffectsLayout$.Lambda.1;
-import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar;
-import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar.OnCustomProgressChangeListener;
-import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar.OnCustomProgressProStateChangeListener;
-import com.blink.academy.onetake.widgets.WheelPager.MeasureSizeFrameLayout;
-import com.blink.academy.onetake.widgets.loop.HorizontalLoopView;
-import com.blink.academy.onetake.widgets.loop.HorizontalLoopView.OnSelectItemChange;
+import cn.nineton.onetake.R;
+import cn.nineton.onetake.bean.LongVideosModel;
+import cn.nineton.onetake.util.ColorFilterUtil;
+import cn.nineton.onetake.util.LocaleUtil;
+import cn.nineton.onetake.util.TextUtil;
+//import com.blink.academy.onetake.VideoTools.FilterView.VideoSpeedup;
+//import com.blink.academy.onetake.bean.longvideo.LongVideosModel;
+//import com.blink.academy.onetake.support.utils.ColorFilterUtil;
+//import com.blink.academy.onetake.support.utils.LocaleUtil;
+//import com.blink.academy.onetake.support.utils.StaticLayoutUtil;
+//import com.blink.academy.onetake.support.utils.TextUtil;
+//import com.blink.academy.onetake.widgets.LinearLayout.VideoEditEffectsLayout$.Lambda.1;
+//import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar;
+//import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar.OnCustomProgressChangeListener;
+//import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar.OnCustomProgressProStateChangeListener;
+//import com.blink.academy.onetake.widgets.WheelPager.MeasureSizeFrameLayout;
+//import com.blink.academy.onetake.widgets.loop.HorizontalLoopView;
+//import com.blink.academy.onetake.widgets.loop.HorizontalLoopView.OnSelectItemChange;
 import com.weigan.loopview.bean.Bean;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,39 +84,39 @@ public class VideoEditEffectsLayout extends FrameLayout {
 
     /* renamed from: com.blink.academy.onetake.widgets.LinearLayout.VideoEditEffectsLayout$3 */
     static /* synthetic */ class AnonymousClass3 {
-        static final /* synthetic */ int[] $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup = new int[VideoSpeedup.values().length];
+        static final /* synthetic */ int[] $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup = new int[FilterView.VideoSpeedup.values().length];
 
         static {
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.STEP.ordinal()] = 1;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.STEP.ordinal()] = 1;
             } catch (NoSuchFieldError e) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.SLOW.ordinal()] = 2;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.SLOW.ordinal()] = 2;
             } catch (NoSuchFieldError e2) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.EIGHTMM.ordinal()] = 3;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.EIGHTMM.ordinal()] = 3;
             } catch (NoSuchFieldError e3) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.NORMAL.ordinal()] = 4;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.NORMAL.ordinal()] = 4;
             } catch (NoSuchFieldError e4) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.CHAPLIN.ordinal()] = 5;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.CHAPLIN.ordinal()] = 5;
             } catch (NoSuchFieldError e5) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.DOUBLE.ordinal()] = 6;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.DOUBLE.ordinal()] = 6;
             } catch (NoSuchFieldError e6) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.QUADRUPLE.ordinal()] = 7;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.QUADRUPLE.ordinal()] = 7;
             } catch (NoSuchFieldError e7) {
             }
             try {
-                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[VideoSpeedup.TIMELAPSE.ordinal()] = 8;
+                $SwitchMap$com$blink$academy$onetake$VideoTools$FilterView$VideoSpeedup[FilterView.VideoSpeedup.TIMELAPSE.ordinal()] = 8;
             } catch (NoSuchFieldError e8) {
             }
         }
@@ -119,37 +124,37 @@ public class VideoEditEffectsLayout extends FrameLayout {
 
     private /* synthetic */ void lambda$new$0(View v) {
         switch (v.getId()) {
-            case 2131691642:
+            case R.id.sound_min_iv:
                 if (this.sound_seekBar.isNeedGesture()) {
                     this.sound_seekBar.setPro(StaticLayoutUtil.DefaultSpacingadd);
                     return;
                 }
                 return;
-            case 2131691643:
+            case R.id.sound_max_iv:
                 if (this.sound_seekBar.isNeedGesture()) {
                     this.sound_seekBar.setPro(1.0f);
                     return;
                 }
                 return;
-            case 2131691645:
+            case R.id.music_min_iv:
                 if (this.music_seekBar.isNeedGesture()) {
                     this.music_seekBar.setPro(StaticLayoutUtil.DefaultSpacingadd);
                     return;
                 }
                 return;
-            case 2131691646:
+            case R.id.music_max_iv:
                 if (this.music_seekBar.isNeedGesture()) {
                     this.music_seekBar.setPro(1.0f);
                     return;
                 }
                 return;
-            case 2131691648:
+            case R.id.brightness_min_iv:
                 if (this.bright_seekBar.isNeedGesture()) {
                     this.bright_seekBar.setPro(StaticLayoutUtil.DefaultSpacingadd);
                     return;
                 }
                 return;
-            case 2131691649:
+            case R.id.brightness_max_iv:
                 if (this.bright_seekBar.isNeedGesture()) {
                     this.bright_seekBar.setPro(1.0f);
                     return;
@@ -174,23 +179,29 @@ public class VideoEditEffectsLayout extends FrameLayout {
 
     public VideoEditEffectsLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.mListener = 1.lambdaFactory$(this);
+//        this.mListener = 1.lambdaFactory$(this);
+        this.mListener = new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lambda$new$0(v);
+            }
+        };
         init(context);
     }
 
     private void init(Context context) {
-        LayoutInflater.from(context).inflate(2130968935, this, true);
-        ButterKnife.inject(this);
+        LayoutInflater.from(context).inflate(R.layout.layout_video_edit_effects, this, true);
+        ButterKnife.bind(this);
         initSpeedLoop();
         initZoomLoop();
-        this.music_seekBar.setOnCustomProgressProStateChangeListener(new OnCustomProgressProStateChangeListener() {
+        this.music_seekBar.setOnCustomProgressProStateChangeListener(new CustomSeekBar.OnCustomProgressProStateChangeListener() {
             public void onPro0(boolean flag) {
             }
 
             public void onPro100(boolean flag) {
             }
         });
-        this.sound_seekBar.setOnCustomProgressProStateChangeListener(new OnCustomProgressProStateChangeListener() {
+        this.sound_seekBar.setOnCustomProgressProStateChangeListener(new CustomSeekBar.OnCustomProgressProStateChangeListener() {
             public void onPro0(boolean flag) {
             }
 
@@ -207,9 +218,9 @@ public class VideoEditEffectsLayout extends FrameLayout {
 
     private void initZoomLoop() {
         List<Bean> beanList = new ArrayList();
-        beanList.add(new Bean(getResources().getString(2131296563), "", null));
-        beanList.add(new Bean(getResources().getString(2131296562), "", null));
-        beanList.add(new Bean(getResources().getString(2131296561), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_ZOOM_OUT), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_ZOOM_OFF), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_ZOOM_IN), "", null));
         this.zoom_loop.setItems(beanList);
         this.zoom_loop.setCurrentPosition(1);
         if (LocaleUtil.isChinese()) {
@@ -223,14 +234,14 @@ public class VideoEditEffectsLayout extends FrameLayout {
 
     private void initSpeedLoop() {
         List<Bean> beanList = new ArrayList();
-        beanList.add(new Bean(getResources().getString(2131296560), "", null));
-        beanList.add(new Bean(getResources().getString(2131296559), "", null));
-        beanList.add(new Bean(getResources().getString(2131296554), "", null));
-        beanList.add(new Bean(getResources().getString(2131296558), "", null));
-        beanList.add(new Bean(getResources().getString(2131296555), "", null));
-        beanList.add(new Bean(getResources().getString(2131296552), "", null));
-        beanList.add(new Bean(getResources().getString(2131296553), "", null));
-        beanList.add(new Bean(getResources().getString(2131296551), "", null));
+            beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_STEP), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_SLOW), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_8MM), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_NORMAL), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_CHAPLIN), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_2XFAST), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_4XFAST), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_15XFAST), "", null));
         this.speed_loop.setItems(beanList);
         this.speed_loop.setCurrentPosition(3);
         this.speed_loop.setNotLoop();
@@ -353,52 +364,52 @@ public class VideoEditEffectsLayout extends FrameLayout {
         int state = -1;
         switch (this.speed_loop.getSelectedItem()) {
             case 0:
-                if (model.getVideoSpeedUp() != VideoSpeedup.STEP) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.STEP) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.STEP);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.STEP);
                 break;
             case 1:
-                if (model.getVideoSpeedUp() != VideoSpeedup.SLOW) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.SLOW) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.SLOW);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.SLOW);
                 break;
             case 2:
-                if (model.getVideoSpeedUp() != VideoSpeedup.EIGHTMM) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.EIGHTMM) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.EIGHTMM);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.EIGHTMM);
                 break;
             case 3:
-                if (model.getVideoSpeedUp() != VideoSpeedup.NORMAL) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.NORMAL) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.NORMAL);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.NORMAL);
                 break;
             case 4:
-                if (model.getVideoSpeedUp() != VideoSpeedup.CHAPLIN) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.CHAPLIN) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.CHAPLIN);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.CHAPLIN);
                 break;
             case 5:
-                if (model.getVideoSpeedUp() != VideoSpeedup.DOUBLE) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.DOUBLE) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.DOUBLE);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.DOUBLE);
                 break;
             case 6:
-                if (model.getVideoSpeedUp() != VideoSpeedup.QUADRUPLE) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.QUADRUPLE) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.QUADRUPLE);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.QUADRUPLE);
                 break;
             case 7:
-                if (model.getVideoSpeedUp() != VideoSpeedup.TIMELAPSE) {
+                if (model.getVideoSpeedUp() != FilterView.VideoSpeedup.TIMELAPSE) {
                     state = 0;
                 }
-                model.setVideoSpeedUp(VideoSpeedup.TIMELAPSE);
+                model.setVideoSpeedUp(FilterView.VideoSpeedup.TIMELAPSE);
                 break;
         }
         switch (this.zoom_loop.getSelectedItem()) {
@@ -511,33 +522,33 @@ public class VideoEditEffectsLayout extends FrameLayout {
         this.confirm_btn_iv.setOnClickListener(listener);
     }
 
-    public void setMusicSeekBarListener(OnCustomProgressChangeListener listener) {
+    public void setMusicSeekBarListener(CustomSeekBar.OnCustomProgressChangeListener listener) {
         this.music_seekBar.setOnCustomProgressChangedListener(listener);
     }
 
-    public void setBrightnessSeekBarListener(OnCustomProgressChangeListener listener) {
+    public void setBrightnessSeekBarListener(CustomSeekBar.OnCustomProgressChangeListener listener) {
         this.bright_seekBar.setOnCustomProgressChangedListener(listener);
     }
 
-    public void setSoundSeekBarListener(OnCustomProgressChangeListener listener) {
+    public void setSoundSeekBarListener(CustomSeekBar.OnCustomProgressChangeListener listener) {
         this.sound_seekBar.setOnCustomProgressChangedListener(listener);
     }
 
-    public void setOnSelectItemChange(OnSelectItemChange onSelectItemChange) {
+    public void setOnSelectItemChange(HorizontalLoopView.OnSelectItemChange onSelectItemChange) {
         this.speed_loop.setOnSelectItemChange(onSelectItemChange);
         this.zoom_loop.setOnSelectItemChange(onSelectItemChange);
     }
 
     public void resetSpeedLoop(int size) {
         List<Bean> beanList = new ArrayList();
-        beanList.add(new Bean(getResources().getString(2131296560), "", null));
-        beanList.add(new Bean(getResources().getString(2131296559), "", null));
-        beanList.add(new Bean(getResources().getString(2131296554), "", null));
-        beanList.add(new Bean(getResources().getString(2131296558), "", null));
-        beanList.add(new Bean(getResources().getString(2131296555), "", null));
-        beanList.add(new Bean(getResources().getString(2131296552), "", null));
-        beanList.add(new Bean(getResources().getString(2131296553), "", null));
-        beanList.add(new Bean(getResources().getString(2131296551), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_STEP), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_SLOW), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_8MM), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_NORMAL), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_CHAPLIN), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_2XFAST), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_4XFAST), "", null));
+        beanList.add(new Bean(getResources().getString(R.string.BUTTON_VIDEO_EDIT_EFFECTS_SPEED_15XFAST), "", null));
         List<Bean> finalList = new ArrayList();
         for (int i = 0; i < size; i++) {
             finalList.add(beanList.get(i));

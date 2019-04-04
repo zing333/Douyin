@@ -1,6 +1,8 @@
 package cn.nineton.onetake.util;
 
 import android.os.Build;
+import android.os.Environment;
+
 import java.io.File;
 
 public class Config {
@@ -16,7 +18,6 @@ public class Config {
     public static String ChineseGifFileName = null;
     public static String ChinesePhotoFileName = null;
     public static String ChineseVideoFileName = null;
-    private static String DRAFTS_PATH = null;
     public static String EnglishGifFileName = null;
     public static String EnglishPhotoFileName = null;
     public static String EnglishVideoFileName = null;
@@ -29,7 +30,8 @@ public class Config {
     private static String LONG_VIDEO_RECORD_PATH = null;
     public static final String MessengerInstall = "messenger_install";
     public static final String MessengerPackage = "com.facebook.orca";
-    private static String PRIVATE_PATH = null;
+    private static String PRIVATE_PATH = Environment.getExternalStorageDirectory()+File.separator+"OneTakeDemo";//null;
+    private static String DRAFTS_PATH = PRIVATE_PATH+File.separator+"drafts";
     public static String PhotoFileName = null;
     public static final String QQInstall = "qq_install";
     public static final String QQPackage = "com.tencent.mobileqq";

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DevInfor>
+
+    <ShareSDK
+        AppKey="111e2b61f06c8"/>
+
+    <SinaWeibo
+        AppKey="927658127"
+        AppSecret="c4bb19f183389011bd02539909165029"
+        Enable="true"
+        Id="1"
+        RedirectUrl="https://api.weibo.com/oauth2/default.html"
+        ShareByAppClient="false"
+        isNewApi="true"
+        SortId="1"/>
+
+    <Wechat
+        AppId="wxf75cebddac437ce3"
+        AppSecret="d0bbc2956386a4fa8fb4246f1c4fd4b4"
+        BypassApproval="false"
+        Enable="true"
+        Id="2"
+        SortId="2"/>
+
+    <QQ
+        AppId="1105188709"
+        AppKey="KO7BqHAxdpyQioB2"
+        Enable="true"
+        Id="3"
+        ShareByAppClient="true"
+        SortId="3"/>
+
+    <Twitter
+        CallbackUrl="http://onetake.com"
+        ConsumerKey="amBh2uiFN40qpjWew2mhHE6Yv"
+        ConsumerSecret="6BRiMuk219LTH9vkYAdb96L77sUqFyoXHQXkhGEnf583BP2irx"
+        Enable="true"
+        Id="4"
+        SortId="4"/>
+
+    <Facebook
+        ConsumerKey="253073255025876"
+        ConsumerSecret="b35a0442b2f9c55420cadf7d759e6062"
+        Enable="true"
+        Id="5"
+        RedirectUrl="http://www.51snow.com/account/login/"
+        SortId="5"/>
+
+    <Tumblr
+        CallbackUrl="http://www.dafork.com"
+        Enable="true"
+        Id="25"
+        OAuthConsumerKey="vZooEAT6rVozMfbA8HSTiN6QYxgx11aTyjsBO1BvyeqXIrilvA"
+        SecretKey="KhCwcvS0KgrA1KSffaVMYf2YbtkSAQbdxpxtS5VYkI9YHzoiaM"
+        SortId="25"/>
+</DevInfor>

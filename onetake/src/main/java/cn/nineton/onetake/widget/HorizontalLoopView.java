@@ -12,11 +12,11 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import com.blink.academy.onetake.App;
-import com.blink.academy.onetake.support.debug.LogUtil;
-import com.blink.academy.onetake.support.utils.DensityUtil;
-import com.blink.academy.onetake.support.utils.StaticLayoutUtil;
-import com.weigan.loopview.LoopView;
+//import com.blink.academy.onetake.App;
+//import com.blink.academy.onetake.support.debug.LogUtil;
+//import com.blink.academy.onetake.support.utils.DensityUtil;
+//import com.blink.academy.onetake.support.utils.StaticLayoutUtil;
+//import com.weigan.loopview.LoopView;
 import com.weigan.loopview.OnItemSelectedListener;
 import com.weigan.loopview.R;
 import com.weigan.loopview.bean.Bean;
@@ -25,6 +25,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import cn.nineton.onetake.App;
+import cn.nineton.onetake.util.DensityUtil;
+import cn.nineton.onetake.util.HorizontalInertiaTimerTask;
+import cn.nineton.onetake.util.HorizontalOnItemSelectedRunnable;
+import cn.nineton.onetake.util.HorizontalSmoothScrollTimerTask;
+import cn.nineton.onetake.util.LogUtil;
 
 public class HorizontalLoopView extends View {
     private static final float DEFAULT_LINE_SPACE = 2.0f;
@@ -38,23 +45,23 @@ public class HorizontalLoopView extends View {
     int firstLineX;
     private GestureDetector flingGestureDetector;
     int halfCircumference;
-    int initPosition;
-    boolean isLoop;
+    public int initPosition;
+    public boolean isLoop;
     public boolean isTouch = false;
-    List<Bean> items;
+    public List<Bean> items;
     int itemsVisibleCount;
     private int lastItem = -1;
-    float lineSpacingMultiplier;
+    public float lineSpacingMultiplier;
     private Bean mBean = new Bean("", "", null);
     ScheduledExecutorService mExecutor = Executors.newSingleThreadScheduledExecutor();
     private float mFirstLineStringStartX;
     private ScheduledFuture<?> mFuture;
-    Handler mHandler;
+    public Handler mHandler;
     private int mOffset = 0;
-    int maxItemWidth;
+    public int maxItemWidth;
     int measuredHeight;
     int measuredWidth;
-    OnItemSelectedListener onItemSelectedListener;
+    public OnItemSelectedListener onItemSelectedListener;
     private OnSelectItemChange onSelect;
     int outerTextColor;
     private Paint paintCenterText;
@@ -597,7 +604,6 @@ public class HorizontalLoopView extends View {
                                                         }
                                                         smoothScroll(ACTION.DAGGLE);
                                                         break;
-                                                        break;
                                                     case 3:
                                                         if (circlePosition > 6) {
                                                             smoothScroll(ACTION.DAGGLE);
@@ -643,7 +649,6 @@ public class HorizontalLoopView extends View {
                                                     }
                                                     smoothScroll(ACTION.DAGGLE);
                                                     break;
-                                                    break;
                                                 case 3:
                                                     if (circlePosition > 5) {
                                                         smoothScroll(ACTION.DAGGLE);
@@ -668,7 +673,6 @@ public class HorizontalLoopView extends View {
                                                 }
                                                 smoothScroll(ACTION.DAGGLE);
                                                 break;
-                                                break;
                                             case 1:
                                                 if (circlePosition >= 3 && circlePosition <= 6) {
                                                     smoothScroll(ACTION.CLICK);
@@ -676,14 +680,12 @@ public class HorizontalLoopView extends View {
                                                 }
                                                 smoothScroll(ACTION.DAGGLE);
                                                 break;
-                                                break;
                                             case 2:
                                                 if (circlePosition >= 2 && circlePosition <= 5) {
                                                     smoothScroll(ACTION.CLICK);
                                                     break;
                                                 }
                                                 smoothScroll(ACTION.DAGGLE);
-                                                break;
                                                 break;
                                             case 3:
                                                 if (circlePosition >= 4) {
@@ -702,14 +704,12 @@ public class HorizontalLoopView extends View {
                                             }
                                             smoothScroll(ACTION.CLICK);
                                             break;
-                                            break;
                                         case 1:
                                             if (circlePosition != 5 && circlePosition != 3) {
                                                 smoothScroll(ACTION.DAGGLE);
                                                 break;
                                             }
                                             smoothScroll(ACTION.CLICK);
-                                            break;
                                             break;
                                         case 2:
                                             if (circlePosition != 2 && circlePosition != 3) {
@@ -746,7 +746,6 @@ public class HorizontalLoopView extends View {
                                         break;
                                     }
                                     smoothScroll(ACTION.DAGGLE);
-                                    break;
                                     break;
                                 case 1:
                                     if (circlePosition >= 2 && circlePosition <= 4) {

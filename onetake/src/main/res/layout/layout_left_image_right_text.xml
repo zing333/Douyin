@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@id/left_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+        android:id="@id/right_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5.0dip"
+        android:textSize="@dimen/fontRegular12" />
+</merge>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <!--<com.blink.academy.onetake.widgets.AudioWave.AudioWaveView-->
+    <cn.nineton.onetake.widget.AudioWaveView
+        android:id="@id/audio_trim_wave_view"
+        android:layout_width="9.0dip"
+        android:layout_height="@dimen/_44dp"
+        android:layout_centerVertical="true" />
+
+    <View
+        android:id="@id/audio_trim_verse_cursor"
+        android:layout_width="1.0px"
+        android:layout_height="30.0dip"
+        android:layout_centerVertical="true"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+</RelativeLayout>

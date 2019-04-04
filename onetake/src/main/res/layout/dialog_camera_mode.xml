@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/camera_mode_root_ll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_below="@id/capture_title_rl"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="5.0dip"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <View
+        android:id="@id/camera_mode_bg_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/transparent" />
+
+    <LinearLayout
+        android:id="@id/camera_mode_view_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_circular_black_10"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/_15dp">
+
+        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+        <cn.nineton.onetake.widget.AvenirNextRegularTextView
+            android:id="@id/camera_mode_picture"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/_5dp"
+            android:layout_marginTop="@dimen/_15dp"
+            android:alpha="0.4"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingRight="@dimen/_15dp"
+            android:text="@string/BUTTON_FRAME"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular12" />
+
+        <LinearLayout
+            android:id="@id/camera_mode_full_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/camera_mode_full_iv"
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_20_frame_full" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/camera_mode_full_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/BUTTON_FRAME_FULL"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/camera_mode_square_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/camera_mode_square_iv"
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_20_frame_square" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/camera_mode_square_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/BUTTON_FRAME_SQUARE"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/camera_mode_widescreen_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_20dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/camera_mode_widescreen_iv"
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_20_frame_widescreen" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/camera_mode_widescreen_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/BUTTON_FRAME_WIDESCREEN"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

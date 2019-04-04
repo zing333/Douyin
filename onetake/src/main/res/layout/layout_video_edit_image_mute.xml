@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_59dp"
+    android:layout_height="fill_parent"
+    android:paddingRight="@dimen/_15dp">
+
+    <ImageView
+        android:id="@id/video_edit_image_mute_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/icon_20_mute_off"
+        android:tint="@color/colorWhite" />
+</FrameLayout>

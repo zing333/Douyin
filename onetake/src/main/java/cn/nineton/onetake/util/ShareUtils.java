@@ -220,7 +220,7 @@ public class ShareUtils {
 
     }
 
-    public static void shareImageToWeiBoNoCheck2(final Context context, String text, String imagePath, String webUrl, final PlatformActionListener accountValidActionListener, final ShareActionSheetDialog.WeiboSharePlatformActionListener listener) {
+//    public static void shareImageToWeiBoNoCheck2(final Context context, String text, String imagePath, String webUrl, final PlatformActionListener accountValidActionListener, final ShareActionSheetDialog.WeiboSharePlatformActionListener listener) {
 //        if (context != null) {
 //            HashMap<String, Object> map = new HashMap();
 //            final Oauth2AccessToken token = AccessTokenKeeper.readAccessToken(context);
@@ -259,8 +259,8 @@ public class ShareUtils {
 //                }
 //            });
 //        }
-        Toast.makeText(context,"分享图片到微博2:"+imagePath,Toast.LENGTH_LONG).show();
-    }
+//        Toast.makeText(context,"分享图片到微博2:"+imagePath,Toast.LENGTH_LONG).show();
+//    }
 
     public static void shareImageToWeiBoNoCheck(final Context context, String text, String imagePath, String webUrl, final PlatformActionListener accountValidActionListener) {
 //        if (context != null) {

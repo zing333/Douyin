@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:greason="http://schemas.android.com/apk/res-auto"
+    android:id="@id/filter_add_text_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="140.0dip"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:background="@color/colorGray"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@id/filter_addition_root_fl"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_90dp">
+
+        <HorizontalScrollView
+            android:id="@id/filter_addition_root_hsv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@id/filter_addition_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_10dp">
+
+                <View
+                    android:id="@id/filter_addition_empty"
+                    android:layout_width="0.0dip"
+                    android:layout_height="fill_parent" />
+
+                <FrameLayout
+                    android:id="@id/filter_addition_modify"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:orientation="vertical">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_modify_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_EDIT"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_modify_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_add"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_font"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_font_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_FONTTYPE"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_font_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_fonttype"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_size"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    android:visibility="visible">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_size_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_FONTSIZE"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_size_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_fontsize"
+                        android:tint="@color/colorWhite" />
+
+                    <!--<com.blink.academy.onetake.widgets.VideoText.RingBackgroundView-->
+                    <cn.nineton.onetake.widget.RingBackgroundView
+                        android:id="@id/filter_addition_size_ring"
+                        android:layout_width="@dimen/_44dp"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        greason:bgLineWidth="0.5px"
+                        greason:bgRingColor="@color/colorDate"
+                        greason:proLineWidth="3.0px"
+                        greason:proRingColor="#ffffffff" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_color"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    android:visibility="gone">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_color_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_COLOR"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_color_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_color"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_shader"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_shader_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_SHADOW"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_shader_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_shadow"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_word_space"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_word_space_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_TRACKING"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_word_space_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_tracking"
+                        android:tint="@color/colorWhite" />
+
+                    <!--<com.blink.academy.onetake.widgets.VideoText.RingBackgroundView-->
+                    <cn.nineton.onetake.widget.RingBackgroundView
+                        android:id="@id/filter_addition_word_space_ring"
+                        android:layout_width="@dimen/_44dp"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        greason:bgLineWidth="0.5px"
+                        greason:bgRingColor="@color/colorDate"
+                        greason:proLineWidth="3.0px"
+                        greason:proRingColor="#ffffffff" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_line_space"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_line_space_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_LINESPACING"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_line_space_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_linespacing"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_align"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    android:visibility="gone">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_align_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_ALIGN"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_align_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_align"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_loc"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    android:visibility="gone">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_loc_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_ARRANGE"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_loc_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_arrange"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@id/filter_addition_delete"
+                    android:layout_width="64.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    android:paddingRight="20.0dip">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                        android:id="@id/filter_addition_delete_anrtv"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/BUTTON_TEXT_DELETE"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular12" />
+
+                    <ImageView
+                        android:id="@id/filter_addition_delete_iv"
+                        android:layout_width="44.0dip"
+                        android:layout_height="44.0dip"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/shape_filter_effect_whilte_3px"
+                        android:padding="12.0dip"
+                        android:src="@drawable/icon_20_text_delete"
+                        android:tint="@color/colorWhite" />
+                </FrameLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <RelativeLayout
+            android:id="@id/filter_addition_size_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorGray"
+            android:paddingTop="@dimen/_10dp"
+            android:visibility="gone">
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                android:id="@id/vt_textsize_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular12" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/vt_textsize_hint"
+                android:layout_centerHorizontal="true">
+
+                <!--<com.blink.academy.onetake.widgets.VTContainerView.TextSizeView-->
+                <cn.nineton.onetake.widget.TextSizeView
+                    android:id="@id/vt_textsize"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    greason:circleColor="@color/colorWhite"
+                    greason:circleOutTouchWidth="10.0dip"
+                    greason:circlePaddingTop="12.0dip"
+                    greason:circleRadius="10.0dip"
+                    greason:lineColor="@color/colorDate"
+                    greason:lineHeight="5.0dip"
+                    greason:textSize="14.0dip" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/filter_addition_color_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorGray"
+            android:overScrollMode="ifContentScrolls"
+            android:paddingTop="@dimen/_10dp"
+            android:visibility="gone">
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                android:id="@id/vt_color_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular12" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/vt_color_hint"
+                android:layout_centerHorizontal="true">
+
+                <!--<com.blink.academy.onetake.widgets.VTContainerView.ColorChooseView-->
+                <cn.nineton.onetake.widget.ColorChooseView
+                    android:id="@id/vt_colorchoose"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="20.0dip"
+                    android:paddingRight="20.0dip"
+                    greason:ccv_circleInPadding="5.0dip"
+                    greason:ccv_circleOutTouchWidth="15.0dip"
+                    greason:ccv_circleRadius="15.0dip"
+                    greason:ccv_circleStrokeWidth="1.5dip" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/filter_addition_shader_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10.0dip"
+            android:alpha="1.0"
+            android:background="@color/colorGray"
+            android:overScrollMode="ifContentScrolls"
+            android:visibility="gone">
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+                android:id="@id/vt_shader_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular12" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/vt_shader_hint"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal"
+                android:paddingLeft="20.0dip"
+                android:paddingRight="20.0dip">
+
+                <View
+                    android:layout_width="0.0dip"
+                    android:layout_height="@dimen/_1dp"
+                    android:layout_weight="1.0" />
+
+                <ImageView
+                    android:id="@id/vt_shader_1"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:padding="7.0dip" />
+
+                <View
+                    android:layout_width="0.0dip"
+                    android:layout_height="@dimen/_1dp"
+                    android:layout_weight="1.0" />
+
+                <ImageView
+                    android:id="@id/vt_shader_2"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:padding="7.0dip" />
+
+                <View
+                    android:layout_width="0.0dip"
+                    android:layout_height="@dimen/_1dp"
+                    android:layout_weight="1.0" />
+
+                <ImageView
+                    android:id="@id/vt_shader_3"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:padding="7.0dip" />
+
+                <View
+                    android:layout_width="0.0dip"
+                    android:layout_height="@dimen/_1dp"
+                    android:layout_weight="1.0" />
+
+                <ImageView
+                    android:id="@id/vt_shader_4"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/_10dp"
+                    android:padding="7.0dip"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@id/vt_shader_5"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/_10dp"
+                    android:padding="7.0dip"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@id/vt_shader_6"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:padding="7.0dip"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@id/filter_addition_bottom_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_50dp"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@id/video_text_cancel_iv"
+                android:layout_width="@dimen/_44dp"
+                android:layout_height="@dimen/_44dp"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/icon_25_cancel"
+                android:tint="@color/colorWhite" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@id/video_text_confirm_iv"
+                android:layout_width="@dimen/_44dp"
+                android:layout_height="@dimen/_44dp"
+                android:layout_gravity="center"
+                android:scaleType="center"
+                android:src="@drawable/icon_25_confirm"
+                android:tint="@color/colorWhite" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

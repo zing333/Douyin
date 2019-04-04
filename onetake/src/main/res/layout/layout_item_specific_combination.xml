@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@id/specific_combination_point_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.4"
+        android:src="@drawable/shape_filter_group_name"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@id/specific_combination_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_20dp"
+        android:layout_marginRight="@dimen/_20dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular14" />
+</LinearLayout>

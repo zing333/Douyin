@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="10.0dip"
+    android:layout_height="76.0dip"
+    android:layout_marginLeft="0.0dip"
+    android:background="@color/colorGray"
+    android:paddingRight="8.0dip">
+
+    <!--<com.blink.academy.onetake.widgets.TextView.VerticalTextView-->
+    <cn.nineton.onetake.widget.VerticalTextView
+        android:id="@id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="6.5dip"
+        android:gravity="bottom"
+        android:includeFontPadding="false"
+        android:textColor="@color/colorDate"
+        android:textSize="@dimen/fontRegular12"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="1.0px"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/colorDate"
+        android:visibility="gone" />
+</RelativeLayout>

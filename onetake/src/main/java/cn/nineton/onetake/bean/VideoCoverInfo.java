@@ -21,7 +21,7 @@ public class VideoCoverInfo implements Parcelable {
     public long videoDuration;
     public int videoHeight;
     public int videoWidth;
-
+    public VideoCoverInfo(){}
     protected VideoCoverInfo(Parcel in) {
         this.videoWidth = in.readInt();
         this.videoHeight = in.readInt();

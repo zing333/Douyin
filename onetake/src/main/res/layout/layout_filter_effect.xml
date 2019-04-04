@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:greason="http://schemas.android.com/apk/res-auto"
+    android:id="@id/filter_effect_root_hsv"
+    android:layout_width="wrap_content"
+    android:layout_height="78.0dip"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="78.0dip"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="horizontal">
+
+        <!--<cn.nineton.onetake.widget.FilterEffectSetRelativeLayout-->
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_beauty"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="25.0dip"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:src="@drawable/icon_25_beautify_on"
+            android:text="@string/BUTTON_EFFECT_BEAUTY" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_exposure"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="25.0dip"
+            android:src="@drawable/icon_20_effect_new_brightness"
+            android:text="@string/BUTTON_EFFECT_EXPOSURE" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_contrast"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_contrast"
+            android:text="@string/BUTTON_EFFECT_CONTRAST" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_saturation"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_saturation"
+            android:text="@string/BUTTON_EFFECT_SATURATION" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_temperature"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_temperature"
+            android:text="@string/BUTTON_EFFECT_WHITE_BALANCE" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_tinge"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_tint"
+            android:text="@string/BUTTON_EFFECT_WHITE_TINT" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="15.0dip">
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_grain"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_grain"
+                android:text="@string/BUTTON_EFFECT_GRAINS" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_dust"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_dust"
+                android:text="@string/LABEL_EFFECT_DUST" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_vignette"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_vignette"
+                android:text="@string/BUTTON_EFFECT_VIGNETTE" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_leak"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_leak"
+                android:text="@string/BUTTON_EFFECT_LIGHT_LEAK" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_date"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_date"
+                android:text="@string/LABEL_EFFECT_DATE" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_sharpen"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="25.0dip"
+                android:src="@drawable/icon_20_effect_sharpen"
+                android:text="@string/BUTTON_EFFECT_SHARPEN" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_tilt"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_tilt"
+                android:text="@string/BUTTON_EFFECT_TILT" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_prism"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_prism"
+                android:text="@string/LABEL_EFFECT_PRISM" />
+        </LinearLayout>
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_fade"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="25.0dip"
+            android:src="@drawable/icon_20_effect_new_fade"
+            android:text="@string/BUTTON_EFFECT_FADE" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_shade_lighten"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_highlight"
+            android:text="@string/BUTTON_EFFECT_HIGHTLIGHTS_SAVE" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_highlight_shadow"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_shadow"
+            android:text="@string/BUTTON_EFFECT_SHADOWS_SAVE" />
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_sky"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="10.0dip"
+            android:src="@drawable/icon_20_effect_new_sky"
+            android:text="@string/BUTTON_EFFECT_SKY" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="15.0dip">
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_crop"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="20.0dip"
+                android:src="@drawable/icon_20_effect_new_crop"
+                android:text="@string/BUTTON_EFFECT_CROP" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_rotation"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_rotate"
+                android:text="@string/BUTTON_EFFECT_ROTATE" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_vertical"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_vertical"
+                android:text="@string/BUTTON_EFFECT_VERTITAL_PERSPECTIVE" />
+
+            <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                android:id="@id/filter_effect_horizontal"
+                android:layout_width="44.0dip"
+                android:layout_height="78.0dip"
+                android:layout_marginLeft="10.0dip"
+                android:src="@drawable/icon_20_effect_new_horizontal"
+                android:text="@string/BUTTON_EFFECT_HORIZONTAL_PERSPECTIVE" />
+        </LinearLayout>
+
+        <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+            android:id="@id/filter_effect_mirror"
+            android:layout_width="44.0dip"
+            android:layout_height="78.0dip"
+            android:layout_marginLeft="25.0dip"
+            android:layout_marginRight="25.0dip"
+            android:src="@drawable/icon_20_effect_new_mirror"
+            android:text="@string/BUTTON_EFFECT_MIRROR" />
+    </LinearLayout>
+</HorizontalScrollView>

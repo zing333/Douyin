@@ -51,7 +51,7 @@ public class FrameRenderer {
     private VidStabilizer.Transform[] mTransforms;
     private OutputSurfaceArray mVideoFrames;
     private int mWrapFrameIndex = 0;
-    RenderMode mode = RenderMode.RENDER_CROP;
+    public RenderMode mode = RenderMode.RENDER_CROP;
     private double newFrameTime = 0.0d;
     private int newWrapFrameIndex = 0;
     private Framebuffer stabfbo;

@@ -1,0 +1,232 @@
+[
+  {
+    "name": "Cosmopolis",
+    "filename": "Cosmopolis",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 10,
+    "invisible": 1
+  },
+  {
+    "name": "Muir Woods",
+    "filename": "MuirWoods",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 6,
+    "invisible": 1
+  },
+  {
+    "name": "5th Avenue",
+    "filename": "5thAvenue",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 10
+  },
+  {
+    "name": "SoHo",
+    "filename": "SoHo",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 4
+  },
+  {
+    "name": "Brooklyn",
+    "filename": "Brooklyn",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 10,
+    "invisible": 1
+  },
+  {
+    "name": "California 1",
+    "filename": "California1",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 12
+  },
+  {
+    "name": "Geary Street",
+    "filename": "GearyStreet",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 4,
+    "invisible": 1
+  },
+  {
+    "name": "INFINITE LOOP",
+    "filename": "InfiniteLoop",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 12,
+    "capitalized": 1
+  },
+  {
+    "name": "Pier 39",
+    "filename": "Pier39",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 8,
+    "invisible": 1
+  },
+  {
+    "name": "Bellevue",
+    "filename": "Bellevue",
+    "fonttype": "ttf",
+    "language": "en",
+    "url": "",
+    "status": 1,
+    "borderwidth": 10
+  },
+  {
+    "name": "南京西路",
+    "filename": "NanJingXiLu",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "",
+    "borderwidth": 10,
+    "size": 3.9,
+    "default": 1,
+    "status": 1
+  },
+  {
+    "name": "798艺术区",
+    "filename": "798YiShuQu",
+    "fonttype": "otf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/798YiShuQu.otf",
+    "size": 1.3,
+    "status": 0,
+    "borderwidth": 10,
+    "cnonly": "simplified"
+  },
+  {
+    "name": "六本木站",
+    "filename": "LiuBenMuZhan",
+    "fonttype": "otf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/LiuBenMuZhan.otf",
+    "size": 1.2,
+    "status": 0,
+    "borderwidth": 4,
+    "cnonly": "simplified"
+  },
+  {
+    "name": "淡江中學",
+    "filename": "DanJiangZhongXue",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/DanJiangZhongXue.ttf",
+    "size": 10.4,
+    "status": 0,
+    "borderwidth": 4
+  },
+  {
+    "name": "彌敦道",
+    "filename": "MiDunDao",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/MiDunDao.ttf",
+    "size": 11.5,
+    "status": 0,
+    "borderwidth": 10
+  },
+  {
+    "name": "胭脂胡同",
+    "filename": "YanZhiHuTong",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/YanZhiHuTong.ttf",
+    "borderwidth": 10,
+    "size": 1.9,
+    "status": 0,
+    "cnonly": "simplified"
+  },
+  {
+    "name": "清水寺",
+    "filename": "QingShuiSi",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/QingShuiSi.ttf",
+    "size": 22.1,
+    "status": 0,
+    "borderwidth": 6
+  },
+  {
+    "name": "銀座一丁目",
+    "filename": "YinZuoYiDingMu",
+    "fonttype": "otf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/YinZuoYiDingMu.otf",
+    "size": 7.7,
+    "status": 0,
+    "borderwidth": 2
+  },
+  {
+    "name": "時代廣場",
+    "filename": "ShiDaiGuangChang",
+    "fonttype": "otf",
+    "language": "cn",
+    "url": "",
+    "status": 0,
+    "borderwidth": 10,
+    "lineheightoffset": 0.2,
+    "cnonly": "traditional",
+    "invisible": 1
+  },
+  {
+    "name": "幸福三村",
+    "filename": "XingFuSanCun",
+    "fonttype": "otf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/XingFuSanCun.otf",
+    "size": 3.9,
+    "status": 0,
+    "borderwidth": 6,
+    "invisible": 1
+  },
+  {
+    "name": "深夜食堂",
+    "filename": "ShenYeShiTang",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/ShenYeShiTang.ttf",
+    "size": 8.5,
+    "status": 0,
+    "cnonly": "traditional",
+    "borderwidth": 4,
+    "invisible": 1
+  },
+  {
+    "name": "大眾酒場",
+    "filename": "DaZhongJiuChang",
+    "fonttype": "ttf",
+    "language": "cn",
+    "url": "http://fonts.dafork.com/DaZhongJiuChang.ttf",
+    "size": 3.9,
+    "status": 0,
+    "cnonly": "traditional",
+    "borderwidth": 12,
+    "lineheightoffset": 0.2,
+    "invisible": 1
+  }
+]
+
+

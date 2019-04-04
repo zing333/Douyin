@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="horizontal">
+
+    <View
+        android:id="@id/music_bg_view"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/colorMusicEditBg" />
+
+    <!--<com.blink.academy.onetake.custom.CircleCoverView-->
+    <cn.nineton.onetake.widget.CircleCoverView
+        android:id="@id/music_bg_cover"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center_vertical"
+        app:circleOutColor="@color/colorGray"
+        app:leftRightSpace="3.0dip"
+        app:outLineColor="@color/colorGray"
+        app:radius="@dimen/_5dp" />
+
+    <android.support.v7.widget.CardView
+        android:id="@id/music_left_add_fl"
+        android:layout_width="@dimen/_44dp"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="3.0dip"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/colorDarkerGray"
+        app:cardCornerRadius="@dimen/_5dp"
+        app:cardElevation="0.0dip">
+
+        <ImageView
+            android:layout_width="24.0dip"
+            android:layout_height="24.0dip"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_15_add_from_album"
+            android:tint="@color/colorGray" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@id/music_add_fl"
+        android:layout_width="@dimen/_44dp"
+        android:layout_height="@dimen/_44dp"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/colorDarkerGray"
+        app:cardCornerRadius="@dimen/_5dp"
+        app:cardElevation="0.0dip">
+
+        <ImageView
+            android:layout_width="24.0dip"
+            android:layout_height="24.0dip"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_15_add_from_album"
+            android:tint="@color/colorGray" />
+
+        <!--<com.blink.academy.onetake.custom.CircleCoverView-->
+        <cn.nineton.onetake.widget.CircleCoverView
+            android:id="@id/music_add_cover_ccv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone"
+            app:circleOutColor="@color/colorGray"
+            app:outLineColor="@color/colorGray"
+            app:radius="@dimen/_5dp" />
+    </android.support.v7.widget.CardView>
+
+    <FrameLayout
+        android:id="@id/music_wave_content_fl"
+        android:layout_width="200.0dip"
+        android:layout_height="fill_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="4.0dip"
+            android:layout_marginTop="4.0dip">
+
+            <!--<com.blink.academy.onetake.widgets.AudioWave.LargeAudioWaveView-->
+            <cn.nineton.onetake.widget.LargeAudioWaveView
+                android:id="@id/music_audio_wave_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/colorAudioBlue" />
+
+            <View
+                android:id="@id/music_volume_center_line"
+                android:layout_width="0.5dip"
+                android:layout_height="fill_parent"
+                android:alpha="0.5"
+                android:background="@color/colorWhite" />
+
+            <FrameLayout
+                android:id="@id/music_volume_line_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+            <View
+                android:id="@id/music_special_cover_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/colorBlack242322" />
+
+            <!--<com.blink.academy.onetake.custom.CircleCoverView-->
+            <cn.nineton.onetake.widget.CircleCoverView
+                android:id="@id/music_wave_content_ccv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                app:circleOutColor="@color/colorGray"
+                app:leftRightSpace="3.0dip"
+                app:outLineColor="@color/colorTransparent"
+                app:radius="@dimen/_5dp" />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@id/music_edit_white_parent_rl"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:visibility="visible">
+
+            <View
+                android:id="@id/video_edit_top_line_bottom"
+                android:layout_width="fill_parent"
+                android:layout_height="4.0dip"
+                android:background="@color/colorGray" />
+
+            <View
+                android:id="@id/video_edit_top_line"
+                android:layout_width="fill_parent"
+                android:layout_height="2.0dip"
+                android:layout_marginTop="2.0dip"
+                android:background="@color/colorWhite" />
+
+            <View
+                android:id="@id/video_edit_bottom_line_bottom"
+                android:layout_width="fill_parent"
+                android:layout_height="2.0dip"
+                android:layout_alignParentBottom="true"
+                android:background="@color/colorGray" />
+
+            <View
+                android:id="@id/video_edit_bottom_line"
+                android:layout_width="fill_parent"
+                android:layout_height="2.0dip"
+                android:layout_marginBottom="2.0dip"
+                android:layout_marginTop="48.0dip"
+                android:background="@color/colorWhite" />
+
+            <View
+                android:id="@id/video_edit_slider_right_iv_bottom"
+                android:layout_width="12.0dip"
+                android:layout_height="52.0dip"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="-12.0dip"
+                android:background="@drawable/round_color_gray_right_button_bottom" />
+
+            <ImageView
+                android:id="@id/video_edit_slider_right_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="48.0dip"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="2.0dip"
+                android:layout_marginRight="-10.0dip"
+                android:layout_marginTop="2.0dip"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <View
+                android:id="@id/video_edit_right_iv_slide_view"
+                android:layout_width="40.0dip"
+                android:layout_height="52.0dip"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="-20.0dip" />
+
+            <View
+                android:id="@id/video_edit_slider_left_iv_bottom"
+                android:layout_width="12.0dip"
+                android:layout_height="52.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="-12.0dip"
+                android:background="@drawable/round_color_gray_right_button_bottom"
+                android:scaleX="-1.0" />
+
+            <!--<com.blink.academy.onetake.custom.CircleCoverView-->
+            <cn.nineton.onetake.widget.CircleCoverView
+                android:id="@id/video_edit_inner_cover"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/_44dp"
+                android:layout_centerInParent="true"
+                app:circleOutColor="@color/colorWhite" />
+
+            <ImageView
+                android:id="@id/video_edit_slider_left_iv"
+                android:layout_width="10dip"
+                android:layout_height="48.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="2.0dip"
+                android:layout_marginLeft="-10.0dip"
+                android:layout_marginTop="2.0dip"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:scaleX="-1.0"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <View
+                android:id="@id/video_edit_left_iv_slide_view"
+                android:layout_width="40.0dip"
+                android:layout_height="52.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="-20.0dip" />
+        </RelativeLayout>
+
+        <!--<com.blink.academy.onetake.custom.videoedit.VolumeSlideView-->
+        <cn.nineton.onetake.widget.VolumeSlideView
+            android:id="@id/video_edit_music_slide_view"
+            android:layout_width="40.0dip"
+            android:layout_height="@dimen/_35dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp"
+            android:visibility="gone" />
+    </FrameLayout>
+</FrameLayout>

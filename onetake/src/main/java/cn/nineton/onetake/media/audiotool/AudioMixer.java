@@ -152,11 +152,9 @@ public final class AudioMixer {
             createZeroTrack();
         }
 //        this.mMixerThread = new Thread(AudioMixer$$Lambda$1.lambdaFactory$(this));
-        mMixerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                access$lambda$0();
-            }
+        mMixerThread = new Thread(() -> {
+            //access$lambda$0();
+            Log.e("debug","AudioMixer 初始化线程运行");
         });
         this.mMixerThread.setName(TAG);
         this.mMixerThread.start();
@@ -168,7 +166,6 @@ public final class AudioMixer {
         }
         return true;
     }
-
     /* JADX WARNING: Missing block: B:16:0x002b, code:
             if (r0 <= 0) goto L_0x0001;
      */
@@ -177,7 +174,7 @@ public final class AudioMixer {
             java.util.Arrays.fill(r8.mMixBuffer, 0, r0 * 2, (short) 0);
      */
     /* renamed from: mixerThreadEntry */
-    void access$lambda$0() {
+//    void access$lambda$0() {
         /*
         r8 = this;
         r0 = 0;
@@ -234,8 +231,8 @@ public final class AudioMixer {
         monitor-exit(r8);	 Catch:{ all -> 0x0048 }
         throw r1;	 Catch:{ InterruptedException -> 0x0043 }
         */
-        throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.VideoTools.AudioMixer.mixerThreadEntry():void");
-    }
+        //throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.VideoTools.AudioMixer.mixerThreadEntry():void");
+//    }
 
     public synchronized void flush(long endTimeUs) {
         try {

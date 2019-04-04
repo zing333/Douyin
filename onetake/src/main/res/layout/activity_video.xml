@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/content_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorBlack">
+
+    <com.blink.academy.onetake.VideoTools.CameraView2
+        android:id="@id/capture_cameraview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.blink.academy.onetake.custom.SlideBarView2
+        android:id="@id/capture_slidebar_left"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="7.0dip" />
+
+    <com.weigan.loopview.LoopView
+        android:id="@id/capture_loopview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@id/freeze_frame_alpha_sdv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.3"
+        android:background="@color/colorTransparent"
+        android:visibility="gone"
+        app:actualImageScaleType="centerCrop" />
+
+    <View
+        android:id="@id/change_camera_mode_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorBlack"
+        android:visibility="visible" />
+
+    <View
+        android:id="@id/alpha_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.0"
+        android:background="@color/colorBlack" />
+
+    <View
+        android:id="@id/freeze_frame_white_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorWhite"
+        android:visibility="visible" />
+
+    <!--<com.blink.academy.onetake.widgets.RelativeLayout.CameraTouchView-->
+    <View
+        android:id="@id/capture_touch_view"
+        android:layout_width="150.0dip"
+        android:layout_height="150.0dip"
+        android:visibility="invisible" />
+
+    <View
+        android:id="@id/capture_rl_flash_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip"
+        android:alpha="0.0"
+        android:background="@color/colorBlack" />
+
+    <RelativeLayout
+        android:id="@id/capture_title_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip">
+
+        <RelativeLayout
+            android:id="@id/capture_rl_two_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_44dp"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@id/capture_iv_square_switch"
+                android:layout_width="44.0dip"
+                android:layout_height="44.0dip"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/capture_iv_flash_bt"
+                android:padding="12.0dip"
+                android:src="@drawable/icon_20_frame_full"
+                android:tint="@color/colorWhite" />
+
+            <ImageView
+                android:id="@id/capture_iv_choose_speed"
+                android:layout_width="@dimen/_44dp"
+                android:layout_height="@dimen/_44dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/capture_iv_square_switch"
+                android:padding="12.0dip"
+                android:src="@drawable/icon_20_speed_mode_30_normal"
+                android:tint="@color/colorWhite"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@id/capture_iv_exp_bt"
+                android:layout_width="44.0dip"
+                android:layout_height="44.0dip"
+                android:layout_toRightOf="@id/capture_iv_flash_bt"
+                android:padding="12.0dip"
+                android:src="@drawable/icon_20_exposure_0"
+                android:tint="@color/colorWhite"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@id/capture_iv_flash_bt"
+                android:layout_width="44.0dip"
+                android:layout_height="44.0dip"
+                android:padding="12.0dip"
+                android:src="@drawable/icon_20_flash_off"
+                android:tint="@color/colorWhite" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/capture_show_filter_rl"
+            android:layout_width="44.0dip"
+            android:layout_height="44.0dip"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true">
+
+            <RelativeLayout
+                android:id="@id/capture_show_filter_rl2"
+                android:layout_width="44.0dip"
+                android:layout_height="44.0dip"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@id/capture_show_filter_gray_iv"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/_12dp"
+                    android:src="@drawable/icon_44_camera_presets_off" />
+
+                <ImageView
+                    android:id="@id/capture_show_filter_iv"
+                    android:layout_width="44.0dip"
+                    android:layout_height="44.0dip"
+                    android:layout_centerInParent="true"
+                    android:padding="@dimen/_12dp"
+                    android:src="@drawable/icon_44_camera_presets_on"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@id/filter_name_bg_view"
+        android:layout_width="fill_parent"
+        android:layout_height="0.0dip"
+        android:layout_below="@id/capture_title_rl"
+        android:background="@color/colorBlack" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/capture_group_name_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_44dp"
+        android:layout_below="@id/capture_title_rl"
+        android:layout_centerHorizontal="true"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:visibility="invisible" />
+
+    <!--<com.blink.academy.onetake.custom.HollowTextView-->
+    <TextView
+        android:id="@id/capture_exposure_lock_htv"
+        android:layout_width="90.0dip"
+        android:layout_height="20.0dip"
+        android:gravity="center"
+        android:paddingBottom="5.0dip"
+        android:paddingTop="5.0dip"
+        android:visibility="invisible"/>
+        <!--app:bgColor="#ffffffff"-->
+        <!--app:cornerRadius="3.0dip"-->
+        <!--app:hollowtextSize="12.0dip"-->
+        <!--app:roundBottomLeft="true"-->
+        <!--app:roundBottomRight="true"-->
+        <!--app:roundTopLeft="true"-->
+        <!--app:roundTopRight="true"-->
+        <!--app:text="@string/TEXT_AE_AF_LOCK" />-->
+
+    <View
+        android:id="@id/capture_shutter_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="144.0dip"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorBlack" />
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+        android:id="@id/capture_no_access_anrtv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/LABEL_NO_CAMERA_ACCESS"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular14"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:id="@id/capture_filter_name_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/capture_filter_group_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:shadowColor="@color/color60Black"
+                android:shadowRadius="15.0"
+                android:text=""
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14"
+                android:visibility="visible" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+
+                android:id="@id/capture_filter_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="2.0dip"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:shadowColor="@color/color60Black"
+                android:shadowRadius="20.0"
+                android:text=""
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular25"
+                android:visibility="visible" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/capture_pop_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="48.0dip"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:id="@id/capture_pop_text_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="40.0dip"
+            android:layout_centerVertical="true"
+            android:background="@drawable/round_color_button"
+            android:orientation="horizontal">
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/capture_pop_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="@dimen/_10dp"
+                android:paddingRight="@dimen/_10dp"
+                android:text="@string/TEXT_SAVED_TO_DRAFT"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </LinearLayout>
+
+        <!--<com.blink.academy.onetake.custom.TriangleImage-->
+        <ImageView
+            android:id="@id/capture_pop_ti"
+            android:layout_width="12.0dip"
+            android:layout_height="8.0dip"
+            android:layout_below="@id/capture_pop_text_ll"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/capture_filter_pic_or_video_ra"
+        android:layout_width="fill_parent"
+        android:layout_height="144.0dip"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:id="@id/capture_filter_pic_or_video"
+            android:layout_width="fill_parent"
+            android:layout_height="44.0dip"
+            android:layout_alignParentBottom="true">
+
+            <RelativeLayout
+                android:id="@id/filter_tag_pic_video_ra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                    android:id="@id/filter_tag_video_anrtv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_44dp"
+                    android:alpha="0.4"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_10dp"
+                    android:paddingRight="@dimen/_15dp"
+                    android:shadowColor="@color/colorBlack"
+                    android:shadowRadius="7.0"
+                    android:text="@string/BUTTON_SAVE_VIDEO"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/fontRegular12"
+                    app:textAllCaps="true" />
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                    android:id="@id/filter_tag_pic_anrtv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_44dp"
+                    android:layout_toRightOf="@id/filter_tag_video_anrtv"
+                    android:alpha="0.4"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_15dp"
+                    android:paddingRight="@dimen/_15dp"
+                    android:shadowColor="@color/colorBlack"
+                    android:shadowRadius="7.0"
+                    android:text="@string/BUTTON_MODE_PHOTO"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/fontRegular12" />
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                    android:id="@id/filter_tag_gif_anrtv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44.0dip"
+                    android:layout_toRightOf="@id/filter_tag_pic_anrtv"
+                    android:gravity="center"
+                    android:paddingLeft="15.0dip"
+                    android:paddingRight="10.0dip"
+                    android:shadowColor="@color/colorBlack"
+                    android:shadowRadius="7.0"
+                    android:text="@string/BUTTON_MODE_GIF"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/fontRegular12"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@id/filter_tag_video_icon_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="6.0dip"
+                android:src="@drawable/shape_drafts_bottom" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/zoom_switch_camera_rl"
+        android:layout_width="wrap_content"
+        android:layout_height="40.0dip"
+        android:layout_above="@id/capture_shutter_all_root_rl"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_20dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <!--<com.blink.academy.onetake.widgets.TextView.CameraZoomTextView-->
+        <TextView
+            android:id="@id/camera_zoom_in_out_tv"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip" />
+
+        <ImageView
+            android:id="@id/capture_iv_switch2"
+            android:layout_width="40.0dip"
+            android:layout_height="40.0dip"
+            android:padding="4.0dip"
+            android:src="@drawable/icon_40_switch_camera"
+            android:tint="@color/colorWhite"
+            android:visibility="visible" />
+
+        <!--<com.blink.academy.onetake.widgets.TextView.TimerTextView-->
+        <TextView
+            android:id="@id/camera_duration_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/round_5_color_black_button"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/capture_shutter_all_root_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="144.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:id="@id/capture_shutter_circles"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@id/capture_outer_shutter_iv"
+                android:layout_width="60.0dip"
+                android:layout_height="60.0dip"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/shape_circle_outer_shutter"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@id/capture_inner_shutter_iv"
+                android:layout_width="60.0dip"
+                android:layout_height="60.0dip"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/shape_circle_inner_shutter"
+                android:visibility="invisible" />
+
+            <!--<com.blink.academy.onetake.widgets.ProgressBar.IMCameraProgressBar-->
+            <cn.nineton.onetake.widget.IMCameraProgressBar
+                android:id="@id/capture_circle_pb"
+                android:layout_width="@dimen/_60dp"
+                android:layout_height="@dimen/_60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@color/colorTransparent"
+                android:visibility="invisible"
+                app:backColor="@color/colorTransparent"
+                app:borderWidth="3.0dip"
+                app:frontColor="@color/colorE02727"
+                app:mode="STROKE" />
+
+            <!--<com.blink.academy.onetake.widgets.Button.VideoCameraIOSButton-->
+            <Button
+                android:id="@id/capture_video_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"/>
+                <!--app:anim_duration="200"-->
+                <!--app:inner_anim_end_corner="10"-->
+                <!--app:inner_anim_from_corner="100"-->
+                <!--app:inner_anim_to_radius_dp="13.0dip"-->
+                <!--app:inner_color="#ffe02727"-->
+                <!--app:inner_radius_dp="20.0dip"-->
+                <!--app:outer_line_color="#ffffffff"-->
+                <!--app:outer_line_width_dp="5.0dip"-->
+                <!--app:outer_radius_dp="30.0dip"-->
+                <!--app:touch_duration="0" />-->
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/capture_buttons_root_rl"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <RelativeLayout
+                android:id="@id/capture_iv_switch_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:id="@id/capture_iv_switch"
+                    android:layout_width="56.0dip"
+                    android:layout_height="56.0dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:padding="13.0dip"
+                    android:src="@drawable/icon_30_rear_camera"
+                    android:tint="@color/colorWhite" />
+
+                <ImageView
+                    android:id="@id/capture_freezeframe_right_im"
+                    android:layout_width="56.0dip"
+                    android:layout_height="56.0dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:alpha="0.0"
+                    android:padding="6.0dip"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_44_camera_next"
+                    android:visibility="gone" />
+
+                <!--<com.blink.academy.onetake.widgets.CircularProgressBar.OneTakeProgressBar-->
+                <!--style="@style/Widget.MaterialProgressBar.ProgressBar.Small"-->
+                <ProgressBar
+                    android:id="@id/capture_freezeframe_right_loading"
+                    android:layout_width="56.0dip"
+                    android:layout_height="56.0dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:indeterminate="true"
+                    android:padding="18.0dip"
+                    android:tint="@color/colorWhite"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@id/capture_iv_draft_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignParentLeft="true">
+
+                <ImageView
+                    android:id="@id/capture_freezeframe_close_iv"
+                    android:layout_width="56.0dip"
+                    android:layout_height="56.0dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="8.0dip"
+                    android:alpha="0.0"
+                    android:padding="6.0dip"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_44_camera_cancel"
+                    android:visibility="visible" />
+
+                <RelativeLayout
+                    android:id="@id/capture_entrance_draft_rl"
+                    android:layout_width="56.0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true">
+
+                    <ImageView
+                        android:id="@id/iv_scroll_up"
+                        android:layout_width="25.0dip"
+                        android:layout_height="25.0dip"
+                        android:layout_centerHorizontal="true"
+                        android:contentDescription="@null"
+                        android:src="@drawable/icon_25_scroll_up"
+                        android:tint="@color/colorWhite" />
+
+                    <RelativeLayout
+                        android:id="@id/capture_entrance_draft_border_rl"
+                        android:layout_width="40.0dip"
+                        android:layout_height="40.0dip"
+                        android:layout_below="@id/iv_scroll_up"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/shape_gallery_white_draft_icon">
+
+                        <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+                        <cn.nineton.onetake.widget.RoundAngleImageView
+                            android:id="@id/capture_entrance_draft_sdv"
+                            android:layout_width="36.0dip"
+                            android:layout_height="36.0dip"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/background_50_add_from_album"
+                            app:roundHeight="3.5dip"
+                            app:roundWidth="3.5dip" />
+                    </RelativeLayout>
+
+                    <View
+                        android:id="@id/capture_entrance_draft_bottom"
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/_16dp"
+                        android:layout_below="@id/capture_entrance_draft_border_rl" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <include
+        layout="@layout/dialog_choose_speed"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/dialog_camera_mode"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.CircularProgressBar.HorizontalProgressBar2-->
+    <ProgressBar
+        android:id="@id/long_video_hpb"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_10dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@id/capture_center_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/icon_150_camera_void"
+        android:scaleY="-1.0"
+        android:visibility="gone" />
+
+    <View
+        android:id="@id/take_picture_blink_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.DisplayAlbumView-->
+    <ImageView
+        android:id="@id/album_ptr_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        android:background="@color/colorTransparent" />
+
+    <ImageView
+        android:id="@id/capture_iv_back"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentLeft="true"
+        android:padding="12.0dip"
+        android:src="@drawable/icon_20_camera_close"
+        android:tint="@color/colorWhite" />
+</RelativeLayout>

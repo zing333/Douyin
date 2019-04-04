@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.IntBuffer;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.adapter.BaseAdapter;
 import cn.nineton.onetake.media.gpuimage.EGL10Helper;
 import cn.nineton.onetake.media.gpuimage.Framebuffer;
@@ -49,7 +50,7 @@ public class BitmapUtils {
         PixelsReader.get().lockPixels(sourceWidth, sourceHeight, new PixelsReader.LockPixels() {
             @Override
             public void run(IntBuffer intBuffer) {
-                lambda$captureBitmap$0(sourceWidth, sourceHeight, bitmap,intBuffer);
+                lambda$captureBitmap$0(sourceWidth, sourceHeight, bitmap, intBuffer);
             }
         });
         return scaleBitmap(bitmap, targetWidth, targetHeight);
@@ -156,7 +157,6 @@ public class BitmapUtils {
         } catch (InterruptedException e) {
         }
     }
-
 
 
     public interface SaveBitmapCallback {
@@ -418,8 +418,21 @@ public class BitmapUtils {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    public static void saveBitmapToLocal(Bitmap bitmap, String path) throws IOException {
+        File pathFile = new File(path);
+        if (!pathFile.getParentFile().exists()) {
+            pathFile.getParentFile().mkdirs();
+        }
+        try (FileOutputStream fos = new FileOutputStream(path)) {
+            bitmap.compress(CompressFormat.JPEG, 100, fos);
+            Log.e("debug", "saveBitmap success:" + path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     /* JADX WARNING: Removed duplicated region for block: B:15:0x0048 A:{SYNTHETIC, Splitter: B:15:0x0048} */
-    public static void saveBitmapToLocal(android.graphics.Bitmap r8, java.lang.String r9) throws java.io.IOException {
+//    public static void saveBitmapToLocal(android.graphics.Bitmap r8, java.lang.String r9) throws java.io.IOException {
         /*
         r1 = new java.io.File;
         r1.<init>(r9);
@@ -470,8 +483,8 @@ public class BitmapUtils {
         r2 = r3;
         goto L_0x0046;
         */
-        throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.support.utils.BitmapUtil.saveBitmapToLocal(android.graphics.Bitmap, java.lang.String):void");
-    }
+    //throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.support.utils.BitmapUtil.saveBitmapToLocal(android.graphics.Bitmap, java.lang.String):void");
+//    }
 
     public static void saveBitmapToLocal(final Bitmap bitmap, final String filePath, final SaveBitmapCallback saveBitmapCallback) {
         PriorityThreadPoolManager.execute(new PriorityRunnable(9) {
@@ -771,6 +784,22 @@ public class BitmapUtils {
             e = e3;
             e.printStackTrace();
             return i;
+        }
+    }
+
+    public static void saveBitmap2PrivateFile(Bitmap bitmap) {
+        String path = cn.nineton.onetake.util.Config.getPrivatePreviewFilterPath();
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        } else {
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                boolean b = bitmap.compress(CompressFormat.JPEG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

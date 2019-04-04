@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/specific_combination_rl"
+    android:layout_width="wrap_content"
+    android:layout_height="65.0dip"
+    android:layout_centerInParent="true"
+    android:overScrollMode="never"
+    android:visibility="gone" />

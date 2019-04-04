@@ -7,6 +7,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 import cn.nineton.onetake.util.FontsUtil;
 
@@ -28,7 +29,7 @@ public class StaticLayoutUtil {
         textPaint.setTextSize((float) DensityUtil.dip2px(14.0f));
         textPaint.setTypeface(FontsUtil.setDefaultTypeFace());
         textPaint.setFlags((textPaint.getFlags() | 128) | 1);
-        textPaint.setColor(App.getResource().getColor(R.colo.color66));
+        textPaint.setColor(App.getResource().getColor(R.color.color66));
         return textPaint;
     }
 

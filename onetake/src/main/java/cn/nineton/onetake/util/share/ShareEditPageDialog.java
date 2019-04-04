@@ -16,6 +16,7 @@ import android.widget.FrameLayout.LayoutParams;
 //import com.blink.academy.onetake.widgets.dialog.ShareActionSheetDialog.OnDialogDismissListener;
 //import com.blink.academy.onetake.widgets.dialog.ShareEditPageDialog$.Lambda.1;
 //import com.blink.academy.onetake.widgets.dialog.ShareEditPageDialog$.Lambda.2;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 import cn.nineton.onetake.util.LogUtil;
 import cn.nineton.onetake.widget.ShareActionSheetDialog;

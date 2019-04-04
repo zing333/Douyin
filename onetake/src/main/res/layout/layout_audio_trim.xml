@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/audio_trim_root"
+    android:layout_width="fill_parent"
+    android:layout_height="160.0dip"
+    android:background="@color/colorGray"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@id/audio_trim_top_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="10.0dip">
+
+        <!--<cn.nineton.onetake.widget.AvenirNextCondensedDemiBoldTextView-->
+        <cn.nineton.onetake.widget.AvenirNextCondensedDemiBoldTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="@string/TEXT_MUSIC_START_TIME"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_12dp" />
+
+        <cn.nineton.onetake.widget.AvenirNextCondensedDemiBoldTextView
+            android:id="@id/audio_trim_start_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_12dp" />
+
+        <cn.nineton.onetake.widget.AvenirNextCondensedDemiBoldTextView
+            android:id="@id/audio_trim_duration_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_12dp" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/audio_trim_rv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/audio_trim_cancel_iv"
+        android:layout_below="@id/audio_trim_top_ll"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:overScrollMode="never" />
+
+    <FrameLayout
+        android:id="@id/audio_trim_tags_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/audio_trim_center_cursor"
+        android:layout_marginBottom="5.0dip"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="horizontal" />
+
+    <View
+        android:id="@id/audio_trim_cursor"
+        android:layout_width="1.0px"
+        android:layout_height="0.0dip"
+        android:layout_centerVertical="true"
+        android:background="@color/colorWhite"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.ShadowLayout-->
+    <cn.nineton.onetake.widget.ShadowLayout
+        android:id="@id/audio_trim_play_shadow"
+        android:layout_width="30.0dip"
+        android:layout_height="30.0dip"
+        android:layout_centerVertical="true"
+        app:sl_cornerRadius="@dimen/_100dp"
+        app:sl_dx="0.0dip"
+        app:sl_dy="0.0dip"
+        app:sl_shadowColor="#4c000000"
+        app:sl_shadowRadius="10.0dip" />
+
+    <ImageView
+        android:id="@id/audio_trim_play"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"
+        android:padding="12.0dip"
+        android:src="@drawable/icon_20_audio_play"
+        android:tint="@color/colorWhite" />
+
+    <View
+        android:id="@id/audio_trim_center_cursor"
+        android:layout_width="6.0dip"
+        android:layout_height="40.0dip"
+        android:layout_centerInParent="true"
+        android:background="@drawable/filter_tab_center_line_area2" />
+
+    <ImageView
+        android:id="@id/audio_trim_cancel_iv"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_25_cancel"
+        android:tint="@color/colorWhite" />
+
+    <ImageView
+        android:id="@id/audio_trim_confirm_iv"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_25_confirm"
+        android:tint="@color/colorWhite" />
+</RelativeLayout>

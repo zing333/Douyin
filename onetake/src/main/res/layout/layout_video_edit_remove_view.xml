@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@id/video_edit_remove_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <RelativeLayout
+        android:id="@id/video_edit_edit_top"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <!--<cn.nineton.onetake.widget.LeftImageRightTextLayout-->
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_effect_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/video_edit_text_ll"
+            android:minWidth="@dimen/_45dp"
+            app:leftImageRes="@drawable/icon_15_video_effects"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_VIDEO_EDIT_EFFECTS" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_text_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/video_edit_split_ll"
+            android:minWidth="@dimen/_45dp"
+            android:visibility="visible"
+            app:leftImageRes="@drawable/icon_15_video_text"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_VIDEO_EDIT_TEXT" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_split_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:minWidth="@dimen/_45dp"
+            android:visibility="invisible"
+            app:leftImageRes="@drawable/icon_15_video_split"
+            app:leftImageTint="@color/colorWhite"
+            app:rightTextColor="@color/colorWhite"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_VIDEO_EDIT_SPLIT" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_add_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:minWidth="@dimen/_45dp"
+            android:visibility="visible"
+            app:leftImageRes="@drawable/icon_15_video_add"
+            app:leftImageTint="@color/colorWhite"
+            app:rightTextColor="@color/colorWhite"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_AUDIO_EDIT_ADD_CLIP" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_reorder_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/video_edit_split_ll"
+            android:minWidth="@dimen/_45dp"
+            app:leftImageRes="@drawable/icon_15_video_reorder"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_VIDEO_EDIT_REORDER" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_remove_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/video_edit_reorder_ll"
+            android:minWidth="@dimen/_45dp"
+            app:leftImageRes="@drawable/icon_15_video_remove"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_VIDEO_EDIT_REMOVE" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/video_edit_music_top"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_music_replace_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/video_edit_music_trim_ll"
+            android:minWidth="@dimen/_45dp"
+            android:visibility="visible"
+            app:leftImageRes="@drawable/icon_15_music_replace"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_AUDIO_EDIT_REPLACE" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_music_trim_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:minWidth="@dimen/_45dp"
+            app:leftImageRes="@drawable/icon_15_music_start_set"
+            app:leftImageTint="@color/colorWhite"
+            app:rightTextColor="@color/colorWhite"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_AUDIO_EDIT_TRIM" />
+
+        <cn.nineton.onetake.widget.LeftImageRightTextLayout
+            android:id="@id/video_edit_music_remove_ll"
+            style="@style/VideoEditButtonLayoutStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/video_edit_music_trim_ll"
+            android:minWidth="@dimen/_45dp"
+            app:leftImageRes="@drawable/icon_15_video_remove"
+            app:rightTextSize="@dimen/fontRegular10"
+            app:rightTextStr="@string/BUTTON_AUDIO_EDIT_REMOVE" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@id/video_edit_back_image"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingBottom="13.5dip"
+        android:paddingLeft="7.0dip"
+        android:paddingRight="20.0dip"
+        android:paddingTop="13.5dip"
+        android:src="@drawable/icon_17_undo"
+        android:tint="@color/colorWhite"
+        android:visibility="visible" />
+</RelativeLayout>

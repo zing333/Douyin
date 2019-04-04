@@ -46,6 +46,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 import cn.nineton.onetake.util.TextUtil;
 

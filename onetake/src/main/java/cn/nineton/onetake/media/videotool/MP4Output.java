@@ -12,7 +12,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import cn.nineton.onetake.db.IMMsgTable;
+import cn.nineton.onetake.db.table.IMMsgTable;
 import cn.nineton.onetake.media.BitmapUtils;
 import cn.nineton.onetake.media.Ratio;
 import cn.nineton.onetake.media.audiotool.AudioEncoderAAC;

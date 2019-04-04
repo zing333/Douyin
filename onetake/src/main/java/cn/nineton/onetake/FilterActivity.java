@@ -1,15 +1,13 @@
-package cn.nineton.glsurfacedemo.onetake;
+package cn.nineton.onetake;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.MemoryInfo;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
@@ -31,6 +29,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
@@ -38,7 +38,6 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextPaint;
 import android.text.TextUtils;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -47,6 +46,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
@@ -62,258 +62,202 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-import com.almeros.android.multitouch.MoveGestureDetector;
-import com.almeros.android.multitouch.MoveGestureDetector.SimpleOnMoveGestureListener;
 import com.android.volley.VolleyError;
-import com.blink.academy.onetake.App;
-import com.blink.academy.onetake.VideoTools.AFGPUImageDateBlendFilter;
-import com.blink.academy.onetake.VideoTools.AFGPUImageMultiplyBlendFilter;
-import com.blink.academy.onetake.VideoTools.AFGPUImageOverlayBlendFilter;
-import com.blink.academy.onetake.VideoTools.AFGPUImageScreenBlendFilter;
-import com.blink.academy.onetake.VideoTools.AFGPUImageSkyFilter2;
-import com.blink.academy.onetake.VideoTools.AFGPUImageTransformFilter;
-import com.blink.academy.onetake.VideoTools.EGL10Helper;
-import com.blink.academy.onetake.VideoTools.FilterView;
-import com.blink.academy.onetake.VideoTools.FrameRenderer;
-import com.blink.academy.onetake.VideoTools.FrameRenderer.RenderMode;
-import com.blink.academy.onetake.VideoTools.GPUImageGaussianSelectiveBlurFilter;
-import com.blink.academy.onetake.VideoTools.GPUImageLookupFilter2;
-import com.blink.academy.onetake.VideoTools.GPUImageMirrorFilter;
-import com.blink.academy.onetake.VideoTools.GPUImagePrismFilter;
-import com.blink.academy.onetake.VideoTools.InterpolatedFloat;
-import com.blink.academy.onetake.VideoTools.LUTCreator;
-import com.blink.academy.onetake.VideoTools.MediaUtils;
-import com.blink.academy.onetake.VideoTools.OutputSurfaceArray;
-import com.blink.academy.onetake.VideoTools.Player.AspectMode;
-import com.blink.academy.onetake.VideoTools.Playlist;
-import com.blink.academy.onetake.VideoTools.Playlist.Entry;
-import com.blink.academy.onetake.VideoTools.Playlist.FileMedia;
-import com.blink.academy.onetake.VideoTools.ProgramLoader;
-import com.blink.academy.onetake.VideoTools.VidAnalysis;
-import com.blink.academy.onetake.VideoTools.VidStabilizer.Transform;
-import com.blink.academy.onetake.VideoTools.VideoEncoder;
-import com.blink.academy.onetake.VideoTools.VideoEncoder.Quality;
-import com.blink.academy.onetake.VideoTools.VideoEncoderSW;
-import com.blink.academy.onetake.bean.FilterInfo;
-import com.blink.academy.onetake.bean.FirstVideoBean;
-import com.blink.academy.onetake.bean.FramesHolder;
-import com.blink.academy.onetake.bean.VTFontDesBean;
-import com.blink.academy.onetake.bean.audio.AudioTrackBean;
-import com.blink.academy.onetake.bean.combination.SpecificCombination;
-import com.blink.academy.onetake.bean.combination.SpecificsBean;
-import com.blink.academy.onetake.bean.error.ErrorBean;
-import com.blink.academy.onetake.bean.filterview.FilterEffectBean;
-import com.blink.academy.onetake.bean.filterview.FilterPlayButtonBean;
-import com.blink.academy.onetake.bean.imageproperty.ImagePropertyBean;
-import com.blink.academy.onetake.bean.longvideo.LongVideosModel;
-import com.blink.academy.onetake.bean.longvideo.LongVideosModel.AudioVolume;
-import com.blink.academy.onetake.bean.longvideo.UploadVideoAllInfoBean;
-import com.blink.academy.onetake.bean.movie.MovieBean;
-import com.blink.academy.onetake.bean.tag.OfficialTagBean;
-import com.blink.academy.onetake.bean.utils.JsonParserUtil;
-import com.blink.academy.onetake.bean.video.VideoCoverInfo;
-import com.blink.academy.onetake.controller.AudioStoreController;
-import com.blink.academy.onetake.controller.MSCVController;
-import com.blink.academy.onetake.controller.UserController;
-import com.blink.academy.onetake.custom.VideoAudioSplit.VideoMusicSplitLayout;
-import com.blink.academy.onetake.custom.WeakHandler;
-import com.blink.academy.onetake.custom.videoedit.VolumeSlideView;
-import com.blink.academy.onetake.draft.DraftInfoBean;
-import com.blink.academy.onetake.model.ActiveListManager;
-import com.blink.academy.onetake.model.BitmapModel;
-import com.blink.academy.onetake.model.CameraVideoPathModel;
-import com.blink.academy.onetake.model.CornerDistanceModel;
-import com.blink.academy.onetake.model.DraftLongVideoBean;
-import com.blink.academy.onetake.model.DraftModel;
-import com.blink.academy.onetake.model.FilterDownloadModel;
-import com.blink.academy.onetake.model.FilterModel;
-import com.blink.academy.onetake.model.MscvModel;
-import com.blink.academy.onetake.model.video.UndoBean;
-import com.blink.academy.onetake.model.video.UndoEditModel;
-import com.blink.academy.onetake.model.video.UndoFilterModel;
-import com.blink.academy.onetake.model.video.UndoModel;
-import com.blink.academy.onetake.model.video.VideoBitmapsModel;
-import com.blink.academy.onetake.model.video.VideoInputRatio;
-import com.blink.academy.onetake.push.Receiver.NotificationClickReceiver;
-import com.blink.academy.onetake.support.ByteBufferUtils;
-import com.blink.academy.onetake.support.callbacks.IControllerCallback;
-import com.blink.academy.onetake.support.debug.LogUtil;
-import com.blink.academy.onetake.support.events.CollectFilterEvent;
-import com.blink.academy.onetake.support.events.DeleteDownloadFilterEvent;
-import com.blink.academy.onetake.support.events.DestroyActivityEvent;
-import com.blink.academy.onetake.support.events.DestroyActivityEvent.ActivityState;
-import com.blink.academy.onetake.support.events.DraftAddEvent;
-import com.blink.academy.onetake.support.events.EnterCollectedModeEvent;
-import com.blink.academy.onetake.support.events.FilterActivityBackEvent;
-import com.blink.academy.onetake.support.events.FiltersDownloadEvent;
-import com.blink.academy.onetake.support.events.FinishActivityMessageEvent;
-import com.blink.academy.onetake.support.events.LongVideoBackEvent;
-import com.blink.academy.onetake.support.events.OfficialTagListEvent;
-import com.blink.academy.onetake.support.events.PublishDraftEvent;
-import com.blink.academy.onetake.support.events.RecyclePicModelEvent;
-import com.blink.academy.onetake.support.events.RefreshDisplayAlbumEvent;
-import com.blink.academy.onetake.support.events.RefreshFilterSortEvent;
-import com.blink.academy.onetake.support.events.TextInputEvent;
-import com.blink.academy.onetake.support.events.VidAnalysisEvent;
-import com.blink.academy.onetake.support.events.VideoDurationEvent;
-import com.blink.academy.onetake.support.events.VideoPreviewEvent;
-import com.blink.academy.onetake.support.events.audio.VideoAudioUseEvent;
-import com.blink.academy.onetake.support.events.proxy.ProxyProgressEvent;
-import com.blink.academy.onetake.support.global.Constants;
-import com.blink.academy.onetake.support.helper.GlobalHelper;
-import com.blink.academy.onetake.support.interfaces.AnimatorEndListener;
-import com.blink.academy.onetake.support.interfaces.LongVideoPlayCallback;
-import com.blink.academy.onetake.support.manager.DraftBoxManager;
-import com.blink.academy.onetake.support.manager.FilterEffectManager;
-import com.blink.academy.onetake.support.manager.FilterEffectManager.EffectType;
-import com.blink.academy.onetake.support.manager.GlobalLocationManager;
-import com.blink.academy.onetake.support.manager.VideoAudioPlaybackManager;
-import com.blink.academy.onetake.support.share.ShareBitmapEntity;
-import com.blink.academy.onetake.support.thread.PriorityRunnable;
-import com.blink.academy.onetake.support.thread.PriorityThreadPoolManager;
-import com.blink.academy.onetake.support.utils.AnimationUtil;
-import com.blink.academy.onetake.support.utils.AnimationUtil.AnimationCallback;
-import com.blink.academy.onetake.support.utils.BitmapUtil;
-import com.blink.academy.onetake.support.utils.BuglyLogUtil;
-import com.blink.academy.onetake.support.utils.ColorFilterUtil;
-import com.blink.academy.onetake.support.utils.CustomCropUtil;
-import com.blink.academy.onetake.support.utils.DensityUtil;
-import com.blink.academy.onetake.support.utils.FileUtil;
-import com.blink.academy.onetake.support.utils.FilterEffectCompare;
-import com.blink.academy.onetake.support.utils.FilterUtils;
-import com.blink.academy.onetake.support.utils.FilterViewUtils;
-import com.blink.academy.onetake.support.utils.FontsUtil;
-import com.blink.academy.onetake.support.utils.IntentUtil;
-import com.blink.academy.onetake.support.utils.LocaleUtil;
-import com.blink.academy.onetake.support.utils.MovieFileUtil;
-import com.blink.academy.onetake.support.utils.OptionSizeUtil;
-import com.blink.academy.onetake.support.utils.PermissionUtil;
-import com.blink.academy.onetake.support.utils.SharedPrefUtil;
-import com.blink.academy.onetake.support.utils.SharedPrefUtils;
-import com.blink.academy.onetake.support.utils.SpannedUtil;
-import com.blink.academy.onetake.support.utils.StaticLayoutUtil;
-import com.blink.academy.onetake.support.utils.TextUtil;
-import com.blink.academy.onetake.support.utils.TintColorUtil;
-import com.blink.academy.onetake.support.utils.ViewUtil;
-import com.blink.academy.onetake.support.utils.WaterMarkBitmapUtil;
-import com.blink.academy.onetake.support.videoeditimage.ImageCacheUtils;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.1;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.10;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.11;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.12;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.13;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.14;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.15;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.16;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.17;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.18;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.19;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.20;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.21;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.22;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.23;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.24;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.25;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.26;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.27;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.28;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.29;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.30;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.31;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.32;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.33;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.34;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.35;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.36;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.37;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.38;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.39;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.40;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.41;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.42;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.43;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.44;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.45;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.46;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.47;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.7;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.8;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$.Lambda.9;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$46$.Lambda;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$FilterEffectOnClick$.Lambda.2;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$FilterEffectOnClick$.Lambda.3;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$FilterEffectOnClick$.Lambda.4;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$FilterEffectOnClick$.Lambda.5;
-import com.blink.academy.onetake.ui.activity.video.FilterActivity$FilterEffectOnClick$.Lambda.6;
-import com.blink.academy.onetake.ui.activity.video.FilterActivityContract.Presenter;
-import com.blink.academy.onetake.ui.activity.video.FilterActivityContract.View;
-import com.blink.academy.onetake.ui.activity.video.VideoActivity2.AlphaAnimatorCallback;
-import com.blink.academy.onetake.ui.activity.video.VideoSavingEvent.VideoBean;
-import com.blink.academy.onetake.ui.adapter.FilterAdapter;
-import com.blink.academy.onetake.ui.adapter.FilterGroupNameAdapter;
-import com.blink.academy.onetake.ui.adapter.callback.RecyclerViewItemClickListener;
-import com.blink.academy.onetake.ui.adapter.filter.SpecificCombinationAdapter;
-import com.blink.academy.onetake.ui.adapter.filter.VideoEditOrderAdapter;
-import com.blink.academy.onetake.ui.adapter.filter.VideoEditOrderItemDecoration;
-import com.blink.academy.onetake.ui.adapter.filter.VideoEditOrderLayoutManager;
-import com.blink.academy.onetake.ui.adapter.holder.reconstruction.BaseAdapter.Item;
-import com.blink.academy.onetake.ui.helper.FilterActivityHelper;
-import com.blink.academy.onetake.ui.helper.VideoEditHelper;
-import com.blink.academy.onetake.ui.helper.VideoEditHelper.ChangeOtherCallback;
-import com.blink.academy.onetake.ui.helper.VideoModelHelper;
-import com.blink.academy.onetake.ui.holder.VideoEditSwitchTabsHolder;
-import com.blink.academy.onetake.widgets.AppMessage.AppMessage;
-import com.blink.academy.onetake.widgets.AudioWave.AudioWaveView;
-import com.blink.academy.onetake.widgets.Button.FilterPlayButton;
-import com.blink.academy.onetake.widgets.Button.FilterPlayButtonCallback;
-import com.blink.academy.onetake.widgets.CircularProgressBar.CircleProgressBar;
-import com.blink.academy.onetake.widgets.CropView.CustomCropAllView;
-import com.blink.academy.onetake.widgets.CropView.CustomCropView;
-import com.blink.academy.onetake.widgets.IOSDialog.IOSAlertDialog;
-import com.blink.academy.onetake.widgets.LinearLayout.AudioTrimLayout;
-import com.blink.academy.onetake.widgets.LinearLayout.AudioTrimLayout.OnTrimButtonClick;
-import com.blink.academy.onetake.widgets.LinearLayout.VideoEditEffectsLayout;
-import com.blink.academy.onetake.widgets.RelativeLayout.FilterEffectSetRelativeLayout;
-import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar;
-import com.blink.academy.onetake.widgets.SeekBar.CustomSeekBar.OnCustomProgressChangeListener;
-import com.blink.academy.onetake.widgets.SeekBar.MirrorSeekBar;
-import com.blink.academy.onetake.widgets.SeekBar.MyCustomSeekBar;
-import com.blink.academy.onetake.widgets.SeekBar.MyCustomSeekBar.OnCustomProgressChangedListener;
-import com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView;
-import com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView;
-import com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView;
-import com.blink.academy.onetake.widgets.TextView.VerticalTextView;
-import com.blink.academy.onetake.widgets.VTContainerView.ColorChooseView;
-import com.blink.academy.onetake.widgets.VTContainerView.TextSizeView;
-import com.blink.academy.onetake.widgets.VideoSplitSlideView;
-import com.blink.academy.onetake.widgets.VideoText.RingBackgroundView;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.AlignType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.FontSizeType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.LetterSpacingType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.LineSpacingType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.ShadowType;
-import com.blink.academy.onetake.widgets.VideoText.VTContainerView.TextColorType;
-import com.blink.academy.onetake.widgets.dialog.VTFontDialog;
-import com.blink.academy.onetake.widgets.dialog.VTFontDialog.OnFontClickListener;
-import com.blink.academy.onetake.widgets.dialog.VideoMusicDialog;
-import com.blink.academy.onetake.widgets.dialog.VideoOptDialog;
-import com.blink.academy.onetake.widgets.dialog.VideoOptDialog.OnCancelClick;
-import com.blink.academy.onetake.widgets.loop.HorizontalLoopView.OnSelectItemChange;
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback;
 import com.chad.library.adapter.base.listener.OnItemDragListener;
-import com.facebook.share.internal.ShareConstants;
 import com.google.gson.reflect.TypeToken;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.animation.ValueAnimator.AnimatorUpdateListener;
 import com.nineoldandroids.view.ViewPropertyAnimator;
-import com.spreada.utils.chinese.ZHConverter;
-import com.umeng.analytics.MobclickAgent;
-import de.greenrobot.event.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import butterknife.OnClick;
+import cn.nineton.onetake.adapter.BaseAdapter;
+import cn.nineton.onetake.adapter.FilterAdapter;
+import cn.nineton.onetake.adapter.FilterGroupNameAdapter;
+import cn.nineton.onetake.adapter.SpecificCombinationAdapter;
+import cn.nineton.onetake.adapter.UndoBean;
+import cn.nineton.onetake.adapter.VideoEditOrderAdapter;
+import cn.nineton.onetake.bean.AudioTrackBean;
+import cn.nineton.onetake.bean.DraftInfoBean;
+import cn.nineton.onetake.bean.DraftLongVideoBean;
+import cn.nineton.onetake.bean.ErrorBean;
+import cn.nineton.onetake.bean.FilterEffectBean;
+import cn.nineton.onetake.bean.FilterEffectManager;
+import cn.nineton.onetake.bean.FilterInfo;
+import cn.nineton.onetake.bean.FilterModel;
+import cn.nineton.onetake.bean.FilterPlayButtonBean;
+import cn.nineton.onetake.bean.FirstVideoBean;
+import cn.nineton.onetake.bean.ImagePropertyBean;
+import cn.nineton.onetake.bean.LongVideosModel;
+import cn.nineton.onetake.bean.MovieBean;
+import cn.nineton.onetake.bean.MscvModel;
+import cn.nineton.onetake.bean.OfficialTagBean;
+import cn.nineton.onetake.bean.SpecificCombination;
+import cn.nineton.onetake.bean.SpecificsBean;
+import cn.nineton.onetake.bean.UndoEditModel;
+import cn.nineton.onetake.bean.UndoFilterModel;
+import cn.nineton.onetake.bean.UndoModel;
+import cn.nineton.onetake.bean.VTFontDesBean;
+import cn.nineton.onetake.bean.VideoBitmapsModel;
+import cn.nineton.onetake.bean.VideoCoverInfo;
+import cn.nineton.onetake.bean.VideoInputRatio;
+import cn.nineton.onetake.controller.MSCVController;
+import cn.nineton.onetake.event.CollectFilterEvent;
+import cn.nineton.onetake.event.DeleteDownloadFilterEvent;
+import cn.nineton.onetake.event.DestroyActivityEvent;
+import cn.nineton.onetake.event.DraftAddEvent;
+import cn.nineton.onetake.event.EnterCollectedModeEvent;
+import cn.nineton.onetake.event.FilterActivityBackEvent;
+import cn.nineton.onetake.event.FiltersDownloadEvent;
+import cn.nineton.onetake.event.FinishActivityMessageEvent;
+import cn.nineton.onetake.event.LongVideoBackEvent;
+import cn.nineton.onetake.event.OfficialTagListEvent;
+import cn.nineton.onetake.event.ProxyProgressEvent;
+import cn.nineton.onetake.event.PublishDraftEvent;
+import cn.nineton.onetake.event.RecyclePicModelEvent;
+import cn.nineton.onetake.event.RefreshDisplayAlbumEvent;
+import cn.nineton.onetake.event.RefreshFilterSortEvent;
+import cn.nineton.onetake.event.VidAnalysisEvent;
+import cn.nineton.onetake.event.VideoAudioUseEvent;
+import cn.nineton.onetake.event.VideoDurationEvent;
+import cn.nineton.onetake.event.VideoPreviewEvent;
+import cn.nineton.onetake.event.VideoSavedEvent;
+import cn.nineton.onetake.event.VideoSavingEvent;
+import cn.nineton.onetake.listener.AlphaAnimatorCallback;
+import cn.nineton.onetake.listener.AnimatorEndListener;
+import cn.nineton.onetake.listener.FilterActivityContract;
+import cn.nineton.onetake.listener.FilterGroupOnclickListener;
+import cn.nineton.onetake.listener.FilterPlayButtonCallback;
+import cn.nineton.onetake.listener.IControllerCallback;
+import cn.nineton.onetake.listener.RecyclerViewItemClickListener;
+import cn.nineton.onetake.listener.VTFontDialog;
+import cn.nineton.onetake.media.BitmapUtils;
+import cn.nineton.onetake.media.FrameRenderer;
+import cn.nineton.onetake.media.MediaUtils;
+import cn.nineton.onetake.media.OutputSurfaceArray;
+import cn.nineton.onetake.media.VidStabilizer;
+import cn.nineton.onetake.media.gpuimage.AFGPUImageMultiplyBlendFilter;
+import cn.nineton.onetake.media.gpuimage.AFGPUImageOverlayBlendFilter;
+import cn.nineton.onetake.media.gpuimage.AFGPUImageScreenBlendFilter;
+import cn.nineton.onetake.media.gpuimage.AFGPUImageSkyFilter2;
+import cn.nineton.onetake.media.gpuimage.AFGPUImageTransformFilter;
+import cn.nineton.onetake.media.gpuimage.EGL10Helper;
+import cn.nineton.onetake.media.gpuimage.EGLRunnableVoid;
+import cn.nineton.onetake.media.gpuimage.Framebuffer;
+import cn.nineton.onetake.media.gpuimage.FramebufferTexture;
+import cn.nineton.onetake.media.gpuimage.GPUImageAlphaBlendFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageBilateralFilter0;
+import cn.nineton.onetake.media.gpuimage.GPUImageCropFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageFilterGroup;
+import cn.nineton.onetake.media.gpuimage.GPUImageGaussianSelectiveBlurFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageLookupFilter2;
+import cn.nineton.onetake.media.gpuimage.GPUImageMirrorFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImagePrismFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageRenderer;
+import cn.nineton.onetake.media.gpuimage.GPUImageSaturationFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageSharpenFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageToneCurveFilter;
+import cn.nineton.onetake.media.gpuimage.GPUImageWhiteBalanceFilter;
+import cn.nineton.onetake.media.gpuimage.Rotation;
+import cn.nineton.onetake.media.interfaces.LongVideoPlayCallback;
+import cn.nineton.onetake.media.videotool.AFGPUImageDateBlendFilter;
+import cn.nineton.onetake.media.videotool.VidAnalysis;
+import cn.nineton.onetake.media.videotool.VideoEncoder;
+import cn.nineton.onetake.media.videotool.VideoEncoderSW;
+import cn.nineton.onetake.presenter.FilterActivityPresenter;
+import cn.nineton.onetake.util.ActiveListManager;
+import cn.nineton.onetake.util.AnimationUtil;
+import cn.nineton.onetake.util.AppMessage;
+import cn.nineton.onetake.util.AudioStoreController;
+import cn.nineton.onetake.util.ByteBufferUtils;
+import cn.nineton.onetake.util.CameraVideoPathModel;
+import cn.nineton.onetake.util.ColorFilterUtil;
+import cn.nineton.onetake.util.Config;
+import cn.nineton.onetake.util.Constants;
+import cn.nineton.onetake.util.CornerDistanceModel;
+import cn.nineton.onetake.util.CustomCropUtil;
+import cn.nineton.onetake.util.DensityUtil;
+import cn.nineton.onetake.util.DraftBoxManager;
+import cn.nineton.onetake.util.DraftModel;
+import cn.nineton.onetake.util.FileUtil;
+import cn.nineton.onetake.util.FilterActivityHelper;
+import cn.nineton.onetake.util.FilterDownloadModel;
+import cn.nineton.onetake.util.FilterEffectCompare;
+import cn.nineton.onetake.util.FilterViewUtils;
+import cn.nineton.onetake.util.FontsUtil;
+import cn.nineton.onetake.util.FramesHolder;
+import cn.nineton.onetake.util.GlobalHelper;
+import cn.nineton.onetake.util.ImageCacheUtils;
+import cn.nineton.onetake.util.JsonParserUtil;
+import cn.nineton.onetake.util.LocaleUtil;
+import cn.nineton.onetake.util.LogUtil;
+import cn.nineton.onetake.util.MoveGestureDetector;
+import cn.nineton.onetake.util.MovieFileUtil;
+import cn.nineton.onetake.util.OptionSizeUtil;
+import cn.nineton.onetake.util.PermissionUtil;
+import cn.nineton.onetake.util.PriorityRunnable;
+import cn.nineton.onetake.util.PriorityThreadPoolManager;
+import cn.nineton.onetake.util.ProgramLoader;
+import cn.nineton.onetake.util.SharedPrefUtil;
+import cn.nineton.onetake.util.SharedPrefUtils;
+import cn.nineton.onetake.util.SpannedUtil;
+import cn.nineton.onetake.util.TextUtil;
+import cn.nineton.onetake.util.TintColorUtil;
+import cn.nineton.onetake.util.VideoAudioPlaybackManager;
+import cn.nineton.onetake.util.VideoEditOrderLayoutManager;
+import cn.nineton.onetake.util.VideoEditSwitchTabsHolder;
+import cn.nineton.onetake.util.VideoModelHelper;
+import cn.nineton.onetake.util.ViewUtil;
+import cn.nineton.onetake.util.WaterMarkBitmapUtil;
+import cn.nineton.onetake.util.WeakHandler;
+import cn.nineton.onetake.util.ZHConverter;
+import cn.nineton.onetake.widget.AudioTrimLayout;
+import cn.nineton.onetake.widget.AudioWaveView;
+import cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView;
+import cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView;
+import cn.nineton.onetake.widget.AvenirNextRegularTextView;
+import cn.nineton.onetake.widget.CircleProgressBar;
+import cn.nineton.onetake.widget.ColorChooseView;
+import cn.nineton.onetake.widget.CustomCropAllView;
+import cn.nineton.onetake.widget.CustomCropView;
+import cn.nineton.onetake.widget.CustomSeekBar;
+import cn.nineton.onetake.widget.FilterEffectSetRelativeLayout;
+import cn.nineton.onetake.widget.FilterPlayButton;
+import cn.nineton.onetake.widget.FilterView;
+import cn.nineton.onetake.widget.HorizontalLoopView;
+import cn.nineton.onetake.widget.InterpolatedFloat;
+import cn.nineton.onetake.widget.LUTCreator;
+import cn.nineton.onetake.widget.MirrorSeekBar;
+import cn.nineton.onetake.widget.MyCustomSeekBar;
+import cn.nineton.onetake.widget.Player;
+import cn.nineton.onetake.widget.Playlist;
+import cn.nineton.onetake.widget.RingBackgroundView;
+import cn.nineton.onetake.widget.ShareBitmapEntity;
+import cn.nineton.onetake.widget.StaticLayoutUtil;
+import cn.nineton.onetake.widget.TextInputEvent;
+import cn.nineton.onetake.widget.TextSizeView;
+import cn.nineton.onetake.widget.VTBaseView;
+import cn.nineton.onetake.widget.VTContainerView;
+import cn.nineton.onetake.widget.VerticalTextView;
+import cn.nineton.onetake.widget.VideoEditEffectsLayout;
+import cn.nineton.onetake.widget.VideoEditHelper;
+import cn.nineton.onetake.widget.VideoEditOrderItemDecoration;
+import cn.nineton.onetake.widget.VideoMusicSplitLayout;
+import cn.nineton.onetake.widget.VideoSplitSlideView;
+import cn.nineton.onetake.widget.VolumeSlideView;
+import jp.co.cyberagent.android.gpuimage.GPUImage;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -331,24 +275,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import jp.co.cyberagent.android.gpuimage.Framebuffer;
-import jp.co.cyberagent.android.gpuimage.FramebufferTexture;
-import jp.co.cyberagent.android.gpuimage.GPUImage;
-import jp.co.cyberagent.android.gpuimage.GPUImageAlphaBlendFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageBilateralFilter0;
-import jp.co.cyberagent.android.gpuimage.GPUImageCropFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageCropFilter.CropRegion;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilterGroup;
-import jp.co.cyberagent.android.gpuimage.GPUImageRenderer;
-import jp.co.cyberagent.android.gpuimage.GPUImageSaturationFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageToneCurveFilter;
-import jp.co.cyberagent.android.gpuimage.GPUImageWhiteBalanceFilter;
-import jp.co.cyberagent.android.gpuimage.Rotation;
 
 @SuppressLint({"ClickableViewAccessibility"})
-public class FilterActivity extends Activity implements OnClickListener, View, OnItemDragListener, ChangeOtherCallback {
+public class FilterActivity extends AppCompatActivity implements OnClickListener, FilterActivityContract.View, OnItemDragListener, VideoEditHelper.ChangeOtherCallback {
     public static final int ANIMATION_DURATION_100 = 100;
     public static final int ANIMATION_DURATION_200 = 200;
     public static final String BACK_OR_FRONT_CAMERA = "SeilfieIntent";
@@ -409,7 +338,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private boolean addFinalWhiteBalanceFilter = false;
     private int addMusicPosition = -1;
     private int addTextClickId;
-    private OnClickListener addTextControllerListener = 1.lambdaFactory$(this);
+    private OnClickListener addTextControllerListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
     TextView add_text_controller_chapter;
     TextView add_text_controller_info;
     TextView add_text_controller_reset;
@@ -419,44 +353,50 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private Runnable alphaRannable = new Runnable() {
         public void run() {
             ValueAnimator.clearAllAnimations();
-            FilterActivity.this.capture_filter_name_rl.setAlpha(1.0f);
-            FilterActivity.this.capture_filter_name_rl.setVisibility(0);
-            FilterActivity.this.valueAnimator = ValueAnimator.ofFloat(1.0f, StaticLayoutUtil.DefaultSpacingadd);
-            FilterActivity.this.valueAnimator.setDuration(200);
-            FilterActivity.this.valueAnimator.addUpdateListener(Lambda.1.lambdaFactory$(this));
-            FilterActivity.this.valueAnimator.addListener(new AnimatorListenerAdapter() {
+            capture_filter_name_rl.setAlpha(1.0f);
+            capture_filter_name_rl.setVisibility(View.VISIBLE);
+            valueAnimator = ValueAnimator.ofFloat(1.0f, StaticLayoutUtil.DefaultSpacingadd);
+            valueAnimator.setDuration(200);
+//            valueAnimator.addUpdateListener(Lambda.1.lambdaFactory$(this));
+            valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    capture_filter_name_rl.setAlpha(((Float) animation.getAnimatedValue()).floatValue());
+                }
+            });
+            valueAnimator.addListener(new AnimatorListenerAdapter() {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    FilterActivity.this.capture_filter_name_rl.setVisibility(4);
-                    FilterActivity.this.capture_filter_name_rl.setAlpha(1.0f);
-                    FilterActivity.this.valueAnimator = null;
+                    capture_filter_name_rl.setVisibility(View.INVISIBLE);
+                    capture_filter_name_rl.setAlpha(1.0f);
+                    valueAnimator = null;
                 }
 
                 public void onAnimationStart(Animator animation) {
                     super.onAnimationStart(animation);
-                    FilterActivity.this.capture_filter_name_rl.setVisibility(0);
-                    FilterActivity.this.capture_filter_name_rl.setAlpha(1.0f);
+                    capture_filter_name_rl.setVisibility(View.VISIBLE);
+                    capture_filter_name_rl.setAlpha(1.0f);
                 }
 
                 public void onAnimationCancel(Animator animation) {
                     super.onAnimationCancel(animation);
-                    FilterActivity.this.capture_filter_name_rl.setVisibility(0);
-                    FilterActivity.this.capture_filter_name_rl.setAlpha(1.0f);
-                    FilterActivity.this.valueAnimator = null;
+                    capture_filter_name_rl.setVisibility(View.VISIBLE);
+                    capture_filter_name_rl.setAlpha(1.0f);
+                    valueAnimator = null;
                 }
             });
-            FilterActivity.this.valueAnimator.start();
+            valueAnimator.start();
         }
 
-        private /* synthetic */ void lambda$run$0(ValueAnimator animation) {
-            FilterActivity.this.capture_filter_name_rl.setAlpha(((Float) animation.getAnimatedValue()).floatValue());
-        }
+//        private /* synthetic */ void lambda$run$0(ValueAnimator animation) {
+//            capture_filter_name_rl.setAlpha(((Float) animation.getAnimatedValue()).floatValue());
+//        }
     };
     GPUImageAlphaBlendFilter alpha_0;
     GPUImageAlphaBlendFilter alpha_1;
     private int animationHeight;
     private int animationWidth;
-    @InjectView(2131689782)
+    @BindView(R.id.audio_trim_vs)
     ViewStub audio_trim_vs;
     private int beforeRotate_value_cropHeight;
     private float beforeRotate_value_cropPosition;
@@ -469,16 +409,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private float beforeRotate_value_mirrorPercent;
     private float beforeRotate_value_mirrorValue;
     private int beforeRotate_value_width;
-    @InjectView(2131689749)
+    @BindView(R.id.below_surface)
     android.view.View below_surface;
     private boolean canControlVideo;
     private boolean canVideoMuteIndicatorShow = true;
     private boolean canVideoOptDialogShow = true;
-    @InjectView(2131689752)
+    @BindView(R.id.capture_filter_group_name_tv)
     AvenirNextRegularTextView capture_filter_group_name_tv;
-    @InjectView(2131689751)
+    @BindView(R.id.capture_filter_name_rl)
     RelativeLayout capture_filter_name_rl;
-    @InjectView(2131689753)
+    @BindView(R.id.capture_filter_name_tv)
     AvenirNextRegularTextView capture_filter_name_tv;
     private GestureDetector changeFilterGesture;
     private boolean changeSurfaceSize = false;
@@ -486,14 +426,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private List<FilterInfo> collectFilter = new ArrayList();
     private GPUImageToneCurveFilter contrastFilter;
     private float currentDegree = StaticLayoutUtil.DefaultSpacingadd;
-    private EffectType currentEffectType = EffectType.NONE;
+    private FilterEffectManager.EffectType currentEffectType = FilterEffectManager.EffectType.NONE;
     GPUImageFilter currentFilter;
     String currentFilterName = NONE_FILTER;
     private float currentHvalue = StaticLayoutUtil.DefaultSpacingadd;
     private long currentPlayTimeUs;
     private float currentRotateValue = StaticLayoutUtil.DefaultSpacingadd;
     private float currentVvalue = StaticLayoutUtil.DefaultSpacingadd;
-    @InjectView(2131689777)
+    @BindView(R.id.custom_crop_View)
     CustomCropView custom_crop_View;
     private AFGPUImageDateBlendFilter dateFilter;
     private DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -537,20 +477,20 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private RingBackgroundView filter_addition_size_ring;
     private android.view.View filter_addition_word_space;
     private RingBackgroundView filter_addition_word_space_ring;
-    @InjectView(2131689750)
-    android.view.View filter_alpha_view;
-    @InjectView(2131689765)
-    android.view.View filter_beauty_anim;
-    @InjectView(2131691212)
+    @BindView(R.id.filter_alpha_view)
+    View filter_alpha_view;
+    @BindView(R.id.filter_beauty_anim)
+    View filter_beauty_anim;
+    @BindView(R.id.filter_bottom_tab_move_point)
     ImageView filter_bottom_tab_move_point;
     CustomCropAllView filter_crop_ccav;
-    @InjectView(2131689776)
+    @BindView(R.id.filter_crop_ccav_vs)
     ViewStub filter_crop_ccav_vs;
-    @InjectView(2131689770)
+    @BindView(R.id.filter_current_clip_iv)
     android.view.View filter_current_clip_iv;
     MyCustomSeekBar filter_custom_sk;
     AvenirNextCondensedRegularTextView filter_detail_set_text;
-    @InjectView(2131691207)
+    @BindView(R.id.filter_edit_icon_bottom)
     ImageView filter_edit_icon_bottom;
     FilterEffectSetRelativeLayout filter_effect_beauty;
     FilterEffectSetRelativeLayout filter_effect_contrast;
@@ -562,31 +502,31 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     FilterEffectSetRelativeLayout filter_effect_grain;
     FilterEffectSetRelativeLayout filter_effect_highlight_shadow;
     FilterEffectSetRelativeLayout filter_effect_horizontal;
-    @InjectView(2131691204)
+    @BindView(R.id.filter_effect_icon_bottom)
     ImageView filter_effect_icon_bottom;
     FilterEffectSetRelativeLayout filter_effect_leak;
-    @InjectView(2131691181)
+    @BindView(R.id.filter_effect_leak1)
     ImageView filter_effect_leak1;
-    @InjectView(2131691182)
+    @BindView(R.id.filter_effect_leak2)
     ImageView filter_effect_leak2;
-    @InjectView(2131691183)
+    @BindView(R.id.filter_effect_leak3)
     ImageView filter_effect_leak3;
-    @InjectView(2131691184)
+    @BindView(R.id.filter_effect_leak4)
     ImageView filter_effect_leak4;
-    @InjectView(2131691185)
+    @BindView(R.id.filter_effect_leak5)
     ImageView filter_effect_leak5;
-    @InjectView(2131691180)
+    @BindView(R.id.filter_effect_leak_detail)
     android.view.View filter_effect_leak_detail;
     FilterEffectSetRelativeLayout filter_effect_mirror;
     FilterEffectSetRelativeLayout filter_effect_prism;
-    @InjectView(2131691195)
-    android.view.View filter_effect_root_ll;
+    @BindView(R.id.filter_effect_root_ll)
+    View filter_effect_root_ll;
     FilterEffectSetRelativeLayout filter_effect_rotation;
-    @InjectView(2131691177)
+    @BindView(R.id.filter_effect_rotation_rotate90)
     android.view.View filter_effect_rotation_rotate90;
-    @InjectView(2131691178)
+    @BindView(R.id.filter_effect_rotation_rotate90_iv)
     ImageView filter_effect_rotation_rotate90_iv;
-    @InjectView(2131691179)
+    @BindView(R.id.filter_effect_rotation_rotate90_tv)
     AvenirNextCondensedRegularTextView filter_effect_rotation_rotate90_tv;
     FilterEffectSetRelativeLayout filter_effect_saturation;
     android.view.View filter_effect_set_bts_hs;
@@ -606,107 +546,107 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     FilterEffectSetRelativeLayout filter_effect_tinge;
     FilterEffectSetRelativeLayout filter_effect_vertical;
     FilterEffectSetRelativeLayout filter_effect_vignette;
-    @InjectView(2131691201)
+    @BindView(R.id.filter_filter_icon_bottom)
     ImageView filter_filter_icon_bottom;
-    @InjectView(2131691191)
+    @BindView(R.id.filter_filter_root_rl)
     RelativeLayout filter_filter_root_rl;
-    @InjectView(2131691175)
+    @BindView(R.id.filter_group_name_rv)
     RecyclerView filter_group_name_rv;
-    @InjectView(2131691192)
+    @BindView(R.id.filter_list_recyclerview)
     RecyclerView filter_list_recyclerview;
-    @InjectView(2131691157)
+    @BindView(R.id.filter_loop_gesture)
     android.view.View filter_loop_gesture;
-    @InjectView(2131690292)
+    @BindView(R.id.filter_loop_preview_ll)
     LinearLayout filter_loop_preview_ll;
-    @InjectView(2131690279)
+    @BindView(R.id.filter_loop_root_rl)
     android.view.View filter_loop_root_rl;
-    @InjectView(2131691156)
+    @BindView(R.id.filter_loop_slider_root_rl)
     android.view.View filter_loop_slider_root_rl;
-    @InjectView(2131691158)
+    @BindView(R.id.filter_loop_slider_root_rll)
     android.view.View filter_loop_slider_root_rll;
-    @InjectView(2131691162)
+    @BindView(R.id.filter_loop_toggle_ancrt)
     AvenirNextCondensedRegularTextView filter_loop_toggle_ancrt;
-    @InjectView(2131691161)
+    @BindView(R.id.filter_loop_toggle_img)
     ImageView filter_loop_toggle_img;
-    @InjectView(2131690296)
+    @BindView(R.id.filter_loop_toggle_ll)
     android.view.View filter_loop_toggle_ll;
-    @InjectView(2131689755)
+    @BindView(R.id.filter_max_click_view)
     android.view.View filter_max_click_view;
-    @InjectView(2131689767)
+    @BindView(R.id.filter_missing_file_hint_rl)
     android.view.View filter_missing_file_hint_rl;
     FilterEffectSetRelativeLayout filter_music_add;
     FilterEffectSetRelativeLayout filter_music_delete;
-    @InjectView(2131691210)
+    @BindView(R.id.filter_music_icon_bottom)
     ImageView filter_music_icon_bottom;
     LinearLayout filter_music_ll;
     FilterEffectSetRelativeLayout filter_music_split;
     FilterEffectSetRelativeLayout filter_music_volume;
-    @InjectView(2131691197)
+    @BindView(R.id.filter_rule_ll)
     android.view.View filter_rule_ll;
-    @InjectView(2131691198)
+    @BindView(R.id.filter_ruler_view_stub)
     ViewStub filter_ruler_view_stub;
-    @InjectView(2131691169)
-    android.view.View filter_select_mode_current_iv;
-    @InjectView(2131691167)
-    android.view.View filter_select_mode_current_rl;
-    @InjectView(2131691168)
+    @BindView(R.id.filter_select_mode_current_iv)
+    View filter_select_mode_current_iv;
+    @BindView(R.id.filter_select_mode_current_rl)
+    View filter_select_mode_current_rl;
+    @BindView(R.id.filter_select_mode_current_tv)
     TextView filter_select_mode_current_tv;
-    @InjectView(2131691166)
+    @BindView(R.id.filter_select_mode_global_iv)
     android.view.View filter_select_mode_global_iv;
-    @InjectView(2131691164)
+    @BindView(R.id.filter_select_mode_global_rl)
     android.view.View filter_select_mode_global_rl;
-    @InjectView(2131691165)
+    @BindView(R.id.filter_select_mode_global_tv)
     TextView filter_select_mode_global_tv;
-    @InjectView(2131691163)
+    @BindView(R.id.filter_select_mode_rl)
     android.view.View filter_select_mode_rl;
-    @InjectView(2131691174)
+    @BindView(R.id.filter_stablize_cpb)
     CircleProgressBar filter_stablize_cpb;
-    @InjectView(2131691173)
+    @BindView(R.id.filter_stablize_iv)
     ImageView filter_stablize_iv;
-    @InjectView(2131689754)
+    @BindView(R.id.filter_stablize_ll)
     android.view.View filter_stablize_ll;
-    @InjectView(2131691171)
+    @BindView(R.id.filter_stablize_ra)
     android.view.View filter_stablize_ra;
-    @InjectView(2131691172)
+    @BindView(R.id.filter_stablize_rl)
     android.view.View filter_stablize_rl;
-    @InjectView(2131691216)
+    @BindView(R.id.filter_tab_bottom_cover_view)
     android.view.View filter_tab_bottom_cover_view;
-    @InjectView(2131691215)
+    @BindView(R.id.filter_tab_center_area)
     android.view.View filter_tab_center_area;
-    @InjectView(2131691214)
+    @BindView(R.id.filter_tab_center_line_parent)
     android.view.View filter_tab_center_line_parent;
     android.view.View filter_tab_choose_cancle;
     android.view.View filter_tab_choose_confirm;
     android.view.View filter_tab_choose_ll;
-    @InjectView(2131691213)
+    @BindView(R.id.filter_tab_like_filter_ll)
     android.view.View filter_tab_like_filter_ll;
-    @InjectView(2131691146)
+    @BindView(R.id.filter_tab_ll)
     android.view.View filter_tab_ll;
-    @InjectView(2131691203)
+    @BindView(R.id.filter_tag_effect_iv)
     ImageView filter_tag_effect_iv;
-    @InjectView(2131691202)
+    @BindView(R.id.filter_tag_effect_rl)
     RelativeLayout filter_tag_effect_rl;
-    @InjectView(2131691200)
+    @BindView(R.id.filter_tag_filter_iv)
     ImageView filter_tag_filter_iv;
-    @InjectView(2131691199)
+    @BindView(R.id.filter_tag_filter_rl)
     RelativeLayout filter_tag_filter_rl;
-    @InjectView(2131691206)
+    @BindView(R.id.filter_tag_loop_iv)
     ImageView filter_tag_loop_iv;
-    @InjectView(2131691205)
+    @BindView(R.id.filter_tag_loop_rl)
     RelativeLayout filter_tag_loop_rl;
-    @InjectView(2131691209)
+    @BindView(R.id.filter_tag_music_iv)
     ImageView filter_tag_music_iv;
-    @InjectView(2131691208)
+    @BindView(R.id.filter_tag_music_rl)
     RelativeLayout filter_tag_music_rl;
-    @InjectView(2131689756)
+    @BindView(R.id.filter_title_bar)
     android.view.View filter_title_bar;
-    @InjectView(2131691151)
+    @BindView(R.id.filter_unloop_gesture)
     android.view.View filter_unloop_gesture;
-    @InjectView(2131691150)
+    @BindView(R.id.filter_unloop_root_rl)
     android.view.View filter_unloop_root_rl;
-    @InjectView(2131691152)
+    @BindView(R.id.filter_unloop_slider_root_rl)
     android.view.View filter_unloop_slider_root_rl;
-    @InjectView(2131691196)
+    @BindView(R.id.filter_view_stub)
     ViewStub filter_view_stub;
     private float[] finalTransformArray = null;
     Bitmap forFilterBitmap = null;
@@ -740,7 +680,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     boolean isPressed2;
     private boolean isPressedVideoArea = false;
     private boolean isTextCenter = false;
-    @InjectView(2131691193)
+    @BindView(R.id.iv_recyclerview_cache)
     ImageView iv_recyclerview_cache;
     private float lastDegree = -1.0f;
     private int lastDustIndex = -1;
@@ -787,15 +727,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private boolean mConntNext = false;
     private long mCreationDate;
     private long mCurClickTime = 0;
-    private AlignType mCurDefaultAlign;
-    private FontSizeType mCurDefaultFontSize;
+    public VTContainerView.AlignType mCurDefaultAlign;
+    private VTContainerView.FontSizeType mCurDefaultFontSize;
     private int mCurDefaultVerticalPos = 0;
     private int mCurInsertPosition = 0;
     private FilterInfo mCurrentFilterInfo;
     private LongVideosModel mCurrentTextLongVideoModel;
     private String mCurrentTimeStamp;
-    private int mDataFrom;
-    private int mDataType;
+    private int mDataFrom;//0:来自相机拍摄
+    private int mDataType;//1:来自图片,0:来自视频，2:来自gif
     private Bitmap mDateFontBitmap;
     private int mDetermineVideoHeight;
     private int mDetermineVideoWidth;
@@ -833,7 +773,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private boolean mIsSquare;
     private boolean mIsTraditional;
     private boolean mIsVideoLooped;
-    @InjectView(2131689864)
+    @BindView(R.id.back_iv)
     android.view.View mIvBack;
     private GPUImageLookupFilter2 mLUTFilter = new GPUImageLookupFilter2();
     private FramebufferTexture mLUTTexture = null;
@@ -844,106 +784,107 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private MovieBean mMovieBean;
     private float mOffsetX;
     private float mOffsetY;
+    private VidAnalysis va = new VidAnalysis();
     OnClickListener mOnAdditionChangeListener = new OnClickListener() {
         public void onClick(android.view.View v) {
-            FilterActivity.this.clickAddition(v);
+            clickAddition(v);
         }
     };
-    private OnFontClickListener mOnFontClickListener = new OnFontClickListener() {
+    private VTFontDialog.OnFontClickListener mOnFontClickListener = new VTFontDialog.OnFontClickListener() {
         public void OnFontClick(VTFontDesBean vtFontDesBean, int position) {
             boolean z = true;
-            FilterActivity.this.draw_text_view.setTypeface(vtFontDesBean);
-            FilterActivity.this.mIsTraditional = TextUtils.equals(vtFontDesBean.cnonly, Constants.IsTraditionalFont);
+            draw_text_view.setTypeface(vtFontDesBean);
+            mIsTraditional = TextUtils.equals(vtFontDesBean.cnonly, Constants.IsTraditionalFont);
             FilterActivity filterActivity = FilterActivity.this;
             if (vtFontDesBean.capitalized != 1) {
                 z = false;
             }
             filterActivity.mIsCapitalized = z;
-            FilterActivity.this.setTraditionalFont();
+            setTraditionalFont();
         }
     };
     OnClickListener mOnTextEditChangeListener = new OnClickListener() {
         public void onClick(android.view.View v) {
-            FilterActivity.this.clickTextEdit(v);
+            clickTextEdit(v);
         }
     };
     private OnVideoTextSelectListener mOnVideoTextSelectListener = new OnVideoTextSelectListener() {
-        public void cancel(EffectType effectType) {
-            FilterActivity.this.onCancelPress(effectType);
+        public void cancel(FilterEffectManager.EffectType effectType) {
+            onCancelPress(effectType);
         }
 
-        public void confirm(EffectType effectType) {
-            FilterActivity.this.onConfirmPress(effectType);
-            FilterActivity.this.currentEffectType = EffectType.NONE;
-            FilterActivity.this.setNormalFilter();
-            FilterActivity.this.setUndoData(0);
+        public void confirm(FilterEffectManager.EffectType effectType) {
+            onConfirmPress(effectType);
+            currentEffectType = FilterEffectManager.EffectType.NONE;
+            setNormalFilter();
+            setUndoData(0);
         }
 
-        public void videoCropConfirm(EffectType effectType) {
-            FilterActivity.this.restoreSaveAndBack();
-            FilterActivity.this.lastProgressValue = -1.0f;
-            FilterEffectBean bean = FilterActivity.this.mFilterEffectManager.createBean(effectType, new float[]{FilterActivity.this.filter_custom_sk.getMin(), FilterActivity.this.filter_custom_sk.getProgressFloat(), FilterActivity.this.filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
-            if (effectType != EffectType.STRENGTH) {
-                FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_tab_ll, FilterActivity.this.filter_tab_choose_ll, new AnimatorEndListener() {
+        public void videoCropConfirm(FilterEffectManager.EffectType effectType) {
+            restoreSaveAndBack();
+            lastProgressValue = -1.0f;
+            FilterEffectBean bean = mFilterEffectManager.createBean(effectType, new float[]{filter_custom_sk.getMin(), filter_custom_sk.getProgressFloat(), filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
+            if (effectType != FilterEffectManager.EffectType.STRENGTH) {
+                alphaEnterAndExit(filter_tab_ll, filter_tab_choose_ll, new AnimatorEndListener() {
                     public void onAnimationEnd(Animator animation) {
-                        FilterActivity.this.filter_tab_ll.setVisibility(0);
-                        FilterActivity.this.filter_tab_choose_confirm.setEnabled(true);
+                        filter_tab_ll.setVisibility(View.VISIBLE);
+                        filter_tab_choose_confirm.setEnabled(true);
                     }
                 });
-                FilterActivity.this.setFilterEffectGone();
+                setFilterEffectGone();
             }
-            FilterActivity.this.saveVideoTypeOriginWHPercent(FilterActivity.this.mChangeWHPercent);
-            FilterActivity.this.custom_crop_View.refreshPercentValue();
-            FilterActivity.this.custom_crop_View.setVisibility(8);
-            for (int i = 0; i < FilterActivity.this.mFilterEffectDetailSets.size(); i++) {
-                if (((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).getIsSelect()) {
+            saveVideoTypeOriginWHPercent(mChangeWHPercent);
+            custom_crop_View.refreshPercentValue();
+            custom_crop_View.setVisibility(View.GONE);
+            for (int i = 0; i < mFilterEffectDetailSets.size(); i++) {
+                if (((FilterEffectSetRelativeLayout) mFilterEffectDetailSets.get(i)).getIsSelect()) {
                     bean.value = new float[]{(float) i};
                 }
             }
-            FilterActivity.this.setViewColor(FilterActivity.this.filter_effect_crop, FilterActivity.this.mFilterEffectManager.setSelectEffect(bean));
-            if (FilterActivity.this.mFilterEffectManager.setSelectEffect(bean)) {
-                FilterActivity.this.filter_effect_crop.setProgressValue(10.0f);
+            setViewColor(filter_effect_crop, mFilterEffectManager.setSelectEffect(bean));
+            if (mFilterEffectManager.setSelectEffect(bean)) {
+                filter_effect_crop.setProgressValue(10.0f);
             } else {
-                FilterActivity.this.filter_effect_crop.setProgressValue(StaticLayoutUtil.DefaultSpacingadd);
+                filter_effect_crop.setProgressValue(StaticLayoutUtil.DefaultSpacingadd);
             }
-            FilterActivity.this.mDetermineVideoHeight = FilterActivity.this.mVideoHeight;
-            FilterActivity.this.mDetermineVideoWidth = FilterActivity.this.mVideoWidth;
-            FilterActivity.this.saveVideoWHToBitmapManager();
-            FilterActivity.this.setUndoData(1);
-            FilterActivity.this.changeTextModelsSize(true);
+            mDetermineVideoHeight = mVideoHeight;
+            mDetermineVideoWidth = mVideoWidth;
+            saveVideoWHToBitmapManager();
+            setUndoData(1);
+            changeTextModelsSize(true);
         }
 
-        public void videoCropCancel(EffectType effectType) {
-            FilterActivity.this.restoreSaveAndBack();
-            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_tab_ll, FilterActivity.this.filter_tab_choose_ll, new AnimatorEndListener() {
+        public void videoCropCancel(FilterEffectManager.EffectType effectType) {
+            restoreSaveAndBack();
+            alphaEnterAndExit(filter_tab_ll, filter_tab_choose_ll, new AnimatorEndListener() {
                 public void onAnimationEnd(Animator animation) {
-                    FilterActivity.this.filter_tab_ll.setVisibility(0);
-                    FilterActivity.this.filter_tab_choose_cancle.setEnabled(true);
+                    filter_tab_ll.setVisibility(View.VISIBLE);
+                    filter_tab_choose_cancle.setEnabled(true);
                 }
             });
-            FilterActivity.this.setFilterEffectGone();
-            FilterActivity.this.changeVideoPercent(FilterActivity.this.getVideoTypeOriginWHPercent());
-            FilterActivity.this.mVideoHeight = FilterActivity.this.mDetermineVideoHeight;
-            FilterActivity.this.mVideoWidth = FilterActivity.this.mDetermineVideoWidth;
-            FilterActivity.this.saveVideoWHToBitmapManager();
-            FilterActivity.this.initCurrentClipIv(FilterActivity.this.mVideoWidth, FilterActivity.this.mVideoHeight);
-            FilterActivity.this.initMissingFileHint();
-            FilterActivity.this.initPlayBtn(FilterActivity.this.mVideoWidth, FilterActivity.this.mVideoHeight);
-            FilterActivity.this.changeTextModelsSize(false);
+            setFilterEffectGone();
+            changeVideoPercent(getVideoTypeOriginWHPercent());
+            mVideoHeight = mDetermineVideoHeight;
+            mVideoWidth = mDetermineVideoWidth;
+            saveVideoWHToBitmapManager();
+            initCurrentClipIv(mVideoWidth, mVideoHeight);
+            initMissingFileHint();
+            initPlayBtn(mVideoWidth, mVideoHeight);
+            changeTextModelsSize(false);
         }
     };
     private int mOriginVideoHeight;
     private int mOriginVideoWidth;
     private String mOutPath;
-    private Presenter mPresenter;
+    private FilterActivityContract.Presenter mPresenter;
     private boolean mRestart;
     private ScaleGestureDetector mScaleGestureDetector;
     private int mShareType;
     private SpecificCombinationAdapter mSpecificCombinationAdapter;
-    @InjectView(2131689748)
+    @BindView(R.id.filter_surfaceview)
     FilterView mSurfaceView;
     private String mTextContent = "";
-    @InjectView(2131689758)
+    @BindView(R.id.filter_save)
     AvenirNextCondensedMediumTextView mTvSave;
     private GestureDetector mUnLoopGestureDetector;
     private ArrayList<VTFontDesBean> mVTFontDesBeanList;
@@ -956,8 +897,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     VideoEditSwitchTabsHolder mVideoEditSwitchTabsHolder;
     private OutputSurfaceArray mVideoFrames;
     private int mVideoHeight;
-    VideoMusicDialog mVideoMusicDialog;
-    private VideoOptDialog mVideoOptDialog;
+    //VideoMusicDialog mVideoMusicDialog;
+//    private VideoOptDialog mVideoOptDialog;
     private int mVideoRotation;
     private int mVideoWidth;
     private ZHConverter mZHConverter;
@@ -966,10 +907,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private int metricsWidth;
     private int minLoopCount = 6;
     private int minUnLoopCount;
-    private int[] mirrorSetIcon = new int[]{2130837859, 2130837858, 2130837855, 2130837856, 2130837857};
+    private int[] mirrorSetIcon = new int[]{R.drawable.icon_20_effect_new_off, R.drawable.icon_20_effect_new_mirror_top, R.drawable.icon_20_effect_new_mirror_bottom, R.drawable.icon_20_effect_new_mirror_left, R.drawable.icon_20_effect_new_mirror_right};
     private String[] mirrorSetText;
     MirrorSeekBar mirror_seek_bar;
-    @InjectView(2131689775)
+    @BindView(R.id.mirror_seek_bar_vs)
     ViewStub mirror_seek_bar_vs;
     private float moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
     private float moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
@@ -983,21 +924,21 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private GPUImageFilter[] oldFilters = null;
     private boolean onViewAnimating;
     private boolean openStackFrame = false;
-    @InjectView(2131689780)
+    @BindView(R.id.order_video_vs)
     ViewStub order_video_vs;
     private int orientation;
     private float otherValue = StaticLayoutUtil.DefaultSpacingadd;
     private double playbackPercent = 0.0d;
-    @InjectView(2131689769)
+    @BindView(R.id.player_rl)
     FilterPlayButton player_rl;
     private Runnable pressVideoRunnable = new Runnable() {
         public void run() {
-            if (!FilterActivity.NONE_FILTER.equals(FilterActivity.this.mFilterName)) {
-                FilterActivity.this.isPressedVideoArea = true;
-                FilterActivity.this.currentFilterName = FilterActivity.this.mFilterName;
-                FilterActivity.this.mFilterName = FilterActivity.NONE_FILTER;
-                FilterActivity.this.mFilterEffectManager.getLongClickFilterBeans();
-                FilterActivity.this.setNormalFilter();
+            if (!FilterActivity.NONE_FILTER.equals(mFilterName)) {
+                isPressedVideoArea = true;
+                currentFilterName = mFilterName;
+                mFilterName = FilterActivity.NONE_FILTER;
+                mFilterEffectManager.getLongClickFilterBeans();
+                setNormalFilter();
             }
         }
     };
@@ -1011,7 +952,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private int rotate_but;
     private int rotation;
     private GPUImageSaturationFilter saturationFilter;
-    @InjectView(2131689778)
+    @BindView(R.id.save_bottom_effect)
     AvenirNextRegularTextView save_bottom_effect;
     private float scaleFactor = 1.0f;
     private int scaleLock = 0;
@@ -1019,7 +960,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState != 0) {
-                FilterActivity.this.filterAdapter.forbidEnterCollectMode();
+                filterAdapter.forbidEnterCollectMode();
             }
         }
 
@@ -1027,16 +968,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             super.onScrolled(recyclerView, dx, dy);
             FilterActivity filterActivity = FilterActivity.this;
             filterActivity.scrolledX += dx;
-            int first = FilterActivity.this.mFilterListLayoutManager.findFirstVisibleItemPosition();
+            int first = mFilterListLayoutManager.findFirstVisibleItemPosition();
             String showGroupName = "";
-            if (FilterActivity.this.filter_list_recyclerview.getChildAt(0).getLeft() > 0) {
+            if (filter_list_recyclerview.getChildAt(0).getLeft() > 0) {
                 return;
             }
-            if (((RelativeLayout) FilterActivity.this.filter_list_recyclerview.getChildAt(0)).getChildAt(0) instanceof VerticalTextView) {
-                String trim = ((VerticalTextView) ((RelativeLayout) FilterActivity.this.filter_list_recyclerview.getChildAt(0)).getChildAt(0)).getText().toString().trim();
-            } else if (((RelativeLayout) FilterActivity.this.filter_list_recyclerview.getChildAt(1)).getChildAt(0) instanceof VerticalTextView) {
-                String secoundString = ((VerticalTextView) ((RelativeLayout) FilterActivity.this.filter_list_recyclerview.getChildAt(1)).getChildAt(0)).getText().toString().trim();
-                List<FilterInfo> mList = FilterActivity.this.filterAdapter.getInfos();
+            if (((RelativeLayout) filter_list_recyclerview.getChildAt(0)).getChildAt(0) instanceof VerticalTextView) {
+                String trim = ((VerticalTextView) ((RelativeLayout) filter_list_recyclerview.getChildAt(0)).getChildAt(0)).getText().toString().trim();
+            } else if (((RelativeLayout) filter_list_recyclerview.getChildAt(1)).getChildAt(0) instanceof VerticalTextView) {
+                String secoundString = ((VerticalTextView) ((RelativeLayout) filter_list_recyclerview.getChildAt(1)).getChildAt(0)).getText().toString().trim();
+                List<FilterInfo> mList = filterAdapter.getInfos();
                 for (int i = 0; i < mList.size(); i++) {
                     FilterInfo info = (FilterInfo) mList.get(i);
                     if (info.isGroup) {
@@ -1076,80 +1017,80 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private AFGPUImageSkyFilter2 skyFilter;
     int slideLevel;
     RecyclerView specific_combination_rl;
-    @InjectView(2131691176)
+    @BindView(R.id.specific_combination_stub)
     ViewStub specific_combination_stub;
-    @InjectView(2131691147)
+    @BindView(R.id.stack_frame_switch_rl)
     LinearLayout stack_frame_switch_rl;
     private long startTime;
     private float strengthValue = 1.0f;
     private LayoutParams surfaceParams;
-    @InjectView(2131689766)
+    @BindView(R.id.surface_click_view)
     android.view.View surface_click_view;
-    private FontSizeType tempFontSizeType;
-    private LetterSpacingType tempLetterSpacingType;
-    private LineSpacingType tempLineSpacingType;
+    private VTContainerView.FontSizeType tempFontSizeType;
+    private VTContainerView.LetterSpacingType tempLetterSpacingType;
+    private VTContainerView.LineSpacingType tempLineSpacingType;
     private android.view.View text_draw_rl;
     private ImageView text_finger_iv;
-    @InjectView(2131691187)
+    @BindView(R.id.text_move_left_right)
     RelativeLayout text_move_left_right;
     private GPUImageGaussianSelectiveBlurFilter tiltFilter;
-    @InjectView(2131689761)
+    @BindView(R.id.title_add_text)
     AvenirNextRegularTextView title_add_text;
-    @InjectView(2131689760)
+    @BindView(R.id.title_alert_out_time)
     AvenirNextRegularTextView title_alert_out_time;
-    @InjectView(2131689757)
+    @BindView(R.id.title_bg_view)
     android.view.View title_bg_view;
-    @InjectView(2131689759)
+    @BindView(R.id.title_preview)
     AvenirNextRegularTextView title_preview;
     OnTouchListener touch_listener = new OnTouchListener() {
         public boolean onTouch(android.view.View view, MotionEvent event) {
             LogUtil.d(FilterActivity.GestureTag, "======MotionEvent======" + event.toString());
-            if (FilterActivity.this.filter_edit_icon_bottom == null || FilterActivity.this.filter_edit_icon_bottom.getVisibility() != 0) {
+            if (filter_edit_icon_bottom == null || filter_edit_icon_bottom.getVisibility() != View.VISIBLE) {
                 return false;
             }
             if (event.getAction() == 0) {
-                if (!TextUtil.isValidate(FilterActivity.this.mTextContent)) {
+                if (!TextUtil.isValidate(mTextContent)) {
                     return false;
                 }
-                if (FilterActivity.this.draw_text_view.isOnTouchArea(event.getX(), event.getY(), FilterActivity.this.drawTextViewOffsetX)) {
-                    if (!FilterActivity.this.isEditAddText) {
-                        FilterActivity.this.isEditAddText = true;
-                        FilterActivity.this.showAddTextEditLayout();
+                if (draw_text_view.isOnTouchArea(event.getX(), event.getY(), drawTextViewOffsetX)) {
+                    if (!isEditAddText) {
+                        isEditAddText = true;
+                        showAddTextEditLayout();
                     }
-                } else if (!FilterActivity.this.isEditAddText && (FilterActivity.this.video_add_text_control_parent == null || FilterActivity.this.video_add_text_control_parent.getVisibility() != 0)) {
+                } else if (!isEditAddText && (video_add_text_control_parent == null || video_add_text_control_parent.getVisibility() != View.VISIBLE)) {
                     return false;
                 } else {
-                    FilterActivity.this.isEditAddText = false;
-                    FilterActivity.this.confirmAddText();
+                    isEditAddText = false;
+                    confirmAddText();
                     return false;
                 }
             }
             if (event.getPointerCount() > 1) {
-                FilterActivity.this.scaleLock = 2;
-            } else if (FilterActivity.this.scaleLock <= 1 && FilterActivity.this.filter_add_text_parent.getVisibility() == 0) {
+                scaleLock = 2;
+            } else if (scaleLock <= 1 && filter_add_text_parent.getVisibility() == View.VISIBLE) {
                 try {
-                    FilterActivity.this.mMoveGestureDetector.onTouchEvent(event);
+                    mMoveGestureDetector.onTouchEvent(event);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             if (event.getAction() == 1) {
-                FilterActivity.this.scaleLock = FilterActivity.this.scaleLock - 1;
+                scaleLock = scaleLock - 1;
                 LogUtil.d(FilterActivity.GestureTag, "======ACTION_UP======" + event.getPointerCount());
-                FilterActivity.this.hideMoveIconView();
+                hideMoveIconView();
             } else if (event.getAction() == 0) {
                 LogUtil.d(FilterActivity.GestureTag, "======ACTION_DOWN======" + event.getPointerCount());
-                FilterActivity.this.text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(FilterActivity.this.getResources(), 2130838036));
-                FilterActivity.this.showMoveIconView();
-            } else if (event.getAction() == Item.COLLECTION_DETAIL_HEAD_TYPE) {
+                text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), 2130838036));
+                showMoveIconView();
+            } else if (event.getAction() == BaseAdapter.Item.COLLECTION_DETAIL_HEAD_TYPE) {
                 LogUtil.d(FilterActivity.GestureTag, "======ACTION_POINTER_2_UP======" + event.getPointerCount());
-                FilterActivity.this.hideScaleIconView();
+                hideScaleIconView();
             } else if (event.getAction() == 261) {
                 LogUtil.d(FilterActivity.GestureTag, "======ACTION_POINTER_2_DOWN======" + event.getPointerCount());
-                FilterActivity.this.text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(FilterActivity.this.getResources(), 2130838037));
-                FilterActivity.this.showScaleIconView();
+                text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), 2130838037));
+                showScaleIconView();
             }
-            FilterActivity.this.mGestureDetectorCompat.onTouchEvent(event);
+            mGestureDetectorCompat.onTouchEvent(event);
             return true;
         }
     };
@@ -1159,8 +1100,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private int transformCallbackCount;
     private AFGPUImageTransformFilter transformFilter;
     private int transformNeedCount = 0;
-    private Transform[] transformsLooped;
-    private Transform[] transformsStraight;
+    private VidStabilizer.Transform[] transformsLooped;
+    private VidStabilizer.Transform[] transformsStraight;
     private TranslateAnimation translateAnimationHide;
     private TranslateAnimation translateAnimationShow;
     float unLoopDownX;
@@ -1169,12 +1110,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     int unloopEnd;
     int unloopStart;
     private int userLongVideoDuration;
-    private VidAnalysis va;
+//    private VidAnalysis va;
     ValueAnimator valueAnimator = null;
     private List<ImageView> videoEditMissingFootageIvList;
     private float videoRatio;
     RelativeLayout video_add_text_control_parent;
-    @InjectView(2131691188)
+    @BindView(R.id.video_add_text_control_vs)
     ViewStub video_add_text_control_vs;
     ImageView video_edit_add_album_iv;
     FrameLayout video_edit_add_album_tab;
@@ -1188,16 +1129,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     ImageView video_edit_add_textgap_iv;
     FrameLayout video_edit_add_textgap_tab;
     TextView video_edit_add_textgap_tv;
-    @InjectView(2131691190)
+    @BindView(R.id.video_edit_add_type_tv)
     TextView video_edit_add_type_tv;
-    @InjectView(2131689786)
+    @BindView(R.id.video_edit_add_vs)
     ViewStub video_edit_add_vs;
     android.view.View video_edit_audio_mute_indicator;
     TextView video_edit_audio_mute_tv;
     RecyclerView video_edit_audio_rv;
     android.view.View video_edit_audio_volume_line;
     VolumeSlideView video_edit_audio_volume_touch;
-    @InjectView(2131689781)
+    @BindView(R.id.video_edit_effects_vs)
     ViewStub video_edit_effects_vs;
     TextView video_edit_image_mute_tv;
     RecyclerView video_edit_image_rv;
@@ -1207,17 +1148,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     android.view.View video_edit_mute_indicator;
     android.view.View video_edit_mute_indicator_cover;
     FrameLayout video_edit_parent_ll;
-    @InjectView(2131691211)
+    @BindView(R.id.video_edit_parent_new_view_stub)
     ViewStub video_edit_parent_new_view_stub;
     RelativeLayout video_edit_remove_parent;
-    @InjectView(2131691186)
+    @BindView(R.id.video_edit_remove_vs)
     ViewStub video_edit_remove_vs;
-    @InjectView(2131689779)
+    @BindView(R.id.video_edit_text_parent_vs)
     ViewStub video_edit_text_parent_vs;
     RecyclerView video_edit_text_rv;
     RecyclerView video_edit_time_rv;
     TextView video_edit_video_duration_tv;
-    @InjectView(2131689783)
+    @BindView(R.id.video_filter_add_text_vs)
     ViewStub video_filter_add_text_vs;
     CustomSeekBar video_music_audio_sound_seek;
     ImageView video_music_cancel_iv;
@@ -1225,20 +1166,20 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     ImageView video_music_name_iv;
     android.view.View video_music_name_parent;
     TextView video_music_name_tv;
-    @InjectView(2131691189)
+    @BindView(R.id.video_music_name_vs)
     ViewStub video_music_name_vs;
     AudioWaveView video_music_split_awv;
     ImageView video_music_split_cancel_iv;
     ImageView video_music_split_confirm_iv;
     VideoMusicSplitLayout video_music_split_parent;
     FrameLayout video_music_split_tv_parent;
-    @InjectView(2131689785)
+    @BindView(R.id.video_music_split_vs)
     ViewStub video_music_split_vs;
     CustomSeekBar video_music_video_sound_seek;
-    @InjectView(2131691194)
+    @BindView(R.id.video_music_view_stub)
     ViewStub video_music_view_stub;
     FrameLayout video_music_volume_ll;
-    @InjectView(2131689784)
+    @BindView(R.id.video_music_volume_vs)
     ViewStub video_music_volume_vs;
     ImageView video_order_cancel_iv;
     ImageView video_order_confirm_iv;
@@ -1246,9 +1187,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     RecyclerView video_order_rv;
     private ImageView video_text_cancel_iv;
     private ImageView video_text_confirm_iv;
-    @InjectView(2131689764)
+    @BindView(R.id.video_time_slide_bar)
     android.view.View video_time_slide_bar;
-    @InjectView(2131689762)
+    @BindView(R.id.video_time_slide_bar_backgroud_view)
     VideoSplitSlideView video_time_slide_bar_backgroud_view;
     private TextView vt_color_hint;
     private ColorChooseView vt_colorchoose;
@@ -1264,142 +1205,156 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private GPUImageWhiteBalanceFilter whiteBalanceFilter;
 
     public interface OnVideoTextSelectListener {
-        void cancel(EffectType effectType);
+        void cancel(FilterEffectManager.EffectType effectType);
 
-        void confirm(EffectType effectType);
+        void confirm(FilterEffectManager.EffectType effectType);
 
-        void videoCropCancel(EffectType effectType);
+        void videoCropCancel(FilterEffectManager.EffectType effectType);
 
-        void videoCropConfirm(EffectType effectType);
+        void videoCropConfirm(FilterEffectManager.EffectType effectType);
     }
 
     private class FilterEffectOnClick implements OnClickListener {
         private FilterEffectOnClick() {
         }
 
-        /* synthetic */ FilterEffectOnClick(FilterActivity x0, AnonymousClass1 x1) {
-            this();
-        }
+//        /* synthetic */ FilterEffectOnClick(FilterActivity x0, AnonymousClass1 x1) {
+//            this();
+//        }
 
         public void onClick(android.view.View v) {
-            final FilterEffectBean filterEffectBean = FilterActivity.this.mFilterEffectManager.getFilterEffectBeanById(v.getId());
-            FilterActivity.this.currentEffectType = filterEffectBean.effectType;
+            final FilterEffectBean filterEffectBean = mFilterEffectManager.getFilterEffectBeanById(v.getId());
+            currentEffectType = filterEffectBean.effectType;
             if (filterEffectBean.getShowType() == 3) {
                 filterEffectBean.value[1] = filterEffectBean.value[1] == StaticLayoutUtil.DefaultSpacingadd ? 10.0f : StaticLayoutUtil.DefaultSpacingadd;
-                FilterActivity.this.onConfirmPress(FilterActivity.this.currentEffectType);
+                onConfirmPress(currentEffectType);
                 if (filterEffectBean.getItemSelect()) {
-                    if (FilterActivity.this.dateFilter == null) {
-                        FilterActivity.this.dateFilter = FilterActivity.this.getDateFilter();
-                        FilterActivity.this.dateFilter.setCaptureOrientation(FilterActivity.this.mCaptureOrientation, FilterActivity.this.mCameraLensType == 1);
+                    if (dateFilter == null) {
+                        dateFilter = getDateFilter();
+                        dateFilter.setCaptureOrientation(mCaptureOrientation, mCameraLensType == 1);
                     }
-                    FilterActivity.this.dateFilter.setBitmap(FilterActivity.this.getDateBitmap());
+                    dateFilter.setBitmap(getDateBitmap());
                 }
-                FilterActivity.this.setNormalFilter();
-                FilterActivity.this.setUndoData(0);
+                setNormalFilter();
+                setUndoData(0);
                 return;
             }
             new Thread() {
                 public void run() {
                     super.run();
-                    FilterActivity.this.loadFilterEffect(filterEffectBean);
+                    loadFilterEffect(filterEffectBean);
                 }
             }.start();
-            FilterActivity.this.hideSaveAndBack();
+            hideSaveAndBack();
             v.setEnabled(false);
-            FilterActivity.this.initRulerViewStub();
-            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_tab_choose_ll, FilterActivity.this.filter_tab_ll);
-            FilterActivity.this.showFilterEffectRootView(v, filterEffectBean);
+            initRulerViewStub();
+            alphaEnterAndExit(filter_tab_choose_ll, filter_tab_ll);
+            showFilterEffectRootView(v, filterEffectBean);
             if (filterEffectBean.getShowType() == 1) {
-                FilterActivity.this.showFilterEffectButton();
+                showFilterEffectButton();
             } else if (filterEffectBean.getShowType() != 3) {
-                FilterActivity.this.showFilterEffectSeekBar();
-                FilterActivity.this.filter_custom_sk.setOnCustomProgressChangedListener(new FilterOnCustomProgressChangedListener(filterEffectBean.getFilterEffectBeanString()));
+                showFilterEffectSeekBar();
+                filter_custom_sk.setOnCustomProgressChangedListener(new FilterOnCustomProgressChangedListener(filterEffectBean.getFilterEffectBeanString()));
                 float value = filterEffectBean.value[1];
                 float selectPosition;
-                if (filterEffectBean.effectType == EffectType.HORIZONTAL) {
-                    selectPosition = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                if (filterEffectBean.effectType == FilterEffectManager.EffectType.HORIZONTAL) {
+                    selectPosition = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                     if (selectPosition == 90.0f || selectPosition == 270.0f) {
-                        value = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL).value[1];
+                        value = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL).value[1];
                     }
                 } else {
-                    if (filterEffectBean.effectType == EffectType.VERTICAL) {
-                        selectPosition = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                    if (filterEffectBean.effectType == FilterEffectManager.EffectType.VERTICAL) {
+                        selectPosition = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                         if (selectPosition == 90.0f || selectPosition == 270.0f) {
-                            value = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL).value[1];
+                            value = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL).value[1];
                         }
                     }
                 }
-                FilterActivity.this.filter_custom_sk.isCenter(filterEffectBean.isCenterAdsorb()).type(filterEffectBean.effectType).min(filterEffectBean.value[0]).max(filterEffectBean.value[2]).pro(value).build();
+                filter_custom_sk.isCenter(filterEffectBean.isCenterAdsorb()).type(filterEffectBean.effectType).min(filterEffectBean.value[0]).max(filterEffectBean.value[2]).pro(value).build();
             }
             int select;
             int leakDepth;
             int i;
             ImageView imageView;
             switch (v.getId()) {
-                case 2131691108:
-                    FilterActivity.this.filter_stablize_ra.setVisibility(8);
-                    FilterActivity.this.filter_effect_rotation_rotate90.setVisibility(8);
-                    FilterActivity.this.filter_effect_leak_detail.setVisibility(0);
-                    if (FilterActivity.this.specific_combination_rl != null) {
-                        FilterActivity.this.specific_combination_rl.setVisibility(8);
+                case R.id.filter_effect_dust:
+                    filter_stablize_ra.setVisibility(View.GONE);
+                    filter_effect_rotation_rotate90.setVisibility(View.GONE);
+                    filter_effect_leak_detail.setVisibility(View.VISIBLE);
+                    if (specific_combination_rl != null) {
+                        specific_combination_rl.setVisibility(View.GONE);
                     }
                     select = (int) filterEffectBean.selectPosition[0];
                     leakDepth = (int) filterEffectBean.selectPosition[1];
-                    int size = FilterActivity.this.filterEffectLeakList.size();
-                    FilterActivity.this.filter_effect_leak5.setVisibility(0);
-                    FilterActivity.this.lastDustIndex = select;
+                    final int size = filterEffectLeakList.size();
+                    filter_effect_leak5.setVisibility(View.VISIBLE);
+                    lastDustIndex = select;
                     LogUtil.d("filterEffectLeakList", "select  : " + select + " leakDepth : " + leakDepth);
                     for (i = 0; i < size; i++) {
-                        imageView = (ImageView) FilterActivity.this.filterEffectLeakList.get(i);
+                        imageView = (ImageView) filterEffectLeakList.get(i);
                         if (i == select) {
                             imageView.setAlpha(1.0f);
                         } else {
                             imageView.setAlpha(0.4f);
                         }
-                        imageView.setOnClickListener(FilterActivity$FilterEffectOnClick$.Lambda.1.lambdaFactory$(this, size, i));
+                        //imageView.setOnClickListener(FilterActivity$FilterEffectOnClick$.Lambda.1.lambdaFactory$(this, size, i));
+                        final int finalI = i;
+                        imageView.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                lambda$onClick$0(size, finalI,v);
+                            }
+                        });
                     }
                     return;
-                case 2131691110:
-                    FilterActivity.this.filter_stablize_ra.setVisibility(8);
-                    FilterActivity.this.filter_effect_rotation_rotate90.setVisibility(8);
-                    FilterActivity.this.filter_effect_leak_detail.setVisibility(0);
-                    if (FilterActivity.this.specific_combination_rl != null) {
-                        FilterActivity.this.specific_combination_rl.setVisibility(8);
+                case R.id.filter_effect_leak:
+                    filter_stablize_ra.setVisibility(View.GONE);
+                    filter_effect_rotation_rotate90.setVisibility(View.GONE);
+                    filter_effect_leak_detail.setVisibility(View.VISIBLE);
+                    if (specific_combination_rl != null) {
+                        specific_combination_rl.setVisibility(View.GONE);
                     }
                     select = (int) filterEffectBean.selectPosition[0];
                     leakDepth = (int) filterEffectBean.selectPosition[1];
-                    FilterActivity.this.filter_effect_leak5.setVisibility(8);
-                    FilterActivity.this.lastLeakIndex = select;
+                    filter_effect_leak5.setVisibility(View.GONE);
+                    lastLeakIndex = select;
                     LogUtil.d("filterEffectLeakList", "select  : " + select + " leakDepth : " + leakDepth);
                     for (i = 0; i < 4; i++) {
-                        imageView = (ImageView) FilterActivity.this.filterEffectLeakList.get(i);
+                        imageView = (ImageView) filterEffectLeakList.get(i);
                         if (i == select) {
                             imageView.setAlpha(1.0f);
                         } else {
                             imageView.setAlpha(0.4f);
                         }
-                        imageView.setOnClickListener(2.lambdaFactory$(this, i));
+//                        imageView.setOnClickListener(2.lambdaFactory$(this, i));
+                        final int finalI1 = i;
+                        imageView.setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                lambda$onClick$1(finalI1,v);
+                            }
+                        });
                     }
                     return;
-                case 2131691111:
+                case R.id.filter_effect_date:
                     if (filterEffectBean.getItemSelect()) {
-                        if (FilterActivity.this.dateFilter == null) {
-                            FilterActivity.this.dateFilter = FilterActivity.this.getDateFilter();
-                            FilterActivity.this.dateFilter.setCaptureOrientation(FilterActivity.this.mCaptureOrientation, FilterActivity.this.mCameraLensType == 1);
+                        if (dateFilter == null) {
+                            dateFilter = getDateFilter();
+                            dateFilter.setCaptureOrientation(mCaptureOrientation, mCameraLensType == 1);
                         }
-                        FilterActivity.this.dateFilter.setBitmap(FilterActivity.this.getDateBitmap());
+                        dateFilter.setBitmap(getDateBitmap());
                         return;
                     }
                     return;
-                case 2131691119:
-                    if (FilterActivity.this.isVideoType()) {
-                        FilterActivity.this.showCropView();
-                        FilterActivity.this.setSelectEffectDetail(FilterActivity.this.getVideoTypeOriginWHPercent());
-                        FilterActivity.this.fixDateFilter();
-                        for (i = 0; i < FilterActivity.this.mFilterEffectDetailSets.size(); i++) {
-                            ((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).setOnClickListener(new OnClickListener() {
+                case R.id.filter_effect_crop:
+                    if (isVideoType()) {
+                        showCropView();
+                        setSelectEffectDetail(getVideoTypeOriginWHPercent());
+                        fixDateFilter();
+                        for (i = 0; i < mFilterEffectDetailSets.size(); i++) {
+                            ((FilterEffectSetRelativeLayout) mFilterEffectDetailSets.get(i)).setOnClickListener(new OnClickListener() {
                                 public void onClick(android.view.View v) {
-                                    FilterActivity.this.setSelectEffectDetail(FilterActivity.this.mFilterEffectDetailSets.indexOf(v));
+                                    setSelectEffectDetail(mFilterEffectDetailSets.indexOf(v));
                                 }
                             });
                         }
@@ -1407,12 +1362,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     }
                     int width;
                     int height;
-                    if (FilterActivity.this.gpuImageCropFilter != null) {
-                        FilterActivity.this.gpuImageCropFilter.setCropRegion(new CropRegion(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f, 1.0f));
+                    if (gpuImageCropFilter != null) {
+                        gpuImageCropFilter.setCropRegion(new GPUImageCropFilter.CropRegion(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f, 1.0f));
                     }
-                    FilterActivity.this.fixCustomCropViewSize(FilterActivity.this.currentDegree);
-                    OutputSurfaceArray videoFrames = FilterActivity.this.mSurfaceView.getFrameRenderer().getVideoFrames();
-                    if (FilterActivity.this.currentDegree == StaticLayoutUtil.DefaultSpacingadd || FilterActivity.this.currentDegree == 180.0f) {
+                    fixCustomCropViewSize(currentDegree);
+                    OutputSurfaceArray videoFrames = mSurfaceView.getFrameRenderer().getVideoFrames();
+                    if (currentDegree == StaticLayoutUtil.DefaultSpacingadd || currentDegree == 180.0f) {
                         width = videoFrames.mCaptureWidth;
                         height = videoFrames.mCaptureHeight;
                     } else {
@@ -1421,88 +1376,112 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     }
                     videoFrames.mCropWidth = width;
                     videoFrames.mCropHeight = height;
-                    FilterActivity.this.restoreLeakFilter();
-                    FilterActivity.this.showCropView();
-                    FilterActivity.this.setTransformFilterValue(FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).value[1]);
-                    FilterActivity.this.setSelectEffectDetail((int) filterEffectBean.value[0]);
+                    restoreLeakFilter();
+                    showCropView();
+                    setTransformFilterValue(mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).value[1]);
+                    setSelectEffectDetail((int) filterEffectBean.value[0]);
                     if (filterEffectBean.value[0] == StaticLayoutUtil.DefaultSpacingadd) {
-                        FilterActivity.this.custom_crop_View.setVisibility(8);
+                        custom_crop_View.setVisibility(View.GONE);
                     } else {
-                        FilterActivity.this.custom_crop_View.setType((int) filterEffectBean.value[0]);
-                        FilterActivity.this.custom_crop_View.setLeftWidthHeight(filterEffectBean.selectPosition[0], filterEffectBean.selectPosition[1], filterEffectBean.selectPosition[2], filterEffectBean.selectPosition[3]);
-                        FilterActivity.this.custom_crop_View.setVisibility(0);
+                        custom_crop_View.setType((int) filterEffectBean.value[0]);
+                        custom_crop_View.setLeftWidthHeight(filterEffectBean.selectPosition[0], filterEffectBean.selectPosition[1], filterEffectBean.selectPosition[2], filterEffectBean.selectPosition[3]);
+                        custom_crop_View.setVisibility(View.VISIBLE);
                     }
-                    for (i = 0; i < FilterActivity.this.mFilterEffectDetailSets.size(); i++) {
-                        ((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).setOnClickListener(new OnClickListener() {
+                    for (i = 0; i < mFilterEffectDetailSets.size(); i++) {
+                        ((FilterEffectSetRelativeLayout) mFilterEffectDetailSets.get(i)).setOnClickListener(new OnClickListener() {
                             public void onClick(android.view.View v) {
-                                if (FilterActivity.this.mFilterEffectDetailSets.indexOf(v) == 0) {
-                                    FilterActivity.this.custom_crop_View.setVisibility(8);
-                                    FilterActivity.this.setSelectEffectDetail(FilterActivity.this.mFilterEffectDetailSets.indexOf(v));
+                                if (mFilterEffectDetailSets.indexOf(v) == 0) {
+                                    custom_crop_View.setVisibility(View.GONE);
+                                    setSelectEffectDetail(mFilterEffectDetailSets.indexOf(v));
                                     return;
                                 }
-                                FilterActivity.this.custom_crop_View.setType(FilterActivity.this.mFilterEffectDetailSets.indexOf(v));
-                                FilterActivity.this.custom_crop_View.setVisibility(0);
-                                FilterActivity.this.setSelectEffectDetail(FilterActivity.this.mFilterEffectDetailSets.indexOf(v));
+                                custom_crop_View.setType(mFilterEffectDetailSets.indexOf(v));
+                                custom_crop_View.setVisibility(View.VISIBLE);
+                                setSelectEffectDetail(mFilterEffectDetailSets.indexOf(v));
                             }
                         });
                     }
-                    FilterActivity.this.fixDateFilter();
-                    FilterActivity.this.fixCropViewWhenHasRotate();
-                    FilterActivity.this.setNormalFilter();
+                    fixDateFilter();
+                    fixCropViewWhenHasRotate();
+                    setNormalFilter();
                     return;
-                case 2131691120:
-                    FilterActivity.this.initCropAllViewStub();
-                    FilterActivity.this.filter_stablize_ra.setVisibility(8);
-                    FilterActivity.this.filter_effect_rotation_rotate90.setVisibility(0);
-                    FilterActivity.this.filter_effect_leak_detail.setVisibility(8);
-                    if (FilterActivity.this.specific_combination_rl != null) {
-                        FilterActivity.this.specific_combination_rl.setVisibility(8);
+                case R.id.filter_effect_rotation:
+                    initCropAllViewStub();
+                    filter_stablize_ra.setVisibility(View.GONE);
+                    filter_effect_rotation_rotate90.setVisibility(View.VISIBLE);
+                    filter_effect_leak_detail.setVisibility(View.GONE);
+                    if (specific_combination_rl != null) {
+                        specific_combination_rl.setVisibility(View.GONE);
                     }
-                    FilterActivity.this.rotate_but = (int) filterEffectBean.selectPosition[0];
-                    FilterActivity.this.fixGridViewSize((float) FilterActivity.this.rotate_but);
-                    FilterActivity.this.filter_crop_ccav.setVisibility(0);
-                    FilterActivity.this.setValueBeforeRotate();
-                    FilterActivity.this.filter_effect_rotation_rotate90.setOnTouchListener(3.lambdaFactory$(this));
-                    FilterActivity.this.filter_effect_rotation_rotate90.setOnClickListener(4.lambdaFactory$(this));
+                    rotate_but = (int) filterEffectBean.selectPosition[0];
+                    fixGridViewSize((float) rotate_but);
+                    filter_crop_ccav.setVisibility(View.VISIBLE);
+                    setValueBeforeRotate();
+//                    filter_effect_rotation_rotate90.setOnTouchListener(3.lambdaFactory$(this));
+//                    filter_effect_rotation_rotate90.setOnClickListener(4.lambdaFactory$(this));
+                    filter_effect_rotation_rotate90.setOnTouchListener(new OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            return lambda$onClick$2(v,event);
+                        }
+                    });
+                    filter_effect_rotation_rotate90.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            lambda$onClick$3(v);
+                        }
+                    });
                     return;
-                case 2131691121:
-                    FilterActivity.this.initCropAllViewStub();
-                    FilterActivity.this.fixGridViewSize(FilterActivity.this.currentDegree);
-                    FilterActivity.this.filter_crop_ccav.setVisibility(0);
+                case R.id.filter_effect_vertical:
+                    initCropAllViewStub();
+                    fixGridViewSize(currentDegree);
+                    filter_crop_ccav.setVisibility(View.VISIBLE);
                     return;
-                case 2131691122:
-                    FilterActivity.this.initCropAllViewStub();
-                    FilterActivity.this.fixGridViewSize(FilterActivity.this.currentDegree);
-                    FilterActivity.this.filter_crop_ccav.setVisibility(0);
+                case R.id.filter_effect_horizontal:
+                    initCropAllViewStub();
+                    fixGridViewSize(currentDegree);
+                    filter_crop_ccav.setVisibility(View.VISIBLE);
                     return;
-                case 2131691123:
-                    FilterActivity.this.initMirrorSeekViewStub();
-                    for (i = 0; i < FilterActivity.this.mFilterEffectDetailSets.size(); i++) {
+                case R.id.filter_effect_mirror:
+                    initMirrorSeekViewStub();
+                    for (i = 0; i < mFilterEffectDetailSets.size(); i++) {
                         if (i < 5) {
-                            ((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).setFilterEffectImage(FilterActivity.this.mirrorSetIcon[i]);
-                            ((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).setFilterEffectText(FilterActivity.this.mirrorSetText[i]);
+                            mFilterEffectDetailSets.get(i).setFilterEffectImage(mirrorSetIcon[i]);
+                            mFilterEffectDetailSets.get(i).setFilterEffectText(mirrorSetText[i]);
                         } else {
-                            ((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).setVisibility(8);
+                            mFilterEffectDetailSets.get(i).setVisibility(View.GONE);
                         }
                     }
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) FilterActivity.this.filter_effect_set_four.getLayoutParams();
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) filter_effect_set_four.getLayoutParams();
                     layoutParams.rightMargin = DensityUtil.dip2px(20.0f);
-                    FilterActivity.this.filter_effect_set_four.setLayoutParams(layoutParams);
-                    FilterActivity.this.fixMirrorViewSize(FilterActivity.this.currentDegree);
-                    LayoutParams mirrorParams = (LayoutParams) FilterActivity.this.mirror_seek_bar.getLayoutParams();
-                    FilterActivity.this.setSelectEffectDetail((int) filterEffectBean.value[0]);
-                    for (i = 0; i < FilterActivity.this.mFilterEffectDetailSets.size(); i++) {
-                        ((FilterEffectSetRelativeLayout) FilterActivity.this.mFilterEffectDetailSets.get(i)).setOnClickListener(5.lambdaFactory$(this, mirrorParams));
+                    filter_effect_set_four.setLayoutParams(layoutParams);
+                    fixMirrorViewSize(currentDegree);
+                    final LayoutParams mirrorParams = (LayoutParams) mirror_seek_bar.getLayoutParams();
+                    setSelectEffectDetail((int) filterEffectBean.value[0]);
+                    for (i = 0; i < mFilterEffectDetailSets.size(); i++) {
+//                        ((FilterEffectSetRelativeLayout) mFilterEffectDetailSets.get(i)).setOnClickListener(5.lambdaFactory$(this, mirrorParams));
+                        mFilterEffectDetailSets.get(i).setOnClickListener(new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                lambda$onClick$4(mirrorParams,v);
+                            }
+                        });
                         if (((int) filterEffectBean.value[0]) == 0) {
-                            FilterActivity.this.mirror_seek_bar.setVisibility(8);
+                           mirror_seek_bar.setVisibility(View.GONE);
                         } else {
-                            FilterActivity.this.mirror_seek_bar.setMirrorSize((int) filterEffectBean.value[0]);
-                            FilterActivity.this.mirror_seek_bar.setVisibility(0);
-                            FilterActivity.this.mirror_seek_bar.setProgress((int) filterEffectBean.selectPosition[0], mirrorParams.width, mirrorParams.height);
+                            mirror_seek_bar.setMirrorSize((int) filterEffectBean.value[0]);
+                           mirror_seek_bar.setVisibility(View.VISIBLE);
+                            mirror_seek_bar.setProgress((int) filterEffectBean.selectPosition[0], mirrorParams.width, mirrorParams.height);
                         }
                     }
-                    FilterActivity.this.mirror_seek_bar.setOnProgressChangedListener(6.lambdaFactory$(this));
-                    FilterActivity.this.setNormalFilter();
+//                   mirror_seek_bar.setOnProgressChangedListener(6.lambdaFactory$(this));
+                    mirror_seek_bar.setOnProgressChangedListener(new MirrorSeekBar.OnProgressChangedListener() {
+                        @Override
+                        public void onProgressChanged(float f, int i) {
+                            lambda$onClick$5(f,i);
+                        }
+                    });
+                    setNormalFilter();
                     return;
                 default:
                     return;
@@ -1510,37 +1489,37 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
 
         private /* synthetic */ void lambda$onClick$0(int size, int finalI, android.view.View v13) {
-            int index = FilterActivity.this.filterEffectLeakList.indexOf(v13);
-            if (FilterActivity.this.lastDustIndex != index) {
-                FilterActivity.this.lastDustIndex = index;
-                FilterActivity.this.dustFilter.restoreDepth();
+            int index = filterEffectLeakList.indexOf(v13);
+            if (lastDustIndex != index) {
+                lastDustIndex = index;
+                dustFilter.restoreDepth();
             } else {
-                FilterActivity.this.dustFilter.onClickForDepth();
+                dustFilter.onClickForDepth();
             }
             for (int j = 0; j < size; j++) {
                 if (finalI == j) {
-                    FilterActivity.this.loadDustBitmap(finalI);
-                    ((ImageView) FilterActivity.this.filterEffectLeakList.get(j)).setAlpha(1.0f);
+                    loadDustBitmap(finalI);
+                    ((ImageView) filterEffectLeakList.get(j)).setAlpha(1.0f);
                 } else {
-                    ((ImageView) FilterActivity.this.filterEffectLeakList.get(j)).setAlpha(0.4f);
+                    ((ImageView) filterEffectLeakList.get(j)).setAlpha(0.4f);
                 }
             }
         }
 
         private /* synthetic */ void lambda$onClick$1(int finalI, android.view.View v13) {
-            int index = FilterActivity.this.filterEffectLeakList.indexOf(v13);
-            if (FilterActivity.this.lastLeakIndex != index) {
-                FilterActivity.this.lastLeakIndex = index;
-                FilterActivity.this.leakFilter.restoreDepth();
+            int index = filterEffectLeakList.indexOf(v13);
+            if (lastLeakIndex != index) {
+                lastLeakIndex = index;
+                leakFilter.restoreDepth();
             } else {
-                FilterActivity.this.leakFilter.onClickForDepth();
+                leakFilter.onClickForDepth();
             }
             for (int j = 0; j < 4; j++) {
                 if (finalI == j) {
-                    FilterActivity.this.loadLeakBitmap(finalI);
-                    ((ImageView) FilterActivity.this.filterEffectLeakList.get(j)).setAlpha(1.0f);
+                    loadLeakBitmap(finalI);
+                    ((ImageView) filterEffectLeakList.get(j)).setAlpha(1.0f);
                 } else {
-                    ((ImageView) FilterActivity.this.filterEffectLeakList.get(j)).setAlpha(0.4f);
+                    ((ImageView) filterEffectLeakList.get(j)).setAlpha(0.4f);
                 }
             }
         }
@@ -1548,49 +1527,49 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         private /* synthetic */ boolean lambda$onClick$2(android.view.View v12, MotionEvent event) {
             switch (event.getAction()) {
                 case 0:
-                    FilterActivity.this.filter_effect_rotation_rotate90_iv.setAlpha(0.4f);
+                    filter_effect_rotation_rotate90_iv.setAlpha(0.4f);
                     break;
                 case 1:
                 case 3:
-                    FilterActivity.this.filter_effect_rotation_rotate90_iv.setAlpha(1.0f);
+                    filter_effect_rotation_rotate90_iv.setAlpha(1.0f);
                     break;
             }
             return false;
         }
 
         private /* synthetic */ void lambda$onClick$3(android.view.View v1) {
-            FilterActivity.this.rotate_but = FilterActivity.this.rotate_but + 90;
-            if (FilterActivity.this.rotate_but >= 360) {
-                FilterActivity.this.rotate_but = 0;
+            rotate_but = rotate_but + 90;
+            if (rotate_but >= 360) {
+                rotate_but = 0;
             }
-            FilterActivity.this.changeRotateValue((float) FilterActivity.this.rotate_but);
+            changeRotateValue((float) rotate_but);
         }
 
         private /* synthetic */ void lambda$onClick$4(LayoutParams mirrorParams, android.view.View v14) {
-            int indexOf = FilterActivity.this.mFilterEffectDetailSets.indexOf(v14);
+            int indexOf = mFilterEffectDetailSets.indexOf(v14);
             if (indexOf == 0) {
-                FilterActivity.this.mirror_seek_bar.setVisibility(8);
-                FilterActivity.this.setSelectEffectDetail(indexOf);
-                FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(1.0f, 1.0f, FilterActivity.this.orientation);
+                mirror_seek_bar.setVisibility(View.GONE);
+                setSelectEffectDetail(indexOf);
+                mGPUImageMirrorFilter.setMirrorStartAndOrientation(1.0f, 1.0f, orientation);
                 return;
             }
-            FilterActivity.this.setSelectEffectDetail(indexOf);
-            FilterActivity.this.mirror_seek_bar.setVisibility(0);
-            FilterActivity.this.mirror_seek_bar.setMirrorSize(indexOf);
-            FilterActivity.this.mirror_seek_bar.setProgress(50, mirrorParams.width, mirrorParams.height);
-            FilterActivity.this.currentEffectType = EffectType.MIRROR;
+            setSelectEffectDetail(indexOf);
+            mirror_seek_bar.setVisibility(View.VISIBLE);
+            mirror_seek_bar.setMirrorSize(indexOf);
+            mirror_seek_bar.setProgress(50, mirrorParams.width, mirrorParams.height);
+            currentEffectType = FilterEffectManager.EffectType.MIRROR;
             switch (indexOf) {
                 case 1:
-                    FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 1.0f, FilterActivity.this.orientation);
+                    mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 1.0f, orientation);
                     return;
                 case 2:
-                    FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 3.0f, FilterActivity.this.orientation);
+                    mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 3.0f, orientation);
                     return;
                 case 3:
-                    FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 4.0f, FilterActivity.this.orientation);
+                    mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 4.0f, orientation);
                     return;
                 case 4:
-                    FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 2.0f, FilterActivity.this.orientation);
+                    mGPUImageMirrorFilter.setMirrorStartAndOrientation(0.5f, 2.0f, orientation);
                     return;
                 default:
                     return;
@@ -1600,18 +1579,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         private /* synthetic */ void lambda$onClick$5(float progress, int showType) {
             LogUtil.d("onProgressChanged", "progress/100f : " + progress);
             if (showType == 1) {
-                FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 1.0f, FilterActivity.this.orientation);
+                mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 1.0f, orientation);
             } else if (showType == 2) {
-                FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 3.0f, FilterActivity.this.orientation);
+                mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 3.0f, orientation);
             } else if (showType == 3) {
-                FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 4.0f, FilterActivity.this.orientation);
+                mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 4.0f, orientation);
             } else if (showType == 4) {
-                FilterActivity.this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 2.0f, FilterActivity.this.orientation);
+                mGPUImageMirrorFilter.setMirrorStartAndOrientation(progress, 2.0f, orientation);
             }
         }
     }
 
-    private class FilterOnCustomProgressChangedListener implements OnCustomProgressChangedListener {
+    private class FilterOnCustomProgressChangedListener implements MyCustomSeekBar.OnCustomProgressChangedListener {
         private String mFilterEffectTYpe;
 
         public FilterOnCustomProgressChangedListener(String filterEffectTYpe) {
@@ -1623,57 +1602,57 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
 
         public void onProgressChanged(float progressFloat) {
-            if (!(FilterActivity.this.currentEffectType == EffectType.ROTATE || FilterActivity.this.currentEffectType == EffectType.VERTICAL || FilterActivity.this.currentEffectType == EffectType.HORIZONTAL || FilterActivity.this.mSpecificCombinationAdapter == null)) {
-                int selectPosition = FilterActivity.this.mSpecificCombinationAdapter.getSelected();
-                if (!(selectPosition == -1 && selectPosition == FilterActivity.this.filterGroupNameAdapter.getItemCount() - 1)) {
-                    FilterActivity.this.mSpecificCombinationAdapter.setSelected(-1);
-                    FilterActivity.this.mSpecificCombinationAdapter.notifyDataSetChanged();
+            if (!(currentEffectType == FilterEffectManager.EffectType.ROTATE || currentEffectType == FilterEffectManager.EffectType.VERTICAL || currentEffectType == FilterEffectManager.EffectType.HORIZONTAL || mSpecificCombinationAdapter == null)) {
+                int selectPosition = mSpecificCombinationAdapter.getSelected();
+                if (!(selectPosition == -1 && selectPosition == filterGroupNameAdapter.getItemCount() - 1)) {
+                    mSpecificCombinationAdapter.setSelected(-1);
+                    mSpecificCombinationAdapter.notifyDataSetChanged();
                 }
             }
-            if (FilterActivity.this.filterEffectDetailIsShow) {
-                if (FilterActivity.this.currentEffectType == EffectType.ROTATE || FilterActivity.this.currentEffectType == EffectType.VERTICAL || FilterActivity.this.currentEffectType == EffectType.HORIZONTAL) {
+            if (filterEffectDetailIsShow) {
+                if (currentEffectType == FilterEffectManager.EffectType.ROTATE || currentEffectType == FilterEffectManager.EffectType.VERTICAL || currentEffectType == FilterEffectManager.EffectType.HORIZONTAL) {
                     if (progressFloat <= StaticLayoutUtil.DefaultSpacingadd) {
-                        FilterActivity.this.filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(FilterActivity.this.formatFloat1(progressFloat))}));
+                        filter_detail_set_text.setText(String.format("%s: %s", this.mFilterEffectTYpe, formatFloat1(progressFloat)));
                     } else {
-                        FilterActivity.this.filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(FilterActivity.this.formatFloat1(progressFloat))}));
+                        filter_detail_set_text.setText(String.format("%s: +%s", this.mFilterEffectTYpe, formatFloat1(progressFloat)));
                     }
                 } else if (progressFloat <= StaticLayoutUtil.DefaultSpacingadd) {
-                    FilterActivity.this.filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(FilterActivity.this.formatFloat(progressFloat))}));
+                    filter_detail_set_text.setText(String.format("%s: %s", this.mFilterEffectTYpe, formatFloat(progressFloat)));
                 } else {
-                    FilterActivity.this.filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(FilterActivity.this.formatFloat(progressFloat))}));
+                    filter_detail_set_text.setText(String.format("%s: +%s", this.mFilterEffectTYpe, formatFloat(progressFloat)));
                 }
-                if (FilterActivity.this.lastProgressValue != progressFloat) {
-                    FilterActivity.this.lastProgressValue = progressFloat;
-                    FilterActivity.this.editFilterIntensity(progressFloat);
+                if (lastProgressValue != progressFloat) {
+                    lastProgressValue = progressFloat;
+                    editFilterIntensity(progressFloat);
                 }
-            } else if (FilterActivity.this.currentEffectType == EffectType.ROTATE || FilterActivity.this.currentEffectType == EffectType.VERTICAL || FilterActivity.this.currentEffectType == EffectType.HORIZONTAL) {
+            } else if (currentEffectType == FilterEffectManager.EffectType.ROTATE || currentEffectType == FilterEffectManager.EffectType.VERTICAL || currentEffectType == FilterEffectManager.EffectType.HORIZONTAL) {
                 if (progressFloat <= StaticLayoutUtil.DefaultSpacingadd) {
-                    FilterActivity.this.filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(FilterActivity.this.formatFloat1(progressFloat))}));
+                    filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(formatFloat1(progressFloat))}));
                     return;
                 }
-                FilterActivity.this.filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(FilterActivity.this.formatFloat1(progressFloat))}));
+                filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(formatFloat1(progressFloat))}));
             } else if (progressFloat <= StaticLayoutUtil.DefaultSpacingadd) {
-                FilterActivity.this.filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(FilterActivity.this.formatFloat(progressFloat))}));
+                filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(formatFloat(progressFloat))}));
             } else {
-                FilterActivity.this.filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(FilterActivity.this.formatFloat(progressFloat))}));
+                filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(formatFloat(progressFloat))}));
             }
         }
 
         public void onProgressUp(float progressFloat) {
-            if (FilterActivity.this.currentEffectType == EffectType.ROTATE || FilterActivity.this.currentEffectType == EffectType.VERTICAL || FilterActivity.this.currentEffectType == EffectType.HORIZONTAL) {
+            if (currentEffectType == FilterEffectManager.EffectType.ROTATE || currentEffectType == FilterEffectManager.EffectType.VERTICAL || currentEffectType == FilterEffectManager.EffectType.HORIZONTAL) {
                 if (progressFloat <= StaticLayoutUtil.DefaultSpacingadd) {
-                    FilterActivity.this.filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(FilterActivity.this.formatFloat1(progressFloat))}));
+                    filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(formatFloat1(progressFloat))}));
                 } else {
-                    FilterActivity.this.filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(FilterActivity.this.formatFloat1(progressFloat))}));
+                    filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Float.valueOf(formatFloat1(progressFloat))}));
                 }
             } else if (progressFloat <= StaticLayoutUtil.DefaultSpacingadd) {
-                FilterActivity.this.filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(FilterActivity.this.formatFloat(progressFloat))}));
+                filter_detail_set_text.setText(String.format("%s: %s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(formatFloat(progressFloat))}));
             } else {
-                FilterActivity.this.filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(FilterActivity.this.formatFloat(progressFloat))}));
+                filter_detail_set_text.setText(String.format("%s: +%s", new Object[]{this.mFilterEffectTYpe, Integer.valueOf(formatFloat(progressFloat))}));
             }
-            if (FilterActivity.this.lastProgressValue != progressFloat) {
-                FilterActivity.this.lastProgressValue = progressFloat;
-                FilterActivity.this.editFilterIntensity(progressFloat);
+            if (lastProgressValue != progressFloat) {
+                lastProgressValue = progressFloat;
+                editFilterIntensity(progressFloat);
             }
         }
     }
@@ -1698,14 +1677,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         private GestureListener() {
         }
 
-        /* synthetic */ GestureListener(FilterActivity x0, AnonymousClass1 x1) {
-            this();
-        }
+//        /* synthetic */ GestureListener(FilterActivity x0, AnonymousClass1 x1) {
+//            this();
+//        }
 
         public boolean onDoubleTapEvent(MotionEvent event) {
             LogUtil.d(FilterActivity.GestureTag, "======onDoubleTapEvent======event.getAction():" + event.getAction());
             if (event.getAction() == 0) {
-                FilterActivity.this.mCurClickTime = System.currentTimeMillis();
+                mCurClickTime = System.currentTimeMillis();
             } else if (event.getAction() == 1) {
             }
             return super.onDoubleTapEvent(event);
@@ -1715,26 +1694,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private class LoopListener implements OnGestureListener {
         private LoopListener() {
         }
-
-        /* synthetic */ LoopListener(FilterActivity x0, AnonymousClass1 x1) {
-            this();
-        }
+//
+//        /* synthetic */ LoopListener(FilterActivity x0, AnonymousClass1 x1) {
+//            this();
+//        }
 
         public synchronized boolean onDown(MotionEvent e) {
             boolean z = true;
             synchronized (this) {
-                if (e.getRawX() < FilterActivity.this.filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (FilterActivity.this.filter_loop_slider_root_rll.getX() + ((float) FilterActivity.this.filter_loop_slider_root_rll.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
-                    FilterActivity.this.isPressed = false;
+                if (e.getRawX() < filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (filter_loop_slider_root_rll.getX() + ((float) filter_loop_slider_root_rll.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
+                    isPressed = false;
                     z = false;
                 } else {
-                    FilterActivity.this.downXLoop = e.getRawX();
-                    FilterActivity.this.leftStartLoop = FilterActivity.this.filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(17.0f));
-                    FilterActivity.this.leftEndLoop = FilterActivity.this.filter_loop_slider_root_rll.getX() + ((float) DensityUtil.dip2px(20.0f));
-                    FilterActivity.this.rightStartLoop = (FilterActivity.this.filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(10.0f))) + ((float) FilterActivity.this.filter_loop_slider_root_rll.getMeasuredWidth());
-                    FilterActivity.this.rightEndLoop = (FilterActivity.this.filter_loop_slider_root_rll.getX() + ((float) DensityUtil.dip2px(17.0f))) + ((float) FilterActivity.this.filter_loop_slider_root_rll.getMeasuredWidth());
-                    FilterActivity.this.loopLeftMargin = FilterActivity.this.filter_loop_slider_root_rll.getX();
-                    FilterActivity.this.isPressed = true;
-                    FilterActivity.this.movedX = StaticLayoutUtil.DefaultSpacingadd;
+                    downXLoop = e.getRawX();
+                    leftStartLoop = filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(17.0f));
+                    leftEndLoop = filter_loop_slider_root_rll.getX() + ((float) DensityUtil.dip2px(20.0f));
+                    rightStartLoop = (filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(10.0f))) + ((float) filter_loop_slider_root_rll.getMeasuredWidth());
+                    rightEndLoop = (filter_loop_slider_root_rll.getX() + ((float) DensityUtil.dip2px(17.0f))) + ((float) filter_loop_slider_root_rll.getMeasuredWidth());
+                    loopLeftMargin = filter_loop_slider_root_rll.getX();
+                    isPressed = true;
+                    movedX = StaticLayoutUtil.DefaultSpacingadd;
                 }
             }
             return z;
@@ -1742,193 +1721,193 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
         public synchronized boolean onSingleTapUp(MotionEvent e) {
             LogUtil.d("LoopListener", "onSingleTapUp: " + e.getRawX());
-            if (e.getRawX() < FilterActivity.this.filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (FilterActivity.this.filter_loop_slider_root_rll.getX() + ((float) FilterActivity.this.filter_loop_slider_root_rll.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
+            if (e.getRawX() < filter_loop_slider_root_rll.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (filter_loop_slider_root_rll.getX() + ((float) filter_loop_slider_root_rll.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
                 float rawX = e.getRawX();
-                int size = FilterActivity.this.loopEnd - FilterActivity.this.loopStart;
-                int currentX = (int) ((rawX - ((float) DensityUtil.dip2px(84.0f))) / FilterActivity.this.SLIDER_DELTA);
-                int right = (int) (FilterActivity.this.filter_loop_slider_root_rll.getX() + ((float) FilterActivity.this.filter_loop_slider_root_rll.getMeasuredWidth()));
-                if (rawX < ((float) ((int) FilterActivity.this.filter_loop_slider_root_rll.getX()))) {
+                int size = loopEnd - loopStart;
+                int currentX = (int) ((rawX - ((float) DensityUtil.dip2px(84.0f))) / SLIDER_DELTA);
+                int right = (int) (filter_loop_slider_root_rll.getX() + ((float) filter_loop_slider_root_rll.getMeasuredWidth()));
+                if (rawX < ((float) ((int) filter_loop_slider_root_rll.getX()))) {
                     currentX -= size / 2;
                 } else if (rawX > ((float) right)) {
                     currentX -= size / 2;
                 }
-                FilterActivity.this.loopStart = currentX;
-                FilterActivity.this.loopEnd = currentX + size;
-                if (FilterActivity.this.loopStart < 0) {
-                    FilterActivity.this.loopStart = 0;
-                    FilterActivity.this.loopEnd = FilterActivity.this.loopStart + size;
+                loopStart = currentX;
+                loopEnd = currentX + size;
+                if (loopStart < 0) {
+                    loopStart = 0;
+                    loopEnd = loopStart + size;
                 }
-                if (FilterActivity.this.loopEnd > FilterActivity.this.mFrameCount) {
-                    FilterActivity.this.loopEnd = FilterActivity.this.mFrameCount;
-                    FilterActivity.this.loopStart = FilterActivity.this.loopEnd - size;
+                if (loopEnd > mFrameCount) {
+                    loopEnd = mFrameCount;
+                    loopStart = loopEnd - size;
                 }
-                if (FilterActivity.this.loopEnd == FilterActivity.this.mFrameCount) {
+                if (loopEnd == mFrameCount) {
                     FilterActivity filterActivity = FilterActivity.this;
                     filterActivity.loopStart--;
                     filterActivity = FilterActivity.this;
                     filterActivity.loopEnd--;
                 }
-                LayoutParams layoutParams = (LayoutParams) FilterActivity.this.filter_loop_slider_root_rll.getLayoutParams();
-                layoutParams.leftMargin = (int) (((((float) FilterActivity.this.loopStart) * FilterActivity.this.SLIDER_DELTA) + ((float) DensityUtil.dip2px(84.0f))) + 0.5f);
-                int maxMargin = (int) ((((float) (FilterActivity.this.metricsWidth - DensityUtil.dip2px(77.0f))) - ((((float) FilterActivity.this.minLoopCount) * FilterActivity.this.SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f)))) + 0.5f);
+                LayoutParams layoutParams = (LayoutParams) filter_loop_slider_root_rll.getLayoutParams();
+                layoutParams.leftMargin = (int) (((((float) loopStart) * SLIDER_DELTA) + ((float) DensityUtil.dip2px(84.0f))) + 0.5f);
+                int maxMargin = (int) ((((float) (metricsWidth - DensityUtil.dip2px(77.0f))) - ((((float) minLoopCount) * SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f)))) + 0.5f);
                 if (layoutParams.leftMargin <= maxMargin) {
                     maxMargin = layoutParams.leftMargin;
                 }
                 layoutParams.leftMargin = maxMargin;
-                FilterActivity.this.filter_loop_slider_root_rll.setLayoutParams(layoutParams);
-                FilterActivity.this.slideLoop(FilterActivity.this.loopStart, FilterActivity.this.loopEnd);
+                filter_loop_slider_root_rll.setLayoutParams(layoutParams);
+                slideLoop(loopStart, loopEnd);
             }
             return false;
         }
 
         public synchronized boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             LogUtil.d("joker", "e2.getX() : " + e2.getX() + " , e2.getRawX() : " + e2.getRawX());
-            if (FilterActivity.this.isPressed) {
+            if (isPressed) {
                 FilterActivity filterActivity = FilterActivity.this;
                 filterActivity.movedX += distanceX;
-                if (Math.abs(FilterActivity.this.movedX) >= FilterActivity.this.SLIDER_DELTA) {
-                    int deltaLevel = -((int) (Math.abs(FilterActivity.this.movedX) / FilterActivity.this.movedX));
-                    float deltaLevel2 = FilterActivity.this.movedX / FilterActivity.this.SLIDER_DELTA;
-                    LayoutParams layoutParams = (LayoutParams) FilterActivity.this.filter_loop_slider_root_rll.getLayoutParams();
+                if (Math.abs(movedX) >= SLIDER_DELTA) {
+                    int deltaLevel = -((int) (Math.abs(movedX) / movedX));
+                    float deltaLevel2 = movedX / SLIDER_DELTA;
+                    LayoutParams layoutParams = (LayoutParams) filter_loop_slider_root_rll.getLayoutParams();
                     FilterActivity filterActivity2;
                     int i;
                     int maxMargin;
                     int minMargin;
-                    if (FilterActivity.this.downXLoop > FilterActivity.this.leftStartLoop && FilterActivity.this.downXLoop < FilterActivity.this.leftEndLoop) {
+                    if (downXLoop > leftStartLoop && downXLoop < leftEndLoop) {
                         filterActivity = FilterActivity.this;
                         filterActivity.loopStart += deltaLevel;
-                        if (FilterActivity.this.loopStart < 0) {
-                            FilterActivity.this.loopStart = 0;
+                        if (loopStart < 0) {
+                            loopStart = 0;
                         }
-                        if (FilterActivity.this.loopStart < (FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount) {
+                        if (loopStart < (loopEnd + 1) - maxLoopCount) {
                             filterActivity2 = FilterActivity.this;
-                            if ((FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount < 0) {
+                            if ((loopEnd + 1) - maxLoopCount < 0) {
                                 i = 0;
                             } else {
-                                i = (FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount;
+                                i = (loopEnd + 1) - maxLoopCount;
                             }
                             filterActivity2.loopStart = i;
                         } else {
-                            if (FilterActivity.this.loopStart > (FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount) {
+                            if (loopStart > (loopEnd + 1) - minLoopCount) {
                                 filterActivity2 = FilterActivity.this;
-                                if ((FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount < 0) {
+                                if ((loopEnd + 1) - minLoopCount < 0) {
                                     i = 0;
                                 } else {
-                                    i = (FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount;
+                                    i = (loopEnd + 1) - minLoopCount;
                                 }
                                 filterActivity2.loopStart = i;
                             }
                         }
-                        if (FilterActivity.this.loopStart >= 0 && FilterActivity.this.loopEnd - FilterActivity.this.loopStart >= FilterActivity.this.minLoopCount - 1) {
+                        if (loopStart >= 0 && loopEnd - loopStart >= minLoopCount - 1) {
                             int currentMin;
                             int currentMax;
-                            if (FilterActivity.this.loopEnd == FilterActivity.this.mFrameCount) {
+                            if (loopEnd == mFrameCount) {
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopEnd--;
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopStart--;
                             }
                             int nowLeftmargin = layoutParams.leftMargin;
-                            if ((FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount < 0) {
+                            if ((loopEnd + 1) - maxLoopCount < 0) {
                                 currentMin = 0;
                             } else {
-                                currentMin = (FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount;
+                                currentMin = (loopEnd + 1) - maxLoopCount;
                             }
-                            if ((FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount < 0) {
+                            if ((loopEnd + 1) - minLoopCount < 0) {
                                 currentMax = 0;
                             } else {
-                                currentMax = (FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount;
+                                currentMax = (loopEnd + 1) - minLoopCount;
                             }
-                            maxMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) currentMax) * FilterActivity.this.SLIDER_DELTA)) + 0.5f);
-                            minMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) currentMin) * FilterActivity.this.SLIDER_DELTA)) + 0.5f);
-                            int trueMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) ((int) ((e2.getRawX() - ((float) DensityUtil.dip2px(84.0f))) / FilterActivity.this.SLIDER_DELTA))) * FilterActivity.this.SLIDER_DELTA)) + 0.5f);
+                            maxMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) currentMax) * SLIDER_DELTA)) + 0.5f);
+                            minMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) currentMin) * SLIDER_DELTA)) + 0.5f);
+                            int trueMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) ((int) ((e2.getRawX() - ((float) DensityUtil.dip2px(84.0f))) / SLIDER_DELTA))) * SLIDER_DELTA)) + 0.5f);
                             if (trueMargin < minMargin) {
                                 trueMargin = minMargin;
                                 filterActivity2 = FilterActivity.this;
-                                if ((FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount < 0) {
+                                if ((loopEnd + 1) - maxLoopCount < 0) {
                                     i = 0;
                                 } else {
-                                    i = (FilterActivity.this.loopEnd + 1) - FilterActivity.this.maxLoopCount;
+                                    i = (loopEnd + 1) - maxLoopCount;
                                 }
                                 filterActivity2.loopStart = i;
                             }
                             if (trueMargin > maxMargin) {
                                 trueMargin = maxMargin;
                                 filterActivity2 = FilterActivity.this;
-                                if ((FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount < 0) {
+                                if ((loopEnd + 1) - minLoopCount < 0) {
                                     i = 0;
                                 } else {
-                                    i = (FilterActivity.this.loopEnd + 1) - FilterActivity.this.minLoopCount;
+                                    i = (loopEnd + 1) - minLoopCount;
                                 }
                                 filterActivity2.loopStart = i;
                             }
                             layoutParams.leftMargin = trueMargin;
                             layoutParams.width -= layoutParams.leftMargin - nowLeftmargin;
-                            if (((float) layoutParams.width) < ((((float) FilterActivity.this.minLoopCount) * FilterActivity.this.SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f) {
-                                layoutParams.width = (int) (((((float) FilterActivity.this.minLoopCount) * FilterActivity.this.SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
+                            if (((float) layoutParams.width) < ((((float) minLoopCount) * SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f) {
+                                layoutParams.width = (int) (((((float) minLoopCount) * SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
                             }
-                            if (((float) layoutParams.width) > ((FilterActivity.this.SLIDER_DELTA * ((float) FilterActivity.this.maxLoopCount)) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f) {
-                                layoutParams.width = (int) (((FilterActivity.this.SLIDER_DELTA * ((float) FilterActivity.this.maxLoopCount)) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
+                            if (((float) layoutParams.width) > ((SLIDER_DELTA * ((float) maxLoopCount)) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f) {
+                                layoutParams.width = (int) (((SLIDER_DELTA * ((float) maxLoopCount)) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
                             }
-                            FilterActivity.this.filter_loop_slider_root_rll.setLayoutParams(layoutParams);
-                            FilterActivity.this.slideLoop(FilterActivity.this.loopStart, FilterActivity.this.loopEnd);
-                            FilterActivity.this.mSurfaceView.pauseAtZero(false, true);
+                            filter_loop_slider_root_rll.setLayoutParams(layoutParams);
+                            slideLoop(loopStart, loopEnd);
+                            mSurfaceView.pauseAtZero(false, true);
                         }
-                    } else if (FilterActivity.this.downXLoop <= FilterActivity.this.rightStartLoop || FilterActivity.this.downXLoop >= FilterActivity.this.rightEndLoop) {
+                    } else if (downXLoop <= rightStartLoop || downXLoop >= rightEndLoop) {
                         filterActivity = FilterActivity.this;
                         filterActivity.loopStart += deltaLevel;
-                        if (FilterActivity.this.loopStart < 0) {
+                        if (loopStart < 0) {
                             filterActivity = FilterActivity.this;
                             filterActivity.loopStart++;
                             filterActivity = FilterActivity.this;
                             filterActivity.loopEnd++;
                         } else {
-                            if (FilterActivity.this.loopEnd - (FilterActivity.this.loopStart - deltaLevel) < FilterActivity.this.minLoopCount - 1) {
+                            if (loopEnd - (loopStart - deltaLevel) < minLoopCount - 1) {
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopStart--;
                             }
                         }
                         filterActivity = FilterActivity.this;
                         filterActivity.loopEnd += deltaLevel;
-                        if (FilterActivity.this.loopEnd > FilterActivity.this.mFrameCount) {
-                            FilterActivity.this.loopEnd = FilterActivity.this.mFrameCount;
+                        if (loopEnd > mFrameCount) {
+                            loopEnd = mFrameCount;
                             filterActivity = FilterActivity.this;
                             filterActivity.loopStart -= deltaLevel;
                         } else {
-                            if ((FilterActivity.this.loopEnd - deltaLevel) - (FilterActivity.this.loopStart - deltaLevel) < FilterActivity.this.minLoopCount - 1) {
+                            if ((loopEnd - deltaLevel) - (loopStart - deltaLevel) < minLoopCount - 1) {
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopEnd++;
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopStart -= deltaLevel;
                             }
                         }
-                        if (FilterActivity.this.loopStart >= 0 && FilterActivity.this.loopEnd <= FilterActivity.this.mFrameCount) {
-                            if (FilterActivity.this.loopEnd == FilterActivity.this.mFrameCount) {
+                        if (loopStart >= 0 && loopEnd <= mFrameCount) {
+                            if (loopEnd == mFrameCount) {
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopEnd--;
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopStart--;
                             }
                             int nowWidth = layoutParams.width;
-                            layoutParams.leftMargin = (int) (((float) layoutParams.leftMargin) - (FilterActivity.this.SLIDER_DELTA * deltaLevel2));
-                            layoutParams.leftMargin = (int) ((FilterActivity.this.loopLeftMargin + (e2.getRawX() - FilterActivity.this.downXLoop)) + 0.5f);
+                            layoutParams.leftMargin = (int) (((float) layoutParams.leftMargin) - (SLIDER_DELTA * deltaLevel2));
+                            layoutParams.leftMargin = (int) ((loopLeftMargin + (e2.getRawX() - downXLoop)) + 0.5f);
                             minMargin = DensityUtil.dip2px(84.0f);
-                            maxMargin = (FilterActivity.this.metricsWidth - DensityUtil.dip2px(77.0f)) - nowWidth;
+                            maxMargin = (metricsWidth - DensityUtil.dip2px(77.0f)) - nowWidth;
                             if (layoutParams.leftMargin < minMargin) {
                                 layoutParams.leftMargin = minMargin;
                             }
                             if (layoutParams.leftMargin > maxMargin) {
                                 layoutParams.leftMargin = maxMargin;
                             }
-                            int currentStart = (int) ((((float) (layoutParams.leftMargin - DensityUtil.dip2px(84.0f))) / FilterActivity.this.SLIDER_DELTA) + 0.5f);
-                            layoutParams.leftMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) currentStart) * FilterActivity.this.SLIDER_DELTA)) + 0.5f);
+                            int currentStart = (int) ((((float) (layoutParams.leftMargin - DensityUtil.dip2px(84.0f))) / SLIDER_DELTA) + 0.5f);
+                            layoutParams.leftMargin = (int) ((((float) DensityUtil.dip2px(84.0f)) + (((float) currentStart) * SLIDER_DELTA)) + 0.5f);
                             if (layoutParams.leftMargin < minMargin) {
                                 layoutParams.leftMargin = minMargin;
                             }
                             if (layoutParams.leftMargin > maxMargin) {
                                 layoutParams.leftMargin = maxMargin;
                             }
-                            int size = FilterActivity.this.loopEnd - FilterActivity.this.loopStart;
+                            int size = loopEnd - loopStart;
                             filterActivity2 = FilterActivity.this;
                             if (currentStart < 0) {
                                 i = 0;
@@ -1936,71 +1915,71 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                 i = currentStart;
                             }
                             filterActivity2.loopStart = i;
-                            FilterActivity.this.loopEnd = currentStart + size > FilterActivity.this.mFrameCount ? FilterActivity.this.mFrameCount - 1 : currentStart + size;
-                            FilterActivity.this.filter_loop_slider_root_rll.setLayoutParams(layoutParams);
-                            FilterActivity.this.slideLoop(FilterActivity.this.loopStart, FilterActivity.this.loopEnd);
-                            FilterActivity.this.mSurfaceView.pauseAtZero(false, true);
+                            loopEnd = currentStart + size > mFrameCount ? mFrameCount - 1 : currentStart + size;
+                            filter_loop_slider_root_rll.setLayoutParams(layoutParams);
+                            slideLoop(loopStart, loopEnd);
+                            mSurfaceView.pauseAtZero(false, true);
                         }
                     } else {
                         filterActivity = FilterActivity.this;
                         filterActivity.loopEnd += deltaLevel;
-                        if (FilterActivity.this.loopEnd > FilterActivity.this.mFrameCount) {
-                            FilterActivity.this.loopEnd = FilterActivity.this.mFrameCount;
+                        if (loopEnd > mFrameCount) {
+                            loopEnd = mFrameCount;
                         }
-                        if (FilterActivity.this.loopEnd > (FilterActivity.this.loopStart + FilterActivity.this.maxLoopCount) - 1) {
+                        if (loopEnd > (loopStart + maxLoopCount) - 1) {
                             filterActivity2 = FilterActivity.this;
-                            if ((FilterActivity.this.loopStart + FilterActivity.this.maxLoopCount) - 1 > FilterActivity.this.mFrameCount - 1) {
-                                i = FilterActivity.this.mFrameCount - 1;
+                            if ((loopStart + maxLoopCount) - 1 > mFrameCount - 1) {
+                                i = mFrameCount - 1;
                             } else {
-                                i = (FilterActivity.this.loopStart + FilterActivity.this.maxLoopCount) - 1;
+                                i = (loopStart + maxLoopCount) - 1;
                             }
                             filterActivity2.loopEnd = i;
                         } else {
-                            if (FilterActivity.this.loopEnd < (FilterActivity.this.loopStart + FilterActivity.this.minLoopCount) - 1) {
+                            if (loopEnd < (loopStart + minLoopCount) - 1) {
                                 filterActivity2 = FilterActivity.this;
-                                if ((FilterActivity.this.loopStart + FilterActivity.this.minLoopCount) - 1 > FilterActivity.this.mFrameCount - 1) {
-                                    i = FilterActivity.this.mFrameCount - 1;
+                                if ((loopStart + minLoopCount) - 1 > mFrameCount - 1) {
+                                    i = mFrameCount - 1;
                                 } else {
-                                    i = (FilterActivity.this.loopStart + FilterActivity.this.minLoopCount) - 1;
+                                    i = (loopStart + minLoopCount) - 1;
                                 }
                                 filterActivity2.loopEnd = i;
                             }
                         }
-                        if (FilterActivity.this.loopEnd <= FilterActivity.this.mFrameCount && FilterActivity.this.loopEnd - FilterActivity.this.loopStart >= FilterActivity.this.minLoopCount - 1) {
-                            if (FilterActivity.this.loopEnd == FilterActivity.this.mFrameCount) {
+                        if (loopEnd <= mFrameCount && loopEnd - loopStart >= minLoopCount - 1) {
+                            if (loopEnd == mFrameCount) {
                                 filterActivity = FilterActivity.this;
                                 filterActivity.loopEnd--;
                             }
-                            int newWidth = (int) (((((float) ((int) ((((float) (((int) (e2.getRawX() - FilterActivity.this.filter_loop_slider_root_rll.getX())) - DensityUtil.dip2px(20.0f))) / FilterActivity.this.SLIDER_DELTA) + 0.5f))) * FilterActivity.this.SLIDER_DELTA) + 0.5f) + ((float) DensityUtil.dip2px(20.0f)));
-                            int maxWidth = (int) (((((float) FilterActivity.this.maxLoopCount) * FilterActivity.this.SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
-                            int minWidth = (int) (((((float) FilterActivity.this.minLoopCount) * FilterActivity.this.SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
+                            int newWidth = (int) (((((float) ((int) ((((float) (((int) (e2.getRawX() - filter_loop_slider_root_rll.getX())) - DensityUtil.dip2px(20.0f))) / SLIDER_DELTA) + 0.5f))) * SLIDER_DELTA) + 0.5f) + ((float) DensityUtil.dip2px(20.0f)));
+                            int maxWidth = (int) (((((float) maxLoopCount) * SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
+                            int minWidth = (int) (((((float) minLoopCount) * SLIDER_DELTA) + ((float) DensityUtil.dip2px(20.0f))) + 0.5f);
                             if (newWidth < minWidth) {
                                 newWidth = minWidth;
                                 filterActivity2 = FilterActivity.this;
-                                if ((FilterActivity.this.loopStart + FilterActivity.this.minLoopCount) - 1 > FilterActivity.this.mFrameCount) {
-                                    i = FilterActivity.this.mFrameCount;
+                                if ((loopStart + minLoopCount) - 1 > mFrameCount) {
+                                    i = mFrameCount;
                                 } else {
-                                    i = (FilterActivity.this.loopStart + FilterActivity.this.minLoopCount) - 1;
+                                    i = (loopStart + minLoopCount) - 1;
                                 }
                                 filterActivity2.loopEnd = i;
                             }
                             if (newWidth > maxWidth) {
                                 newWidth = maxWidth;
                                 filterActivity2 = FilterActivity.this;
-                                if ((FilterActivity.this.loopStart + FilterActivity.this.maxLoopCount) - 1 > FilterActivity.this.mFrameCount) {
-                                    i = FilterActivity.this.mFrameCount;
+                                if ((loopStart + maxLoopCount) - 1 > mFrameCount) {
+                                    i = mFrameCount;
                                 } else {
-                                    i = (FilterActivity.this.loopStart + FilterActivity.this.maxLoopCount) - 1;
+                                    i = (loopStart + maxLoopCount) - 1;
                                 }
                                 filterActivity2.loopEnd = i;
                             }
                             layoutParams.width = newWidth;
-                            FilterActivity.this.filter_loop_slider_root_rll.setLayoutParams(layoutParams);
-                            FilterActivity.this.slideLoop(FilterActivity.this.loopStart, FilterActivity.this.loopEnd);
-                            FilterActivity.this.mSurfaceView.pauseAtZero(true, true);
+                            filter_loop_slider_root_rll.setLayoutParams(layoutParams);
+                            slideLoop(loopStart, loopEnd);
+                            mSurfaceView.pauseAtZero(true, true);
                         }
                     }
-                    FilterActivity.this.movedX = StaticLayoutUtil.DefaultSpacingadd;
+                    movedX = StaticLayoutUtil.DefaultSpacingadd;
                 }
             }
             return false;
@@ -2017,94 +1996,94 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private class MoveListener extends SimpleOnMoveGestureListener {
+    private class MoveListener extends MoveGestureDetector.SimpleOnMoveGestureListener {
         private MoveListener() {
         }
 
-        /* synthetic */ MoveListener(FilterActivity x0, AnonymousClass1 x1) {
-            this();
-        }
+//        /* synthetic */ MoveListener(FilterActivity x0, AnonymousClass1 x1) {
+//            this();
+//        }
 
         public boolean onMoveBegin(MoveGestureDetector detector) {
             LogUtil.d(FilterActivity.GestureTag, "======onMoveBegin======");
             LogUtil.d(FilterActivity.MoveTag, "======onMoveBegin======");
-            FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.DafaultMoveXOffset = (int) FilterActivity.this.draw_text_view.getMoveXOffset();
-            FilterActivity.this.DafaultMoveYOffset = (int) App.getResource().getDimension(2131427609);
-            FilterActivity.this.mCurDefaultAlign = FilterActivity.this.draw_text_view.getAlignType();
-            FilterActivity.this.mCurDefaultVerticalPos = FilterActivity.this.draw_text_view.getVerticalPos();
-            FilterActivity.this.isMove = false;
-            FilterActivity.this.text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(FilterActivity.this.getResources(), 2130838036));
-            FilterActivity.this.showMoveIconView();
+            moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+            moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
+            DafaultMoveXOffset = (int) draw_text_view.getMoveXOffset();
+            DafaultMoveYOffset = (int) App.getResource().getDimension(R.dimen.video_add_text_y_offset);
+            mCurDefaultAlign = draw_text_view.getAlignType();
+            mCurDefaultVerticalPos = draw_text_view.getVerticalPos();
+            isMove = false;
+            text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.icon_25_text_finger_move));
+            showMoveIconView();
             return super.onMoveBegin(detector);
         }
 
         public boolean onMove(MoveGestureDetector detector) {
             PointF d = detector.getFocusDelta();
-            if (!(FilterActivity.this.moveDistanceX == StaticLayoutUtil.DefaultSpacingadd && FilterActivity.this.moveDistanceY == StaticLayoutUtil.DefaultSpacingadd && (Math.abs(d.x) > 50.0f || Math.abs(d.y) > 50.0f))) {
-                FilterActivity.this.moveDistanceX = FilterActivity.this.moveDistanceX + d.x;
-                FilterActivity.this.moveDistanceY = FilterActivity.this.moveDistanceY + d.y;
+            if (!(moveDistanceX == StaticLayoutUtil.DefaultSpacingadd && moveDistanceY == StaticLayoutUtil.DefaultSpacingadd && (Math.abs(d.x) > 50.0f || Math.abs(d.y) > 50.0f))) {
+                moveDistanceX = moveDistanceX + d.x;
+                moveDistanceY = moveDistanceY + d.y;
             }
-            if (!FilterActivity.this.isMove && Math.sqrt(Math.pow((double) FilterActivity.this.moveDistanceX, 2.0d) + Math.pow((double) FilterActivity.this.moveDistanceY, 2.0d)) >= 20.0d) {
-                FilterActivity.this.isMove = true;
+            if (!isMove && Math.sqrt(Math.pow((double) moveDistanceX, 2.0d) + Math.pow((double) moveDistanceY, 2.0d)) >= 20.0d) {
+                isMove = true;
             }
-            if (FilterActivity.this.isMove) {
-                FilterActivity.this.isMove = false;
-                if (FilterActivity.this.text_finger_iv.getVisibility() == 8) {
-                    FilterActivity.this.text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(FilterActivity.this.getResources(), 2130838036));
-                    FilterActivity.this.showMoveIconView();
+            if (isMove) {
+                isMove = false;
+                if (text_finger_iv.getVisibility() == View.GONE) {
+                    text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.icon_25_text_finger_move));
+                    showMoveIconView();
                 }
             }
-            switch (FilterActivity.this.mCurDefaultAlign) {
+            switch (mCurDefaultAlign) {
                 case L:
-                    if (FilterActivity.this.moveDistanceX >= StaticLayoutUtil.DefaultSpacingadd) {
-                        if (FilterActivity.this.moveDistanceX >= ((float) FilterActivity.this.DafaultMoveXOffset)) {
-                            FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-                            FilterActivity.this.mCurDefaultAlign = AlignType.M;
+                    if (moveDistanceX >= StaticLayoutUtil.DefaultSpacingadd) {
+                        if (moveDistanceX >= ((float) DafaultMoveXOffset)) {
+                            moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+                            mCurDefaultAlign = VTContainerView.AlignType.M;
                             break;
                         }
                     }
-                    FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+                    moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
                     break;
-                    break;
+
                 case M:
-                    if (FilterActivity.this.moveDistanceX > ((float) (-FilterActivity.this.DafaultMoveXOffset))) {
-                        if (FilterActivity.this.moveDistanceX >= ((float) FilterActivity.this.DafaultMoveXOffset)) {
-                            FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-                            FilterActivity.this.mCurDefaultAlign = AlignType.R;
+                    if (moveDistanceX > ((float) (-DafaultMoveXOffset))) {
+                        if (moveDistanceX >= ((float) DafaultMoveXOffset)) {
+                            moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+                            mCurDefaultAlign = VTContainerView.AlignType.R;
                             break;
                         }
                     }
-                    FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-                    FilterActivity.this.mCurDefaultAlign = AlignType.L;
+                    moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+                    mCurDefaultAlign = VTContainerView.AlignType.L;
                     break;
-                    break;
+
                 case R:
-                    if (FilterActivity.this.moveDistanceX > ((float) (-FilterActivity.this.DafaultMoveXOffset))) {
-                        if (FilterActivity.this.moveDistanceX > StaticLayoutUtil.DefaultSpacingadd) {
-                            FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+                    if (moveDistanceX > ((float) (-DafaultMoveXOffset))) {
+                        if (moveDistanceX > StaticLayoutUtil.DefaultSpacingadd) {
+                            moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
                             break;
                         }
                     }
-                    FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-                    FilterActivity.this.mCurDefaultAlign = AlignType.M;
+                    moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+                    mCurDefaultAlign = VTContainerView.AlignType.M;
                     break;
-                    break;
+
             }
-            LogUtil.d(VTContainerView.TAG, "mCurDefaultVerticalPos:" + FilterActivity.this.mCurDefaultVerticalPos + ", verticalPos:" + (((float) FilterActivity.this.mCurDefaultVerticalPos) + FilterActivity.this.moveDistanceY));
-            FilterActivity.this.setTextAlign(FilterActivity.this.mCurDefaultAlign, (int) (((double) FilterActivity.this.mCurDefaultVerticalPos) + (Math.ceil((double) (FilterActivity.this.moveDistanceY / ((float) FilterActivity.this.DafaultMoveYOffset))) * ((double) FilterActivity.this.DafaultMoveYOffset))));
-            LogUtil.d(FilterActivity.GestureTag, "======onMove======PointF:x:" + d.x + ", y:" + d.y + ", moveDistanceX:" + FilterActivity.this.moveDistanceX + ", moveDistanceY:" + FilterActivity.this.moveDistanceY);
-            LogUtil.d(FilterActivity.MoveTag, "======onMove======PointF:x:" + d.x + ", y:" + d.y + ", moveDistanceX:" + FilterActivity.this.moveDistanceX + ", moveDistanceY:" + FilterActivity.this.moveDistanceY);
+            LogUtil.d(VTContainerView.TAG, "mCurDefaultVerticalPos:" + mCurDefaultVerticalPos + ", verticalPos:" + (((float) mCurDefaultVerticalPos) + moveDistanceY));
+            setTextAlign(mCurDefaultAlign, (int) (((double) mCurDefaultVerticalPos) + (Math.ceil((double) (moveDistanceY / ((float) DafaultMoveYOffset))) * ((double) DafaultMoveYOffset))));
+            LogUtil.d(FilterActivity.GestureTag, "======onMove======PointF:x:" + d.x + ", y:" + d.y + ", moveDistanceX:" + moveDistanceX + ", moveDistanceY:" + moveDistanceY);
+            LogUtil.d(FilterActivity.MoveTag, "======onMove======PointF:x:" + d.x + ", y:" + d.y + ", moveDistanceX:" + moveDistanceX + ", moveDistanceY:" + moveDistanceY);
             return true;
         }
 
         public void onMoveEnd(MoveGestureDetector detector) {
             LogUtil.d(FilterActivity.GestureTag, "======onMoveEnd======");
             LogUtil.d(FilterActivity.MoveTag, "======onMoveEnd======");
-            FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.isMove = false;
+            moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+            moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
+            isMove = false;
             super.onMoveEnd(detector);
         }
     }
@@ -2113,138 +2092,130 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         private ScaleListener() {
         }
 
-        /* synthetic */ ScaleListener(FilterActivity x0, AnonymousClass1 x1) {
-            this();
-        }
+//        /* synthetic */ ScaleListener(FilterActivity x0, AnonymousClass1 x1) {
+//            this();
+//        }
 
         public boolean onScaleBegin(ScaleGestureDetector detector) {
             LogUtil.d(FilterActivity.GestureTag, "======onScaleBegin======");
             LogUtil.d(FilterActivity.ScaleTag, "======onScaleBegin======");
-            FilterActivity.this.scaleFactor = 1.0f;
-            FilterActivity.this.mCurDefaultFontSize = FilterActivity.this.draw_text_view.getFontSizeType();
-            FilterActivity.this.text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(FilterActivity.this.getResources(), 2130838037));
-            FilterActivity.this.showScaleIconView();
+            scaleFactor = 1.0f;
+            mCurDefaultFontSize = draw_text_view.getFontSizeType();
+            text_finger_iv.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.icon_25_text_finger_scale));
+            showScaleIconView();
             return super.onScaleBegin(detector);
         }
 
         public boolean onScale(ScaleGestureDetector detector) {
             LogUtil.d(FilterActivity.GestureTag, "======onScale======" + detector.getScaleFactor());
             LogUtil.d(FilterActivity.ScaleTag, "======onScale======" + detector.getScaleFactor());
-            FilterActivity.this.scaleFactor = FilterActivity.this.scaleFactor * detector.getScaleFactor();
-            LogUtil.d("test", "======onScale======scaleFactor:" + FilterActivity.this.scaleFactor);
+            scaleFactor = scaleFactor * detector.getScaleFactor();
+            LogUtil.d("test", "======onScale======scaleFactor:" + scaleFactor);
             boolean isChange = false;
-            switch (FilterActivity.this.mCurDefaultFontSize) {
+            switch (mCurDefaultFontSize) {
                 case XS:
-                    if (FilterActivity.this.scaleFactor >= 1.0f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.S;
+                    if (scaleFactor >= 1.0f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.S;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    break;
+                    scaleFactor = 1.0f;
                     break;
                 case S:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.M;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.M;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.XS;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.XS;
                     isChange = true;
-                    break;
                     break;
                 case M:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.L;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.L;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.S;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.S;
                     isChange = true;
-                    break;
                     break;
                 case L:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.XL;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.XL;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.M;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.M;
                     isChange = true;
-                    break;
                     break;
                 case XL:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.XXL;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.XXL;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.L;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.L;
                     isChange = true;
-                    break;
                     break;
                 case XXL:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.XL3;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.XL3;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.XL;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.XL;
                     isChange = true;
-                    break;
                     break;
                 case XL3:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.2f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
-                            FilterActivity.this.mCurDefaultFontSize = FontSizeType.XL4;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.2f) {
+                            scaleFactor = 1.0f;
+                            mCurDefaultFontSize = VTContainerView.FontSizeType.XL4;
                             isChange = true;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.XXL;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.XXL;
                     isChange = true;
                     break;
-                    break;
                 case XL4:
-                    if (FilterActivity.this.scaleFactor > 0.8f) {
-                        if (FilterActivity.this.scaleFactor >= 1.0f) {
-                            FilterActivity.this.scaleFactor = 1.0f;
+                    if (scaleFactor > 0.8f) {
+                        if (scaleFactor >= 1.0f) {
+                            scaleFactor = 1.0f;
                             break;
                         }
                     }
-                    FilterActivity.this.scaleFactor = 1.0f;
-                    FilterActivity.this.mCurDefaultFontSize = FontSizeType.XL3;
+                    scaleFactor = 1.0f;
+                    mCurDefaultFontSize = VTContainerView.FontSizeType.XL3;
                     isChange = true;
-                    break;
                     break;
             }
             if (isChange) {
-                FilterActivity.this.setFontSize(FilterActivity.this.mCurDefaultFontSize);
+                setFontSize(mCurDefaultFontSize);
             }
             return true;
         }
@@ -2252,12 +2223,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         public void onScaleEnd(ScaleGestureDetector detector) {
             LogUtil.d(FilterActivity.GestureTag, "======onScaleEnd======");
             LogUtil.d(FilterActivity.ScaleTag, "======onScaleEnd======");
-            FilterActivity.this.scaleFactor = 1.0f;
-            FilterActivity.this.moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.mCurDefaultAlign = FilterActivity.this.draw_text_view.getAlignType();
-            FilterActivity.this.mCurDefaultVerticalPos = FilterActivity.this.draw_text_view.getVerticalPos();
-            FilterActivity.this.isMove = false;
+            scaleFactor = 1.0f;
+            moveDistanceX = StaticLayoutUtil.DefaultSpacingadd;
+            moveDistanceY = StaticLayoutUtil.DefaultSpacingadd;
+            mCurDefaultAlign = draw_text_view.getAlignType();
+            mCurDefaultVerticalPos = draw_text_view.getVerticalPos();
+            isMove = false;
             super.onScaleEnd(detector);
         }
     }
@@ -2276,26 +2247,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         private UnLoopListener() {
         }
 
-        /* synthetic */ UnLoopListener(FilterActivity x0, AnonymousClass1 x1) {
-            this();
-        }
+//        /* synthetic */ UnLoopListener(FilterActivity x0, AnonymousClass1 x1) {
+//            this();
+//        }
 
         public boolean onDown(MotionEvent e) {
-            if (e.getRawX() < FilterActivity.this.filter_unloop_slider_root_rl.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (FilterActivity.this.filter_unloop_slider_root_rl.getX() + ((float) FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
-                FilterActivity.this.isPressed2 = false;
+            if (e.getRawX() < filter_unloop_slider_root_rl.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (filter_unloop_slider_root_rl.getX() + ((float) filter_unloop_slider_root_rl.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
+                isPressed2 = false;
                 return false;
             }
-            FilterActivity.this.downX = e.getRawX();
-            FilterActivity.this.leftStart = FilterActivity.this.filter_unloop_slider_root_rl.getX() - ((float) DensityUtil.dip2px(17.0f));
-            FilterActivity.this.leftEnd = FilterActivity.this.filter_unloop_slider_root_rl.getX() + ((float) DensityUtil.dip2px(27.0f));
-            FilterActivity.this.rightStart = FilterActivity.this.leftStart + ((float) FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth());
-            FilterActivity.this.rightEnd = FilterActivity.this.leftEnd + ((float) FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth());
-            FilterActivity.this.unLoopDownX = e.getRawX() - FilterActivity.this.filter_unloop_slider_root_rl.getX();
-            FilterActivity.this.unLoopLeftMargin = FilterActivity.this.filter_unloop_slider_root_rl.getX();
-            FilterActivity.this.isPressed2 = true;
-            FilterActivity.this.movedX2 = StaticLayoutUtil.DefaultSpacingadd;
-            FilterActivity.this.unLoopWidth = FilterActivity.this.filter_unloop_slider_root_rl.getLayoutParams().width;
-            LogUtil.d("huangweijie", "unloop=====Width : " + ((LayoutParams) FilterActivity.this.filter_unloop_slider_root_rl.getLayoutParams()).width);
+            downX = e.getRawX();
+            leftStart = filter_unloop_slider_root_rl.getX() - ((float) DensityUtil.dip2px(17.0f));
+            leftEnd = filter_unloop_slider_root_rl.getX() + ((float) DensityUtil.dip2px(27.0f));
+            rightStart = leftStart + ((float) filter_unloop_slider_root_rl.getMeasuredWidth());
+            rightEnd = leftEnd + ((float) filter_unloop_slider_root_rl.getMeasuredWidth());
+            unLoopDownX = e.getRawX() - filter_unloop_slider_root_rl.getX();
+            unLoopLeftMargin = filter_unloop_slider_root_rl.getX();
+            isPressed2 = true;
+            movedX2 = StaticLayoutUtil.DefaultSpacingadd;
+            unLoopWidth = filter_unloop_slider_root_rl.getLayoutParams().width;
+            LogUtil.d("huangweijie", "unloop=====Width : " + ((LayoutParams) filter_unloop_slider_root_rl.getLayoutParams()).width);
             return true;
         }
 
@@ -2303,36 +2274,36 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
 
         public boolean onSingleTapUp(MotionEvent e) {
-            if (e.getRawX() < FilterActivity.this.filter_unloop_slider_root_rl.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (FilterActivity.this.filter_unloop_slider_root_rl.getX() + ((float) FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
+            if (e.getRawX() < filter_unloop_slider_root_rl.getX() - ((float) DensityUtil.dip2px(17.0f)) || e.getRawX() > (filter_unloop_slider_root_rl.getX() + ((float) filter_unloop_slider_root_rl.getMeasuredWidth())) + ((float) DensityUtil.dip2px(17.0f))) {
                 float rawX = e.getRawX();
-                int size = FilterActivity.this.unloopEnd - FilterActivity.this.unloopStart;
-                int currentX = (int) ((rawX - ((float) DensityUtil.dip2px(84.0f))) / ((float) FilterActivity.this.UNLOOP_DELTA));
-                int right = (int) (FilterActivity.this.filter_unloop_slider_root_rl.getX() + ((float) FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth()));
-                if (rawX < ((float) ((int) FilterActivity.this.filter_unloop_slider_root_rl.getX()))) {
+                int size = unloopEnd - unloopStart;
+                int currentX = (int) ((rawX - ((float) DensityUtil.dip2px(84.0f))) / ((float) UNLOOP_DELTA));
+                int right = (int) (filter_unloop_slider_root_rl.getX() + ((float) filter_unloop_slider_root_rl.getMeasuredWidth()));
+                if (rawX < ((float) ((int) filter_unloop_slider_root_rl.getX()))) {
                     currentX -= size / 2;
                 } else if (rawX > ((float) right)) {
                     currentX -= size / 2;
                 }
-                FilterActivity.this.unloopStart = currentX;
-                FilterActivity.this.unloopEnd = currentX + size;
-                if (FilterActivity.this.unloopStart < 0) {
-                    FilterActivity.this.unloopStart = 0;
-                    FilterActivity.this.unloopEnd = FilterActivity.this.unloopStart + size;
+                unloopStart = currentX;
+                unloopEnd = currentX + size;
+                if (unloopStart < 0) {
+                    unloopStart = 0;
+                    unloopEnd = unloopStart + size;
                 }
-                if (FilterActivity.this.unloopEnd > FilterActivity.this.mFrameCount) {
-                    FilterActivity.this.unloopEnd = FilterActivity.this.mFrameCount;
-                    FilterActivity.this.unloopStart = FilterActivity.this.unloopEnd - size;
+                if (unloopEnd > mFrameCount) {
+                    unloopEnd = mFrameCount;
+                    unloopStart = unloopEnd - size;
                 }
-                if (FilterActivity.this.unloopEnd == FilterActivity.this.mFrameCount) {
+                if (unloopEnd == mFrameCount) {
                     FilterActivity filterActivity = FilterActivity.this;
                     filterActivity.unloopStart--;
                     filterActivity = FilterActivity.this;
                     filterActivity.unloopEnd--;
                 }
-                LayoutParams layoutParams = (LayoutParams) FilterActivity.this.filter_unloop_slider_root_rl.getLayoutParams();
-                layoutParams.leftMargin = (int) (rawX - ((float) (FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth() / 2)));
+                LayoutParams layoutParams = (LayoutParams) filter_unloop_slider_root_rl.getLayoutParams();
+                layoutParams.leftMargin = (int) (rawX - ((float) (filter_unloop_slider_root_rl.getMeasuredWidth() / 2)));
                 int minMargin = DensityUtil.dip2px(84.0f);
-                int maxMargin = (FilterActivity.this.metricsWidth - DensityUtil.dip2px(84.0f)) - FilterActivity.this.filter_unloop_slider_root_rl.getMeasuredWidth();
+                int maxMargin = (metricsWidth - DensityUtil.dip2px(84.0f)) - filter_unloop_slider_root_rl.getMeasuredWidth();
                 if (layoutParams.leftMargin <= maxMargin) {
                     maxMargin = layoutParams.leftMargin;
                 }
@@ -2341,135 +2312,135 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     minMargin = layoutParams.leftMargin;
                 }
                 layoutParams.leftMargin = minMargin;
-                FilterActivity.this.filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
-                FilterActivity.this.slideUnloop(FilterActivity.this.unloopStart, FilterActivity.this.unloopEnd, false, false);
+                filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
+                slideUnloop(unloopStart, unloopEnd, false, false);
             }
             return false;
         }
 
         public synchronized boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             boolean z;
-            if (FilterActivity.this.isPressed2) {
+            if (isPressed2) {
                 FilterActivity filterActivity = FilterActivity.this;
                 filterActivity.movedX2 += distanceX;
-                if (Math.abs(FilterActivity.this.movedX2) >= ((float) FilterActivity.this.UNLOOP_DELTA)) {
+                if (Math.abs(movedX2) >= ((float) UNLOOP_DELTA)) {
                     LogUtil.d("huangweijie", "Math.abs(movedX2) >= UNLOOP_DELTA");
-                    int deltaLevel = -((int) (Math.abs(FilterActivity.this.movedX2) / FilterActivity.this.movedX2));
-                    float deltaLevel2 = FilterActivity.this.movedX2 / ((float) FilterActivity.this.UNLOOP_DELTA);
-                    LayoutParams layoutParams = (LayoutParams) FilterActivity.this.filter_unloop_slider_root_rl.getLayoutParams();
-                    if (FilterActivity.this.downX > FilterActivity.this.leftStart && FilterActivity.this.downX < FilterActivity.this.leftEnd) {
+                    int deltaLevel = -((int) (Math.abs(movedX2) / movedX2));
+                    float deltaLevel2 = movedX2 / ((float) UNLOOP_DELTA);
+                    LayoutParams layoutParams = (LayoutParams) filter_unloop_slider_root_rl.getLayoutParams();
+                    if (downX > leftStart && downX < leftEnd) {
                         LogUtil.d("huangweijie", "downX > leftStart && downX < leftEnd");
                         filterActivity = FilterActivity.this;
                         filterActivity.unloopStart += deltaLevel;
-                        if (FilterActivity.this.unloopStart < 0) {
+                        if (unloopStart < 0) {
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopStart++;
-                        } else if (FilterActivity.this.unloopEnd - FilterActivity.this.unloopStart < FilterActivity.this.minUnLoopCount - 1) {
+                        } else if (unloopEnd - unloopStart < minUnLoopCount - 1) {
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopStart--;
                         }
-                        if (FilterActivity.this.unloopStart >= 0 && FilterActivity.this.unloopEnd - FilterActivity.this.unloopStart >= FilterActivity.this.minUnLoopCount - 1) {
+                        if (unloopStart >= 0 && unloopEnd - unloopStart >= minUnLoopCount - 1) {
                             int nowLeftmargin = layoutParams.leftMargin;
-                            int trueMargin = (int) (e2.getRawX() - FilterActivity.this.unLoopDownX);
+                            int trueMargin = (int) (e2.getRawX() - unLoopDownX);
                             layoutParams.leftMargin = trueMargin;
                             if (layoutParams.leftMargin < DensityUtil.dip2px(84.0f)) {
                                 layoutParams.leftMargin = DensityUtil.dip2px(84.0f);
-                                LogUtil.d(ShareConstants.WEB_DIALOG_PARAM_MESSAGE, "layoutParams.leftMargin < DensityUtil.dip2px(31)");
+                                LogUtil.d("message", "layoutParams.leftMargin < DensityUtil.dip2px(31)");
                             }
-                            int maxLeftmargin = (int) (FilterActivity.this.unLoopLeftMargin + ((float) (FilterActivity.this.unLoopWidth - (FilterActivity.this.minUnLoopCount * FilterActivity.this.UNLOOP_DELTA))));
-                            LogUtil.d(ShareConstants.WEB_DIALOG_PARAM_MESSAGE, "maxLeftmargin : " + maxLeftmargin);
+                            int maxLeftmargin = (int) (unLoopLeftMargin + ((float) (unLoopWidth - (minUnLoopCount * UNLOOP_DELTA))));
+                            LogUtil.d("message", "maxLeftmargin : " + maxLeftmargin);
                             if (layoutParams.leftMargin > maxLeftmargin) {
-                                LogUtil.d(ShareConstants.WEB_DIALOG_PARAM_MESSAGE, "layoutParams.leftMargin > ((Dens");
+                                LogUtil.d("message", "layoutParams.leftMargin > ((Dens");
                                 layoutParams.leftMargin = maxLeftmargin;
-                                FilterActivity.this.unloopStart = (FilterActivity.this.unloopEnd - FilterActivity.this.minUnLoopCount) + 1;
+                                unloopStart = (unloopEnd - minUnLoopCount) + 1;
                             }
                             layoutParams.width -= layoutParams.leftMargin - nowLeftmargin;
-                            if (layoutParams.width < FilterActivity.this.minUnLoopCount * FilterActivity.this.UNLOOP_DELTA) {
-                                layoutParams.width = FilterActivity.this.minUnLoopCount * FilterActivity.this.UNLOOP_DELTA;
-                                LogUtil.d(ShareConstants.WEB_DIALOG_PARAM_MESSAGE, "layoutParams.width < CameraView2.FILTER_");
+                            if (layoutParams.width < minUnLoopCount * UNLOOP_DELTA) {
+                                layoutParams.width = minUnLoopCount * UNLOOP_DELTA;
+                                LogUtil.d("message", "layoutParams.width < CameraView2.FILTER_");
                             }
-                            if (layoutParams.width > FilterActivity.this.metricsWidth - DensityUtil.dip2px(148.0f)) {
-                                layoutParams.width = FilterActivity.this.metricsWidth - DensityUtil.dip2px(148.0f);
-                                LogUtil.d(ShareConstants.WEB_DIALOG_PARAM_MESSAGE, "layoutParams.width > (DensityUtil.getMetricsWid");
+                            if (layoutParams.width > metricsWidth - DensityUtil.dip2px(148.0f)) {
+                                layoutParams.width = metricsWidth - DensityUtil.dip2px(148.0f);
+                                LogUtil.d("message", "layoutParams.width > (DensityUtil.getMetricsWid");
                             }
                             LogUtil.d("huangweijie", "layoutParams.width : " + layoutParams.width + " , layoutParams.leftMargin : " + layoutParams.leftMargin + " , trueMargin : " + trueMargin + " ， nowLeftmargin ： " + nowLeftmargin);
-                            FilterActivity.this.filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
-                            FilterActivity.this.slideUnloop(FilterActivity.this.unloopStart, FilterActivity.this.unloopEnd, false, true);
+                            filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
+                            slideUnloop(unloopStart, unloopEnd, false, true);
                         }
-                    } else if (FilterActivity.this.downX <= FilterActivity.this.rightStart || FilterActivity.this.downX >= FilterActivity.this.rightEnd) {
+                    } else if (downX <= rightStart || downX >= rightEnd) {
                         filterActivity = FilterActivity.this;
                         filterActivity.unloopStart += deltaLevel;
-                        if (FilterActivity.this.unloopStart < 0) {
+                        if (unloopStart < 0) {
                             LogUtil.d("huangweijie", "unloopStart < 0");
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopStart++;
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopEnd++;
-                        } else if (FilterActivity.this.unloopEnd - (FilterActivity.this.unloopStart - deltaLevel) < FilterActivity.this.minUnLoopCount - 1) {
+                        } else if (unloopEnd - (unloopStart - deltaLevel) < minUnLoopCount - 1) {
                             LogUtil.d("huangweijie", "unloopEnd - (unloopStart - deltaLevel) < minUnLoopCount - 1");
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopStart--;
                         }
                         filterActivity = FilterActivity.this;
                         filterActivity.unloopEnd += deltaLevel;
-                        LogUtil.d("huangweijie", "unloopStart : " + FilterActivity.this.unloopStart + " , unloopEnd : " + FilterActivity.this.unloopEnd + " , deltaLevel : " + deltaLevel);
-                        if (FilterActivity.this.unloopEnd > FilterActivity.this.mFrameCount - 1) {
+                        LogUtil.d("huangweijie", "unloopStart : " + unloopStart + " , unloopEnd : " + unloopEnd + " , deltaLevel : " + deltaLevel);
+                        if (unloopEnd > mFrameCount - 1) {
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopEnd--;
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopStart -= deltaLevel;
-                            LogUtil.d("huangweijie", "unloopEnd > mFrameCount - 1 : start : " + FilterActivity.this.unloopStart + " , end : " + FilterActivity.this.unloopEnd);
-                        } else if ((FilterActivity.this.unloopEnd - deltaLevel) - (FilterActivity.this.unloopStart - deltaLevel) < FilterActivity.this.minUnLoopCount - 1) {
+                            LogUtil.d("huangweijie", "unloopEnd > mFrameCount - 1 : start : " + unloopStart + " , end : " + unloopEnd);
+                        } else if ((unloopEnd - deltaLevel) - (unloopStart - deltaLevel) < minUnLoopCount - 1) {
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopEnd++;
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopStart -= deltaLevel;
                             LogUtil.d("huangweijie", "unloopEnd - deltaLevel - (unloopStart - deltaLevel) < minUnLoopCount - 1");
                         }
-                        if (FilterActivity.this.unloopStart >= 0 && FilterActivity.this.unloopEnd <= FilterActivity.this.mFrameCount - 1) {
+                        if (unloopStart >= 0 && unloopEnd <= mFrameCount - 1) {
                             LogUtil.d("huangweijie", "unloopStart >= 0 && unloopEnd <= mFrameCount - 1");
                             int nowWidth = layoutParams.width;
-                            layoutParams.leftMargin = (int) (((float) layoutParams.leftMargin) - (((float) FilterActivity.this.UNLOOP_DELTA) * deltaLevel2));
-                            FilterActivity.this.filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
-                            layoutParams.leftMargin = (int) (FilterActivity.this.unLoopLeftMargin + (e2.getRawX() - FilterActivity.this.downX));
+                            layoutParams.leftMargin = (int) (((float) layoutParams.leftMargin) - (((float) UNLOOP_DELTA) * deltaLevel2));
+                            filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
+                            layoutParams.leftMargin = (int) (unLoopLeftMargin + (e2.getRawX() - downX));
                             LogUtil.d("huangweijie", "layoutParams.width : " + layoutParams.width + " , layoutParams.leftMargin : " + layoutParams.leftMargin);
                             if (layoutParams.leftMargin < DensityUtil.dip2px(84.0f)) {
                                 layoutParams.leftMargin = DensityUtil.dip2px(84.0f);
                             }
-                            if (layoutParams.leftMargin > (FilterActivity.this.metricsWidth - DensityUtil.dip2px(84.0f)) - nowWidth) {
-                                layoutParams.leftMargin = (FilterActivity.this.metricsWidth - DensityUtil.dip2px(84.0f)) - nowWidth;
+                            if (layoutParams.leftMargin > (metricsWidth - DensityUtil.dip2px(84.0f)) - nowWidth) {
+                                layoutParams.leftMargin = (metricsWidth - DensityUtil.dip2px(84.0f)) - nowWidth;
                             }
-                            FilterActivity.this.filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
-                            FilterActivity.this.slideUnloop(FilterActivity.this.unloopStart, FilterActivity.this.unloopEnd, false, true);
+                            filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
+                            slideUnloop(unloopStart, unloopEnd, false, true);
                         }
                     } else {
                         LogUtil.d("huangweijie", "downX > rightStart && downX < rightEnd");
                         filterActivity = FilterActivity.this;
                         filterActivity.unloopEnd += deltaLevel;
-                        if (FilterActivity.this.unloopEnd > FilterActivity.this.mFrameCount - 1) {
+                        if (unloopEnd > mFrameCount - 1) {
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopEnd--;
-                        } else if (FilterActivity.this.unloopEnd - FilterActivity.this.unloopStart < FilterActivity.this.minUnLoopCount - 1) {
+                        } else if (unloopEnd - unloopStart < minUnLoopCount - 1) {
                             filterActivity = FilterActivity.this;
                             filterActivity.unloopEnd++;
                         }
-                        if (FilterActivity.this.unloopEnd <= FilterActivity.this.mFrameCount - 1 && FilterActivity.this.unloopEnd - FilterActivity.this.unloopStart >= FilterActivity.this.minUnLoopCount - 1) {
-                            layoutParams.width = (int) (((float) layoutParams.width) - (((float) FilterActivity.this.UNLOOP_DELTA) * deltaLevel2));
-                            FilterActivity.this.filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
-                            layoutParams.width = (int) (((float) FilterActivity.this.unLoopWidth) + (e2.getRawX() - FilterActivity.this.downX));
-                            if (layoutParams.width < FilterActivity.this.minUnLoopCount * FilterActivity.this.UNLOOP_DELTA) {
-                                layoutParams.width = FilterActivity.this.minUnLoopCount * FilterActivity.this.UNLOOP_DELTA;
-                                FilterActivity.this.unloopEnd = (FilterActivity.this.unloopStart + FilterActivity.this.minUnLoopCount) - 1;
+                        if (unloopEnd <= mFrameCount - 1 && unloopEnd - unloopStart >= minUnLoopCount - 1) {
+                            layoutParams.width = (int) (((float) layoutParams.width) - (((float) UNLOOP_DELTA) * deltaLevel2));
+                            filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
+                            layoutParams.width = (int) (((float) unLoopWidth) + (e2.getRawX() - downX));
+                            if (layoutParams.width < minUnLoopCount * UNLOOP_DELTA) {
+                                layoutParams.width = minUnLoopCount * UNLOOP_DELTA;
+                                unloopEnd = (unloopStart + minUnLoopCount) - 1;
                             }
-                            if (layoutParams.width > FilterActivity.this.metricsWidth - DensityUtil.dip2px(148.0f)) {
-                                layoutParams.width = FilterActivity.this.metricsWidth - DensityUtil.dip2px(148.0f);
+                            if (layoutParams.width > metricsWidth - DensityUtil.dip2px(148.0f)) {
+                                layoutParams.width = metricsWidth - DensityUtil.dip2px(148.0f);
                             }
                             LogUtil.d("huangweijie", "layoutParams.width : " + layoutParams.width + " , layoutParams.leftMargin : " + layoutParams.leftMargin);
-                            FilterActivity.this.filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
-                            FilterActivity.this.slideUnloop(FilterActivity.this.unloopStart, FilterActivity.this.unloopEnd, true, true);
+                            filter_unloop_slider_root_rl.setLayoutParams(layoutParams);
+                            slideUnloop(unloopStart, unloopEnd, true, true);
                         }
                     }
-                    FilterActivity.this.movedX2 = StaticLayoutUtil.DefaultSpacingadd;
+                    movedX2 = StaticLayoutUtil.DefaultSpacingadd;
                 }
                 z = true;
             } else {
@@ -2527,25 +2498,25 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
             });
             this.video_filter_add_text_vs = null;
-            this.filter_addition_root_hsv = this.filter_add_text_parent.findViewById(2131691047);
-            this.filter_addition_parent = this.filter_addition_root_hsv.findViewById(2131691048);
-            this.filter_addition_modify = this.filter_addition_root_hsv.findViewById(2131691050);
-            this.filter_addition_empty = this.filter_addition_root_hsv.findViewById(2131691049);
-            this.filter_addition_font = this.filter_addition_root_hsv.findViewById(2131691053);
-            this.filter_addition_size = this.filter_addition_root_hsv.findViewById(2131691056);
-            this.filter_addition_color = this.filter_addition_root_hsv.findViewById(2131691060);
-            this.filter_addition_word_space = this.filter_addition_root_hsv.findViewById(2131691066);
-            this.filter_addition_word_space_ring = (RingBackgroundView) this.filter_addition_root_hsv.findViewById(2131691069);
-            this.filter_addition_size_ring = (RingBackgroundView) this.filter_addition_root_hsv.findViewById(2131691059);
-            LineSpacingType[] lineTypes = LineSpacingType.values();
+            this.filter_addition_root_hsv = this.filter_add_text_parent.findViewById(R.id.filter_addition_root_hsv);
+            this.filter_addition_parent = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_parent);
+            this.filter_addition_modify = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_modify);
+            this.filter_addition_empty = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_empty);
+            this.filter_addition_font = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_font);
+            this.filter_addition_size = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_size);
+            this.filter_addition_color = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_color);
+            this.filter_addition_word_space = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_word_space);
+            this.filter_addition_word_space_ring = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_word_space_ring);
+            this.filter_addition_size_ring = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_size_ring);
+            VTContainerView.LineSpacingType[] lineTypes = VTContainerView.LineSpacingType.values();
             List<String> lineList = new ArrayList();
-            for (LineSpacingType type : lineTypes) {
+            for (VTContainerView.LineSpacingType type : lineTypes) {
                 lineList.add(type.name());
             }
             this.filter_addition_word_space_ring.setData(lineList);
-            FontSizeType[] fontTypes = FontSizeType.values();
+            VTContainerView.FontSizeType[] fontTypes = VTContainerView.FontSizeType.values();
             List<String> fontList = new ArrayList();
-            for (FontSizeType type2 : fontTypes) {
+            for (VTContainerView.FontSizeType type2 : fontTypes) {
                 fontList.add(type2.name());
             }
             this.filter_addition_size_ring.setData(fontList);
@@ -2564,11 +2535,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.filter_addition_word_space_ring.setNowValue((String) lineList.get(0));
                 this.filter_addition_size_ring.setNowValue((String) fontList.get(2));
             }
-            this.filter_addition_line_space = this.filter_addition_root_hsv.findViewById(2131691070);
-            this.filter_addition_align = this.filter_addition_root_hsv.findViewById(2131691073);
-            this.filter_addition_shader = this.filter_addition_root_hsv.findViewById(2131691063);
-            this.filter_addition_loc = this.filter_addition_root_hsv.findViewById(2131691076);
-            this.filter_addition_delete = this.filter_addition_root_hsv.findViewById(2131691079);
+            this.filter_addition_line_space = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_line_space);
+            this.filter_addition_align = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_align);
+            this.filter_addition_shader = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_shader);
+            this.filter_addition_loc = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_loc);
+            this.filter_addition_delete = this.filter_addition_root_hsv.findViewById(R.id.filter_addition_delete);
             this.filter_addition_modify.setOnClickListener(this.mOnTextEditChangeListener);
             this.filter_addition_font.setOnClickListener(this.mOnTextEditChangeListener);
             this.filter_addition_size.setOnClickListener(this.mOnTextEditChangeListener);
@@ -2579,117 +2550,169 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filter_addition_shader.setOnClickListener(this.mOnTextEditChangeListener);
             this.filter_addition_loc.setOnClickListener(this.mOnTextEditChangeListener);
             this.filter_addition_delete.setOnClickListener(this.mOnTextEditChangeListener);
-            this.video_text_confirm_iv = (ImageView) this.filter_add_text_parent.findViewById(2131691098);
-            this.video_text_cancel_iv = (ImageView) this.filter_add_text_parent.findViewById(2131691097);
-            this.filter_addition_color_ll = this.filter_add_text_parent.findViewById(2131691085);
-            this.vt_color_hint = (TextView) this.filter_addition_color_ll.findViewById(2131691086);
-            this.vt_colorchoose = (ColorChooseView) this.filter_addition_color_ll.findViewById(2131691087);
-            this.filter_addition_shader_ll = this.filter_add_text_parent.findViewById(2131691088);
-            this.vt_shader_hint = (TextView) this.filter_addition_shader_ll.findViewById(2131691089);
-            this.vt_shader_1 = (ImageView) this.filter_addition_shader_ll.findViewById(2131691090);
-            this.vt_shader_2 = (ImageView) this.filter_addition_shader_ll.findViewById(2131691091);
-            this.vt_shader_3 = (ImageView) this.filter_addition_shader_ll.findViewById(2131691092);
-            this.vt_shader_4 = (ImageView) this.filter_addition_shader_ll.findViewById(2131691093);
-            this.vt_shader_5 = (ImageView) this.filter_addition_shader_ll.findViewById(2131691094);
-            this.vt_shader_6 = (ImageView) this.filter_addition_shader_ll.findViewById(2131691095);
-            this.vt_shader_1.setOnClickListener(FilterActivity$.Lambda.2.lambdaFactory$(this));
-            this.vt_shader_2.setOnClickListener(FilterActivity$.Lambda.3.lambdaFactory$(this));
-            this.vt_shader_3.setOnClickListener(FilterActivity$.Lambda.4.lambdaFactory$(this));
-            this.vt_shader_4.setOnClickListener(FilterActivity$.Lambda.5.lambdaFactory$(this));
-            this.vt_shader_5.setOnClickListener(FilterActivity$.Lambda.6.lambdaFactory$(this));
-            this.vt_shader_6.setOnClickListener(7.lambdaFactory$(this));
+            this.video_text_confirm_iv = this.filter_add_text_parent.findViewById(R.id.video_text_confirm_iv);
+            this.video_text_cancel_iv = this.filter_add_text_parent.findViewById(R.id.video_text_cancel_iv);
+            this.filter_addition_color_ll = this.filter_add_text_parent.findViewById(R.id.filter_addition_color_ll);
+            this.vt_color_hint = this.filter_addition_color_ll.findViewById(R.id.vt_color_hint);
+            this.vt_colorchoose = this.filter_addition_color_ll.findViewById(R.id.vt_colorchoose);
+            this.filter_addition_shader_ll = this.filter_add_text_parent.findViewById(R.id.filter_addition_shader_ll);
+            this.vt_shader_hint = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_hint);
+            this.vt_shader_1 = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_1);
+            this.vt_shader_2 = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_2);
+            this.vt_shader_3 = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_3);
+            this.vt_shader_4 = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_4);
+            this.vt_shader_5 = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_5);
+            this.vt_shader_6 = this.filter_addition_shader_ll.findViewById(R.id.vt_shader_6);
+//            this.vt_shader_1.setOnClickListener(FilterActivity$.Lambda.2.lambdaFactory$(this));
+//            this.vt_shader_2.setOnClickListener(FilterActivity$.Lambda.3.lambdaFactory$(this));
+//            this.vt_shader_3.setOnClickListener(FilterActivity$.Lambda.4.lambdaFactory$(this));
+//            this.vt_shader_4.setOnClickListener(FilterActivity$.Lambda.5.lambdaFactory$(this));
+//            this.vt_shader_5.setOnClickListener(FilterActivity$.Lambda.6.lambdaFactory$(this));
+//            this.vt_shader_6.setOnClickListener(7.lambdaFactory$(this));
+            vt_shader_1.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //lambda$initAddTextEditLayout$6(v);
+                    clickShadder(v);
+                }
+            });
+            vt_shader_2.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //lambda$initAddTextEditLayout$6(v);
+                    clickShadder(v);
+                }
+            });
+            vt_shader_3.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //lambda$initAddTextEditLayout$6(v);
+                    clickShadder(v);
+
+                }
+            });
+            vt_shader_4.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //lambda$initAddTextEditLayout$6(v);
+                    clickShadder(v);
+
+                }
+            });
+            vt_shader_5.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   //lambda$initAddTextEditLayout$6(v);
+                    clickShadder(v);
+
+                }
+            });
+            vt_shader_6.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                   //lambda$initAddTextEditLayout$6(v);
+                    clickShadder(v);
+
+                }
+            });
             this.vt_shader_1.setOnTouchListener(ColorFilterUtil.TouchFocusChange(false));
             this.vt_shader_2.setOnTouchListener(ColorFilterUtil.TouchFocusChange(false));
             this.vt_shader_3.setOnTouchListener(ColorFilterUtil.TouchFocusChange(false));
             this.vt_shader_4.setOnTouchListener(ColorFilterUtil.TouchFocusChange(false));
             this.vt_shader_5.setOnTouchListener(ColorFilterUtil.TouchFocusChange(false));
             this.vt_shader_6.setOnTouchListener(ColorFilterUtil.TouchFocusChange(false));
-            this.filter_addition_size_ll = this.filter_add_text_parent.findViewById(2131691082);
-            this.vt_textsize = (TextSizeView) this.filter_addition_size_ll.findViewById(2131691084);
-            this.vt_textsize_hint = (TextView) this.filter_addition_size_ll.findViewById(2131691083);
+            this.filter_addition_size_ll = this.filter_add_text_parent.findViewById(R.id.filter_addition_size_ll);
+            this.vt_textsize = (TextSizeView) this.filter_addition_size_ll.findViewById(R.id.vt_textsize);
+            this.vt_textsize_hint = (TextView) this.filter_addition_size_ll.findViewById(R.id.vt_textsize_hint);
             int padding = (int) (((float) DensityUtil.getMetricsWidth(this)) * 0.1f);
             this.vt_textsize.setPadding(padding, 0, padding, 0);
-            this.video_text_confirm_iv.setOnClickListener(8.lambdaFactory$(this));
+//            this.video_text_confirm_iv.setOnClickListener(8.lambdaFactory$(this));
+            video_text_confirm_iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initAddTextEditLayout$6(v);
+                }
+            });
             this.video_text_cancel_iv.setOnClickListener(new OnClickListener() {
                 public void onClick(android.view.View v) {
-                    FilterActivity.this.filter_addition_root_hsv.setVisibility(0);
-                    switch (FilterActivity.this.addTextClickId) {
-                        case 2131691056:
-                            FilterActivity.this.filter_addition_size_ll.setVisibility(8);
-                            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_addition_root_hsv, FilterActivity.this.filter_addition_size_ll);
-                            if (FilterActivity.this.mCurrentTextLongVideoModel == null) {
-                                FilterActivity.this.draw_text_view.setFontSizeType(FilterActivity.this.tempFontSizeType);
+                    filter_addition_root_hsv.setVisibility(View.VISIBLE);
+                    switch (addTextClickId) {
+                        case R.id.filter_addition_size:
+                            filter_addition_size_ll.setVisibility(View.GONE);
+                            alphaEnterAndExit(filter_addition_root_hsv, filter_addition_size_ll);
+                            if (mCurrentTextLongVideoModel == null) {
+                                draw_text_view.setFontSizeType(tempFontSizeType);
                                 break;
                             }
-                            FilterActivity.this.draw_text_view.setFontSizeType(FilterActivity.this.mCurrentTextLongVideoModel.getTextFontSizeType());
-                            FilterActivity.this.tempFontSizeType = FilterActivity.this.draw_text_view.getFontSizeType();
+                            draw_text_view.setFontSizeType(mCurrentTextLongVideoModel.getTextFontSizeType());
+                            tempFontSizeType = draw_text_view.getFontSizeType();
                             break;
-                        case 2131691060:
-                            FilterActivity.this.filter_addition_color_ll.setVisibility(8);
-                            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_addition_root_hsv, FilterActivity.this.filter_addition_color_ll);
+                        case R.id.filter_addition_color:
+                            filter_addition_color_ll.setVisibility(View.GONE);
+                            alphaEnterAndExit(filter_addition_root_hsv, filter_addition_color_ll);
                             break;
-                        case 2131691063:
-                            FilterActivity.this.filter_addition_shader_ll.setVisibility(8);
-                            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_addition_root_hsv, FilterActivity.this.filter_addition_shader_ll);
+                        case R.id.filter_addition_shader:
+                            filter_addition_shader_ll.setVisibility(View.GONE);
+                            alphaEnterAndExit(filter_addition_root_hsv, filter_addition_shader_ll);
                             break;
-                        case 2131691066:
-                            FilterActivity.this.filter_addition_size_ll.setVisibility(8);
-                            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_addition_root_hsv, FilterActivity.this.filter_addition_size_ll);
-                            if (FilterActivity.this.mCurrentTextLongVideoModel == null) {
-                                FilterActivity.this.draw_text_view.setLetterSpacingType(FilterActivity.this.tempLetterSpacingType);
+                        case R.id.filter_addition_word_space:
+                            filter_addition_size_ll.setVisibility(View.GONE);
+                            alphaEnterAndExit(filter_addition_root_hsv, filter_addition_size_ll);
+                            if (mCurrentTextLongVideoModel == null) {
+                                draw_text_view.setLetterSpacingType(tempLetterSpacingType);
                                 break;
                             }
-                            FilterActivity.this.draw_text_view.setLetterSpacingType(FilterActivity.this.mCurrentTextLongVideoModel.getTextLetterSpacingType());
-                            FilterActivity.this.tempLetterSpacingType = FilterActivity.this.draw_text_view.getLetterSpacingType();
+                            draw_text_view.setLetterSpacingType(mCurrentTextLongVideoModel.getTextLetterSpacingType());
+                            tempLetterSpacingType = draw_text_view.getLetterSpacingType();
                             break;
-                        case 2131691070:
-                            FilterActivity.this.filter_addition_size_ll.setVisibility(8);
-                            FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_addition_root_hsv, FilterActivity.this.filter_addition_size_ll);
-                            if (FilterActivity.this.mCurrentTextLongVideoModel == null) {
-                                FilterActivity.this.draw_text_view.setLineSpacingType(FilterActivity.this.tempLineSpacingType);
+                        case R.id.filter_addition_line_space:
+                            filter_addition_size_ll.setVisibility(View.GONE);
+                            alphaEnterAndExit(filter_addition_root_hsv, filter_addition_size_ll);
+                            if (mCurrentTextLongVideoModel == null) {
+                                draw_text_view.setLineSpacingType(tempLineSpacingType);
                                 break;
                             }
-                            FilterActivity.this.mTextContent = FilterActivity.this.mCurrentTextLongVideoModel.getTextContent();
-                            FilterActivity.this.draw_text_view.setLineSpacingType(FilterActivity.this.mCurrentTextLongVideoModel.getTextLineSpacingType());
-                            FilterActivity.this.tempLineSpacingType = FilterActivity.this.draw_text_view.getLineSpacingType();
+                            mTextContent = mCurrentTextLongVideoModel.getTextContent();
+                            draw_text_view.setLineSpacingType(mCurrentTextLongVideoModel.getTextLineSpacingType());
+                            tempLineSpacingType = draw_text_view.getLineSpacingType();
                             break;
                         default:
-                            if (FilterActivity.this.hasTextBeforeShow) {
-                                FilterActivity.this.cancelEditAddTextOpt();
+                            if (hasTextBeforeShow) {
+                                cancelEditAddTextOpt();
                             }
-                            FilterActivity.this.hideAddTextEditLayout();
-                            FilterActivity.this.isAfterInsertBlackAddText = false;
+                            hideAddTextEditLayout();
+                            isAfterInsertBlackAddText = false;
                             break;
                     }
-                    FilterActivity.this.addTextClickId = 0;
+                    addTextClickId = 0;
                 }
             });
         }
     }
 
     private /* synthetic */ void lambda$initAddTextEditLayout$6(android.view.View v) {
-        this.filter_addition_root_hsv.setVisibility(0);
+        this.filter_addition_root_hsv.setVisibility(View.VISIBLE);
         switch (this.addTextClickId) {
-            case 2131691056:
+            case R.id.filter_addition_size:
                 this.filter_addition_size_ring.setNowValue(this.lastTextChangeString);
-                this.filter_addition_size_ll.setVisibility(8);
+                this.filter_addition_size_ll.setVisibility(View.GONE);
                 alphaEnterAndExit(this.filter_addition_root_hsv, this.filter_addition_size_ll);
                 break;
-            case 2131691060:
-                this.filter_addition_color_ll.setVisibility(8);
+            case R.id.filter_addition_color:
+                this.filter_addition_color_ll.setVisibility(View.GONE);
                 alphaEnterAndExit(this.filter_addition_root_hsv, this.filter_addition_color_ll);
                 break;
-            case 2131691063:
-                this.filter_addition_shader_ll.setVisibility(8);
+            case R.id.filter_addition_shader:
+                this.filter_addition_shader_ll.setVisibility(View.GONE);
                 alphaEnterAndExit(this.filter_addition_root_hsv, this.filter_addition_shader_ll);
                 break;
-            case 2131691066:
+            case R.id.filter_addition_word_space:
                 this.filter_addition_word_space_ring.setNowValue(this.lastTextChangeString);
-                this.filter_addition_size_ll.setVisibility(8);
+                this.filter_addition_size_ll.setVisibility(View.GONE);
                 alphaEnterAndExit(this.filter_addition_root_hsv, this.filter_addition_size_ll);
                 break;
-            case 2131691070:
-                this.filter_addition_size_ll.setVisibility(8);
+            case R.id.filter_addition_line_space:
+                this.filter_addition_size_ll.setVisibility(View.GONE);
                 alphaEnterAndExit(this.filter_addition_root_hsv, this.filter_addition_size_ll);
                 break;
             default:
@@ -2702,34 +2725,34 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private int getAddTextOptionLeft() {
         int count = 0;
-        if (this.filter_addition_modify != null && this.filter_addition_modify.getVisibility() == 0) {
+        if (this.filter_addition_modify != null && this.filter_addition_modify.getVisibility() == View.VISIBLE) {
             count = 0 + 1;
         }
-        if (this.filter_addition_font != null && this.filter_addition_font.getVisibility() == 0) {
+        if (this.filter_addition_font != null && this.filter_addition_font.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_size != null && this.filter_addition_size.getVisibility() == 0) {
+        if (this.filter_addition_size != null && this.filter_addition_size.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_color != null && this.filter_addition_color.getVisibility() == 0) {
+        if (this.filter_addition_color != null && this.filter_addition_color.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_shader != null && this.filter_addition_shader.getVisibility() == 0) {
+        if (this.filter_addition_shader != null && this.filter_addition_shader.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_word_space != null && this.filter_addition_word_space.getVisibility() == 0) {
+        if (this.filter_addition_word_space != null && this.filter_addition_word_space.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_line_space != null && this.filter_addition_line_space.getVisibility() == 0) {
+        if (this.filter_addition_line_space != null && this.filter_addition_line_space.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_align != null && this.filter_addition_align.getVisibility() == 0) {
+        if (this.filter_addition_align != null && this.filter_addition_align.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_loc != null && this.filter_addition_loc.getVisibility() == 0) {
+        if (this.filter_addition_loc != null && this.filter_addition_loc.getVisibility() == View.VISIBLE) {
             count++;
         }
-        if (this.filter_addition_delete != null && this.filter_addition_delete.getVisibility() == 0) {
+        if (this.filter_addition_delete != null && this.filter_addition_delete.getVisibility() == View.VISIBLE) {
             count++;
         }
         LogUtil.d("slim", "count:" + count);
@@ -2772,12 +2795,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         int pos = 0;
         List<LongVideosModel> list = this.mVideoAudioManager.getTextModelList();
         for (int i = 0; i < list.size(); i++) {
-            if (((LongVideosModel) list.get(i)).getStartTimeMs() < this.mCurrentTextLongVideoModel.getStartTimeMs()) {
+            if (list.get(i).getStartTimeMs() < this.mCurrentTextLongVideoModel.getStartTimeMs()) {
                 pos++;
             }
         }
         if (pos < this.mVideoAudioManager.getTextModelList().size()) {
-            LongVideosModel nextModel = (LongVideosModel) this.mVideoAudioManager.getTextModelList().get(pos);
+            LongVideosModel nextModel = this.mVideoAudioManager.getTextModelList().get(pos);
             if (this.mCurrentTextLongVideoModel.getStartTimeMs() + this.mCurrentTextLongVideoModel.getCurrentDurationValue() > nextModel.getStartTimeMs()) {
                 this.mCurrentTextLongVideoModel.setCurrentDuration(nextModel.getStartTimeMs() - this.mCurrentTextLongVideoModel.getStartTimeMs());
                 this.mCurrentTextLongVideoModel.setCacheStartTime(this.mCurrentTextLongVideoModel.getStartTimeMs());
@@ -2857,14 +2880,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         showAddTextControlLayout();
         initAddTextEditLayout();
         if (this.draw_text_view == null) {
-            this.filter_addition_line_space.setVisibility(8);
+            this.filter_addition_line_space.setVisibility(View.GONE);
         } else if (this.draw_text_view.isMultiLines()) {
-            this.filter_addition_line_space.setVisibility(0);
+            this.filter_addition_line_space.setVisibility(View.VISIBLE);
         } else {
-            this.filter_addition_line_space.setVisibility(8);
+            this.filter_addition_line_space.setVisibility(View.GONE);
         }
         calculateAddTextViewPos();
-        this.filter_add_text_parent.setVisibility(0);
+        this.filter_add_text_parent.setVisibility(View.VISIBLE);
     }
 
     private void calculateAddTextViewPos() {
@@ -2876,14 +2899,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void hideTitleBarIconResetTitle() {
         hideSaveAndBack();
-        this.title_add_text.setVisibility(0);
-        this.title_alert_out_time.setVisibility(8);
+        this.title_add_text.setVisibility(View.VISIBLE);
+        this.title_alert_out_time.setVisibility(View.GONE);
     }
 
     private void showTitleBarIconResetTitle() {
         restoreSaveAndBack();
-        this.title_add_text.setVisibility(8);
-        this.title_alert_out_time.setVisibility(0);
+        this.title_add_text.setVisibility(View.GONE);
+        this.title_alert_out_time.setVisibility(View.VISIBLE);
     }
 
     private void setPlayButtonVisibility(int visibility) {
@@ -2898,7 +2921,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         setPlayButtonVisibility(0);
         showVideoEditView();
         hideAddTextControlLayout();
-        this.filter_add_text_parent.setVisibility(8);
+        this.filter_add_text_parent.setVisibility(View.GONE);
     }
 
     private void saveTextTempInfo() {
@@ -2909,55 +2932,55 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private /* synthetic */ void lambda$new$7(android.view.View v) {
         switch (v.getId()) {
-            case 2131690272:
-                this.draw_text_view.setAlignType(AlignType.M);
-                this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-                this.draw_text_view.setFontSizeType(FontSizeType.XL4);
-                this.draw_text_view.setShadowType(ShadowType.NONE);
+            case R.id.add_text_controller_title:
+                this.draw_text_view.setAlignType(VTContainerView.AlignType.M);
+                this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+                this.draw_text_view.setFontSizeType(VTContainerView.FontSizeType.XL4);
+                this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
                 this.draw_text_view.setVerticalPos(0);
                 this.filter_addition_word_space_ring.setNowValue("XS");
                 this.filter_addition_size_ring.setNowValue("XL4");
                 saveTextTempInfo();
                 setControlViewSelect(0);
                 return;
-            case 2131690273:
-                this.draw_text_view.setAlignType(AlignType.L);
-                this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-                this.draw_text_view.setFontSizeType(FontSizeType.XXL);
-                this.draw_text_view.setShadowType(ShadowType.NONE);
+            case R.id.add_text_controller_chapter:
+                this.draw_text_view.setAlignType(VTContainerView.AlignType.L);
+                this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+                this.draw_text_view.setFontSizeType(VTContainerView.FontSizeType.XXL);
+                this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
                 this.draw_text_view.setVerticalPos(0);
                 this.filter_addition_word_space_ring.setNowValue("XS");
                 this.filter_addition_size_ring.setNowValue("XXL");
                 saveTextTempInfo();
                 setControlViewSelect(1);
                 return;
-            case 2131690274:
-                this.draw_text_view.setAlignType(AlignType.M);
-                this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-                this.draw_text_view.setFontSizeType(FontSizeType.S);
-                this.draw_text_view.setShadowType(ShadowType.NONE);
-                this.draw_text_view.setVerticalPos(com.tencent.android.tpush.common.Constants.ERRORCODE_UNKNOWN);
+            case R.id.add_text_controller_subtitle:
+                this.draw_text_view.setAlignType(VTContainerView.AlignType.M);
+                this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+                this.draw_text_view.setFontSizeType(VTContainerView.FontSizeType.S);
+                this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
+                this.draw_text_view.setVerticalPos(10000);
                 this.filter_addition_word_space_ring.setNowValue("XS");
                 this.filter_addition_size_ring.setNowValue("S");
                 saveTextTempInfo();
                 setControlViewSelect(3);
                 return;
-            case 2131690275:
-                this.draw_text_view.setAlignType(AlignType.L);
-                this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-                this.draw_text_view.setFontSizeType(FontSizeType.M);
-                this.draw_text_view.setShadowType(ShadowType.NONE);
-                this.draw_text_view.setVerticalPos(com.tencent.android.tpush.common.Constants.ERRORCODE_UNKNOWN);
+            case R.id.add_text_controller_info:
+                this.draw_text_view.setAlignType(VTContainerView.AlignType.L);
+                this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+                this.draw_text_view.setFontSizeType(VTContainerView.FontSizeType.M);
+                this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
+                this.draw_text_view.setVerticalPos(10000);
                 this.filter_addition_word_space_ring.setNowValue("XS");
                 this.filter_addition_size_ring.setNowValue("M");
                 saveTextTempInfo();
                 setControlViewSelect(2);
                 return;
-            case 2131690277:
-                this.draw_text_view.setAlignType(AlignType.M);
-                this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-                this.draw_text_view.setFontSizeType(FontSizeType.M);
-                this.draw_text_view.setShadowType(ShadowType.NONE);
+            case R.id.add_text_controller_reset:
+                this.draw_text_view.setAlignType(VTContainerView.AlignType.M);
+                this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+                this.draw_text_view.setFontSizeType(VTContainerView.FontSizeType.M);
+                this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
                 this.draw_text_view.setVerticalPos(0);
                 this.filter_addition_word_space_ring.setNowValue("XS");
                 this.filter_addition_size_ring.setNowValue("M");
@@ -3010,11 +3033,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void initAddTextControlLayout() {
         if (this.video_add_text_control_parent == null && this.video_add_text_control_vs != null) {
             this.video_add_text_control_parent = (RelativeLayout) this.video_add_text_control_vs.inflate();
-            this.add_text_controller_chapter = (TextView) this.video_add_text_control_parent.findViewById(2131690273);
-            this.add_text_controller_title = (TextView) this.video_add_text_control_parent.findViewById(2131690272);
-            this.add_text_controller_subtitle = (TextView) this.video_add_text_control_parent.findViewById(2131690274);
-            this.add_text_controller_reset = (TextView) this.video_add_text_control_parent.findViewById(2131690277);
-            this.add_text_controller_info = (TextView) this.video_add_text_control_parent.findViewById(2131690275);
+            this.add_text_controller_chapter = this.video_add_text_control_parent.findViewById(R.id.add_text_controller_chapter);
+            this.add_text_controller_title = this.video_add_text_control_parent.findViewById(R.id.add_text_controller_title);
+            this.add_text_controller_subtitle = this.video_add_text_control_parent.findViewById(R.id.add_text_controller_subtitle);
+            this.add_text_controller_reset = this.video_add_text_control_parent.findViewById(R.id.add_text_controller_reset);
+            this.add_text_controller_info = this.video_add_text_control_parent.findViewById(R.id.add_text_controller_info);
             this.add_text_controller_title.setAlpha(0.3f);
             this.add_text_controller_info.setAlpha(0.3f);
             this.add_text_controller_chapter.setAlpha(0.3f);
@@ -3036,14 +3059,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void showAddTextControlLayout() {
         initAddTextControlLayout();
-        if (this.video_add_text_control_parent.getVisibility() != 0) {
-            this.video_add_text_control_parent.setVisibility(0);
+        if (this.video_add_text_control_parent.getVisibility() != View.VISIBLE) {
+            this.video_add_text_control_parent.setVisibility(View.VISIBLE);
         }
     }
 
     private void hideAddTextControlLayout() {
-        if (this.video_add_text_control_parent.getVisibility() != 8) {
-            this.video_add_text_control_parent.setVisibility(8);
+        if (this.video_add_text_control_parent.getVisibility() != View.GONE) {
+            this.video_add_text_control_parent.setVisibility(View.GONE);
         }
     }
 
@@ -3054,7 +3077,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         this.mTextContent = "";
         this.draw_text_view.setText("");
-        this.text_draw_rl.setVisibility(8);
+        this.text_draw_rl.setVisibility(View.GONE);
     }
 
     private void refreshEditAddTextOpt() {
@@ -3064,7 +3087,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         this.mTextContent = "";
         this.draw_text_view.setText("");
-        this.text_draw_rl.setVisibility(8);
+        this.text_draw_rl.setVisibility(View.GONE);
     }
 
     private void restoreDrawTextView() {
@@ -3079,18 +3102,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.draw_text_view.setLetterSpacingType(this.mCurrentTextLongVideoModel.getTextLetterSpacingType());
         saveTextTempInfo();
         if (TextUtil.isValidate(this.mCurrentTextLongVideoModel.getTextContent())) {
-            this.text_draw_rl.setVisibility(0);
+            this.text_draw_rl.setVisibility(View.VISIBLE);
         } else {
-            this.text_draw_rl.setVisibility(8);
+            this.text_draw_rl.setVisibility(View.GONE);
         }
     }
 
     private void clickTextEdit(android.view.View v) {
         switch (v.getId()) {
-            case 2131691050:
+            case R.id.filter_addition_modify:
                 toTextInputActivity(this.mTextContent);
                 return;
-            case 2131691053:
+            case R.id.filter_addition_font:
                 if (this.mVTFontDialog == null) {
                     if (this.mVTFontDesBeanList == null) {
                         this.mVTFontDesBeanList = new ArrayList();
@@ -3098,7 +3121,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     if (this.filter_title_bar != null) {
                         int[] locations = new int[2];
                         this.filter_title_bar.getLocationOnScreen(locations);
-                        int curHeight = locations[1] + ((int) getResources().getDimension(2131427423));
+                        int curHeight = locations[1] + ((int) getResources().getDimension(R.dimen._63dp));
                     }
                     this.mVTFontDialog = new VTFontDialog(getActivity(), this.mVTFontDesBeanList).builder(DensityUtil.getMetricsHeight(getApplicationContext()) - DensityUtil.dip2px(40.0f)).setCancelable(true).setOnFontClickListener(this.mOnFontClickListener);
                 }
@@ -3107,116 +3130,148 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131691056:
-                FontSizeType curFontSizeType;
-                this.filter_addition_root_hsv.setVisibility(8);
-                this.filter_addition_size_ll.setVisibility(0);
-                this.addTextClickId = 2131691056;
+            case R.id.filter_addition_size:
+                VTContainerView.FontSizeType curFontSizeType;
+                this.filter_addition_root_hsv.setVisibility(View.GONE);
+                this.filter_addition_size_ll.setVisibility(View.VISIBLE);
+                this.addTextClickId = R.id.filter_addition_size;
                 alphaEnterAndExit(this.filter_addition_size_ll, this.filter_addition_root_hsv);
                 if (this.mCurrentTextLongVideoModel == null) {
                     curFontSizeType = this.draw_text_view.getFontSizeType();
                 } else {
                     curFontSizeType = this.mCurrentTextLongVideoModel.getTextFontSizeType();
                 }
-                FontSizeType[] fontTypes = FontSizeType.values();
-                List<String> fontList = new ArrayList();
-                for (FontSizeType type : fontTypes) {
+                final VTContainerView.FontSizeType[] fontTypes = VTContainerView.FontSizeType.values();
+                final List<String> fontList = new ArrayList();
+                for (VTContainerView.FontSizeType type : fontTypes) {
                     fontList.add(type.name());
                 }
-                this.vt_textsize_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296535), getTextName(curFontSizeType.ordinal())}));
+                this.vt_textsize_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_FONTSIZE), getTextName(curFontSizeType.ordinal())));
                 this.vt_textsize.setHintText(fontList.size(), fontList.indexOf(curFontSizeType.name()));
-                this.vt_textsize.setId(2131691056);
-                this.vt_textsize.setOnChooseChangeListener(10.lambdaFactory$(this, fontTypes, fontList));
+                this.vt_textsize.setId(R.id.filter_addition_size);
+//                this.vt_textsize.setOnChooseChangeListener(10.lambdaFactory$(this, fontTypes, fontList));
+                vt_textsize.setOnChooseChangeListener(new VTBaseView.OnChooseChangeListener() {
+                    @Override
+                    public void change(int i) {
+                        lambda$clickTextEdit$9(fontTypes,fontList,i);
+                    }
+                });
                 return;
-            case 2131691060:
-                this.addTextClickId = 2131691060;
-                this.filter_addition_root_hsv.setVisibility(8);
-                this.filter_addition_color_ll.setVisibility(0);
+            case R.id.filter_addition_color:
+                this.addTextClickId = R.id.filter_addition_color;
+                this.filter_addition_root_hsv.setVisibility(View.GONE);
+                this.filter_addition_color_ll.setVisibility(View.VISIBLE);
                 alphaEnterAndExit(this.filter_addition_color_ll, this.filter_addition_root_hsv);
-                TextColorType curColorType = this.draw_text_view.getTextColorType();
-                TextColorType[] colorTypes = TextColorType.values();
+                VTContainerView.TextColorType curColorType = this.draw_text_view.getTextColorType();
+                final VTContainerView.TextColorType[] colorTypes = VTContainerView.TextColorType.values();
                 List<Integer> colorList = new ArrayList();
-                colorList.add(Integer.valueOf(Color.parseColor("#EEEEEE")));
-                colorList.add(Integer.valueOf(Color.parseColor("#131211")));
-                this.vt_color_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296527), getColorName(curColorType.ordinal())}));
+                colorList.add(Color.parseColor("#EEEEEE"));
+                colorList.add(Color.parseColor("#131211"));
+                this.vt_color_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_COLOR), getColorName(curColorType.ordinal())));
                 this.vt_colorchoose.setColorOfCircle(colorList, curColorType.ordinal());
-                this.vt_colorchoose.setOnChooseChangeListener(9.lambdaFactory$(this, colorTypes));
+//                this.vt_colorchoose.setOnChooseChangeListener(9.lambdaFactory$(this, colorTypes));
+                vt_colorchoose.setOnChooseChangeListener(new VTBaseView.OnChooseChangeListener() {
+                    @Override
+                    public void change(int i) {
+                        lambda$clickTextEdit$8(colorTypes,i);
+                    }
+                });
                 return;
-            case 2131691063:
-                this.filter_addition_root_hsv.setVisibility(8);
-                this.filter_addition_shader_ll.setVisibility(0);
-                this.addTextClickId = 2131691063;
+            case R.id.filter_addition_shader:
+                this.filter_addition_root_hsv.setVisibility(View.GONE);
+                this.filter_addition_shader_ll.setVisibility(View.VISIBLE);
+                this.addTextClickId = R.id.filter_addition_shader;
                 alphaEnterAndExit(this.filter_addition_shader_ll, this.filter_addition_root_hsv);
-                switch (this.draw_text_view.getShadowType().ordinal()) {
-                    case 0:
+//                NONE,
+//                        AROUND,
+//                        SMOOTH,
+//                        UPADDDOWN,
+//                        AROUNDBORDER,
+//                        INLINE,
+//                        SOLID,
+//                        BOX
+                switch (this.draw_text_view.getShadowType()) {
+                    case NONE:
                         clickShadder(this.vt_shader_1);
                         return;
-                    case 1:
+                    case AROUND:
                         clickShadder(this.vt_shader_2);
                         return;
-                    case 2:
+                    case SMOOTH:
                         clickShadder(this.vt_shader_3);
                         return;
-                    case 3:
+                    case UPADDDOWN:
                         clickShadder(this.vt_shader_4);
                         return;
-                    case 4:
+                    case AROUNDBORDER:
                         clickShadder(this.vt_shader_5);
                         return;
-                    case 5:
+                    case INLINE:
                         clickShadder(this.vt_shader_6);
                         return;
                     default:
                         return;
                 }
-            case 2131691066:
-                this.filter_addition_root_hsv.setVisibility(8);
-                this.filter_addition_size_ll.setVisibility(0);
-                this.addTextClickId = 2131691066;
+            case R.id.filter_addition_word_space:
+                this.filter_addition_root_hsv.setVisibility(View.GONE);
+                this.filter_addition_size_ll.setVisibility(View.VISIBLE);
+                this.addTextClickId = R.id.filter_addition_word_space;
                 alphaEnterAndExit(this.filter_addition_size_ll, this.filter_addition_root_hsv);
-                LetterSpacingType curletterSizeType = this.draw_text_view.getLetterSpacingType();
-                LetterSpacingType[] letterTypes = LetterSpacingType.values();
-                List<String> wordList = new ArrayList();
-                for (LetterSpacingType type2 : letterTypes) {
+                VTContainerView.LetterSpacingType curletterSizeType = this.draw_text_view.getLetterSpacingType();
+                final VTContainerView.LetterSpacingType[] letterTypes = VTContainerView.LetterSpacingType.values();
+                final List<String> wordList = new ArrayList();
+                for (VTContainerView.LetterSpacingType type2 : letterTypes) {
                     wordList.add(type2.name());
                 }
-                this.vt_textsize_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296539), getTextName(curletterSizeType.ordinal())}));
+                this.vt_textsize_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_TRACKING), getTextName(curletterSizeType.ordinal())));
                 this.vt_textsize.setHintText(wordList.size(), wordList.indexOf(curletterSizeType.name()));
-                this.vt_textsize.setId(2131691066);
-                this.vt_textsize.setOnChooseChangeListener(12.lambdaFactory$(this, letterTypes, wordList));
+                this.vt_textsize.setId(R.id.filter_addition_word_space);
+                //this.vt_textsize.setOnChooseChangeListener(12.lambdaFactory$(this, letterTypes, wordList));
+                vt_textsize.setOnChooseChangeListener(new VTBaseView.OnChooseChangeListener() {
+                    @Override
+                    public void change(int i) {
+                        lambda$clickTextEdit$11(letterTypes,wordList,i);
+                    }
+                });
                 return;
-            case 2131691070:
-                LineSpacingType curLineSizeType;
-                this.filter_addition_root_hsv.setVisibility(8);
-                this.filter_addition_size_ll.setVisibility(0);
-                this.addTextClickId = 2131691070;
+            case R.id.filter_addition_line_space:
+                VTContainerView.LineSpacingType curLineSizeType;
+                this.filter_addition_root_hsv.setVisibility(View.GONE);
+                this.filter_addition_size_ll.setVisibility(View.VISIBLE);
+                this.addTextClickId = R.id.filter_addition_line_space;
                 alphaEnterAndExit(this.filter_addition_size_ll, this.filter_addition_root_hsv);
                 if (this.mCurrentTextLongVideoModel != null) {
                     curLineSizeType = this.mCurrentTextLongVideoModel.getTextLineSpacingType();
                 } else {
                     curLineSizeType = this.draw_text_view.getLineSpacingType();
                 }
-                LineSpacingType[] lineTypes = LineSpacingType.values();
+                final VTContainerView.LineSpacingType[] lineTypes = VTContainerView.LineSpacingType.values();
                 List<String> lineList = new ArrayList();
-                for (LineSpacingType type3 : lineTypes) {
+                for (VTContainerView.LineSpacingType type3 : lineTypes) {
                     lineList.add(type3.name());
                 }
-                this.vt_textsize_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296537), getTextName(curLineSizeType.ordinal())}));
+                this.vt_textsize_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_LINESPACING), getTextName(curLineSizeType.ordinal())));
                 this.vt_textsize.setHintText(lineList.size(), lineList.indexOf(curLineSizeType.name()));
-                this.vt_textsize.setId(2131691070);
-                this.vt_textsize.setOnChooseChangeListener(11.lambdaFactory$(this, lineTypes));
+                this.vt_textsize.setId(R.id.filter_addition_line_space);
+//                this.vt_textsize.setOnChooseChangeListener(11.lambdaFactory$(this, lineTypes));
+                vt_textsize.setOnChooseChangeListener(new VTBaseView.OnChooseChangeListener() {
+                    @Override
+                    public void change(int i) {
+                        lambda$clickTextEdit$10(lineTypes,i);
+                    }
+                });
                 return;
-            case 2131691079:
+            case R.id.filter_addition_delete:
                 this.mTextContent = "";
                 this.draw_text_view.setText("");
-                this.text_draw_rl.setVisibility(8);
-                this.draw_text_view.setFontSizeType(FontSizeType.M);
-                this.draw_text_view.setAlignType(AlignType.M);
+                this.text_draw_rl.setVisibility(View.GONE);
+                this.draw_text_view.setFontSizeType(VTContainerView.FontSizeType.M);
+                this.draw_text_view.setAlignType(VTContainerView.AlignType.M);
                 this.draw_text_view.setVerticalPos(0);
-                this.draw_text_view.setTextColorType(TextColorType.White);
-                this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-                this.draw_text_view.setLineSpacingType(LineSpacingType.S);
-                this.draw_text_view.setShadowType(ShadowType.NONE);
+                this.draw_text_view.setTextColorType(VTContainerView.TextColorType.White);
+                this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+                this.draw_text_view.setLineSpacingType(VTContainerView.LineSpacingType.S);
+                this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
                 if (this.mCurrentTextLongVideoModel != null) {
                     List<LongVideosModel> textModelList = this.mVideoAudioManager.getTextModelList();
                     if (textModelList != null && textModelList.size() > 0) {
@@ -3235,26 +3290,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private /* synthetic */ void lambda$clickTextEdit$8(TextColorType[] colorTypes, int position) {
-        this.vt_color_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296527), getColorName(position)}));
+    private /* synthetic */ void lambda$clickTextEdit$8(VTContainerView.TextColorType[] colorTypes, int position) {
+        this.vt_color_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_COLOR), getColorName(position)));
         this.draw_text_view.setTextColorType(colorTypes[position]);
     }
 
-    private /* synthetic */ void lambda$clickTextEdit$9(FontSizeType[] fontTypes, List fontList, int position) {
-        this.vt_textsize_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296535), getTextName(position)}));
+    private /* synthetic */ void lambda$clickTextEdit$9(VTContainerView.FontSizeType[] fontTypes, List fontList, int position) {
+        this.vt_textsize_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_FONTSIZE), getTextName(position)));
         this.draw_text_view.setFontSizeType(fontTypes[position]);
         this.lastTextChangeString = (String) fontList.get(position);
         resetControlViews();
     }
 
-    private /* synthetic */ void lambda$clickTextEdit$10(LineSpacingType[] lineTypes, int position) {
-        this.vt_textsize_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296537), getTextName(position)}));
+    private /* synthetic */ void lambda$clickTextEdit$10(VTContainerView.LineSpacingType[] lineTypes, int position) {
+        this.vt_textsize_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_LINESPACING), getTextName(position)));
         this.draw_text_view.setLineSpacingType(lineTypes[position]);
         resetControlViews();
     }
 
-    private /* synthetic */ void lambda$clickTextEdit$11(LetterSpacingType[] letterTypes, List wordList, int position) {
-        this.vt_textsize_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296539), getTextName(position)}));
+    private /* synthetic */ void lambda$clickTextEdit$11(VTContainerView.LetterSpacingType[] letterTypes, List wordList, int position) {
+        this.vt_textsize_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_TRACKING), getTextName(position)));
         this.draw_text_view.setLetterSpacingType(letterTypes[position]);
         this.lastTextChangeString = (String) wordList.get(position);
         resetControlViews();
@@ -3263,67 +3318,67 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private String getTextName(int type) {
         switch (type) {
             case 0:
-                return getString(2131296996);
+                return getString(R.string.TEXT_SIZE_XS);
             case 1:
-                return getString(2131296994);
+                return getString(R.string.TEXT_SIZE_S);
             case 2:
-                return getString(2131296993);
+                return getString(R.string.TEXT_SIZE_M);
             case 3:
-                return getString(2131296992);
+                return getString(R.string.TEXT_SIZE_L);
             case 4:
-                return getString(2131296995);
+                return getString(R.string.TEXT_SIZE_XL);
             case 5:
-                return getString(2131296997);
+                return getString(R.string.TEXT_SIZE_XXL);
             case 6:
-                return getString(2131296990);
+                return getString(R.string.TEXT_SIZE_3XS);
             default:
-                return getString(2131296991);
+                return getString(R.string.TEXT_SIZE_4XL);
         }
     }
 
     private void clickShadder(android.view.View v) {
-        this.vt_shader_1.setImageResource(2130838080);
-        this.vt_shader_2.setImageResource(2130838077);
-        this.vt_shader_3.setImageResource(2130838081);
-        this.vt_shader_4.setImageResource(2130838083);
-        this.vt_shader_5.setImageResource(2130838076);
-        this.vt_shader_6.setImageResource(2130838079);
-        ShadowType[] shadowTypes = ShadowType.values();
-        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_1, 2131755058);
-        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_2, 2131755058);
-        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_3, 2131755058);
-        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_4, 2131755058);
-        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_5, 2131755058);
-        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_6, 2131755058);
+        this.vt_shader_1.setImageResource(R.drawable.icon_30_text_shadow_no);
+        this.vt_shader_2.setImageResource(R.drawable.icon_30_text_shadow_around);
+        this.vt_shader_3.setImageResource(R.drawable.icon_30_text_shadow_smooth);
+        this.vt_shader_4.setImageResource(R.drawable.icon_30_text_shadow_upanddown);
+        this.vt_shader_5.setImageResource(R.drawable.icon_30_text_shadow_4borders);
+        this.vt_shader_6.setImageResource(R.drawable.icon_30_text_shadow_lineinline);
+        VTContainerView.ShadowType[] shadowTypes = VTContainerView.ShadowType.values();
+        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_1, R.color.colorDate);
+        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_2, R.color.colorDate);
+        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_3,  R.color.colorDate);
+        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_4,  R.color.colorDate);
+        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_5,  R.color.colorDate);
+        TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_6,  R.color.colorDate);
         switch (v.getId()) {
-            case 2131691090:
-                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_1, 2131755096);
-                this.vt_shader_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296538), getString(2131296974)}));
+            case R.id.vt_shader_1:
+                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_1, R.color.colorWhite);
+                this.vt_shader_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_SHADOW), getString(R.string.TEXT_SHADOW_OFF)));
                 this.draw_text_view.setShadowType(shadowTypes[0]);
                 return;
-            case 2131691091:
-                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_2, 2131755096);
-                this.vt_shader_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296538), getString(2131296971)}));
+            case R.id.vt_shader_2:
+                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_2, R.color.colorWhite);
+                this.vt_shader_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_SHADOW), getString(R.string.TEXT_SHADOW_AROUND)));
                 this.draw_text_view.setShadowType(shadowTypes[1]);
                 return;
-            case 2131691092:
-                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_3, 2131755096);
-                this.vt_shader_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296538), getString(2131296975)}));
+            case R.id.vt_shader_3:
+                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_3, R.color.colorWhite);
+                this.vt_shader_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_SHADOW), getString(R.string.TEXT_SHADOW_SMOOTH)));
                 this.draw_text_view.setShadowType(shadowTypes[2]);
                 return;
-            case 2131691093:
-                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_4, 2131755096);
-                this.vt_shader_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296538), getString(2131296977)}));
+            case R.id.vt_shader_4:
+                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_4, R.color.colorWhite);
+                this.vt_shader_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_SHADOW), getString(R.string.TEXT_SHADOW_UPANDDOWN)));
                 this.draw_text_view.setShadowType(shadowTypes[3]);
                 return;
-            case 2131691094:
-                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_5, 2131755096);
-                this.vt_shader_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296538), getString(2131296970)}));
+            case R.id.vt_shader_5:
+                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_5, R.color.colorWhite);
+                this.vt_shader_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_SHADOW), getString(R.string.TEXT_SHADOW_4BORDERS)));
                 this.draw_text_view.setShadowType(shadowTypes[4]);
                 return;
-            case 2131691095:
-                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_6, 2131755096);
-                this.vt_shader_hint.setText(String.format("%1$s: %2$s", new Object[]{getString(2131296538), getString(2131296973)}));
+            case R.id.vt_shader_6:
+                TintColorUtil.tintDrawable(getApplicationContext(), this.vt_shader_6, R.color.colorWhite);
+                this.vt_shader_hint.setText(String.format("%1$s: %2$s", getString(R.string.BUTTON_TEXT_SHADOW), getString(R.string.TEXT_SHADOW_INLINE)));
                 this.draw_text_view.setShadowType(shadowTypes[5]);
                 return;
             default:
@@ -3333,27 +3388,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private String getColorName(int type) {
         if (type == 0) {
-            return getString(2131296842);
+            return getString(R.string.TEXT_COLOR_WHITE);
         }
-        return getString(2131296839);
+        return getString(R.string.TEXT_COLOR_BLACK);
     }
 
     private void hideSaveAndBack() {
-        this.mTvSave.setVisibility(8);
-        this.mIvBack.setVisibility(8);
+        this.mTvSave.setVisibility(View.GONE);
+        this.mIvBack.setVisibility(View.GONE);
     }
 
     private void restoreSaveAndBack() {
-        this.mTvSave.setVisibility(0);
-        this.mIvBack.setVisibility(0);
+        this.mTvSave.setVisibility(View.VISIBLE);
+        this.mIvBack.setVisibility(View.VISIBLE);
     }
 
     private void hidePlayButton() {
-        this.player_rl.setVisibility(8);
+        this.player_rl.setVisibility(View.GONE);
     }
 
     private void showPlayButton() {
-        this.player_rl.setVisibility(0);
+        this.player_rl.setVisibility(View.VISIBLE);
     }
 
     private Bitmap getDateBitmap() {
@@ -3403,7 +3458,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 lineWidth = (int) (f + measureText);
             }
-            this.mDateFontBitmap = Bitmap.createBitmap(lineWidth + 30, allLineHeight, Config.ARGB_8888);
+            this.mDateFontBitmap = Bitmap.createBitmap(lineWidth + 30, allLineHeight, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(this.mDateFontBitmap);
             canvas.drawColor(65280);
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, 3));
@@ -3437,47 +3492,54 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.video_edit_add_vs = null;
             this.video_edit_add_parent.setOnClickListener(new OnClickListener() {
                 public void onClick(android.view.View v) {
+                    Toast.makeText(getActivity(),"add video",Toast.LENGTH_LONG).show();
                 }
             });
-            this.video_edit_add_album_tab = (FrameLayout) this.video_edit_add_parent.findViewById(2131691609);
-            this.video_edit_add_album_iv = (ImageView) this.video_edit_add_album_tab.findViewById(2131691610);
-            this.video_edit_add_album_tv = (TextView) this.video_edit_add_album_tab.findViewById(2131691611);
+            this.video_edit_add_album_tab = this.video_edit_add_parent.findViewById(R.id.video_edit_add_album_tab);
+            this.video_edit_add_album_iv = this.video_edit_add_album_tab.findViewById(R.id.video_edit_add_album_iv);
+            this.video_edit_add_album_tv = this.video_edit_add_album_tab.findViewById(R.id.video_edit_add_album_tv);
             int addAlbumWidth = (int) ((((float) DensityUtil.dip2px(55.0f)) + this.video_edit_add_album_tv.getPaint().measureText(this.video_edit_add_album_tv.getText().toString())) + 1.0f);
-            this.video_edit_add_textgap_tab = (FrameLayout) this.video_edit_add_parent.findViewById(2131691612);
-            this.video_edit_add_textgap_iv = (ImageView) this.video_edit_add_textgap_tab.findViewById(2131691613);
-            this.video_edit_add_textgap_tv = (TextView) this.video_edit_add_textgap_tab.findViewById(2131691614);
-            this.video_edit_add_onemin_tab = (FrameLayout) this.video_edit_add_parent.findViewById(2131691615);
-            this.video_edit_add_onemin_iv = (ImageView) this.video_edit_add_parent.findViewById(2131691616);
-            this.video_edit_add_onemin_tv = (TextView) this.video_edit_add_parent.findViewById(2131691617);
+            this.video_edit_add_textgap_tab = this.video_edit_add_parent.findViewById(R.id.video_edit_add_textgap_tab);
+            this.video_edit_add_textgap_iv = this.video_edit_add_textgap_tab.findViewById(R.id.video_edit_add_textgap_iv);
+            this.video_edit_add_textgap_tv = this.video_edit_add_textgap_tab.findViewById(R.id.video_edit_add_textgap_tv);
+            this.video_edit_add_onemin_tab = this.video_edit_add_parent.findViewById(R.id.video_edit_add_onemin_tab);
+            this.video_edit_add_onemin_iv = this.video_edit_add_parent.findViewById(R.id.video_edit_add_onemin_iv);
+            this.video_edit_add_onemin_tv = this.video_edit_add_parent.findViewById(R.id.video_edit_add_onemin_tv);
             this.video_edit_add_onemin_tv.setText(ActiveListManager.OneMinuteActive);
             int addTextGapWidth = (int) ((((float) DensityUtil.dip2px(55.0f)) + this.video_edit_add_textgap_tv.getPaint().measureText(this.video_edit_add_textgap_tv.getText().toString())) + 1.0f);
             int addOneMineWidth = (int) ((((float) DensityUtil.dip2px(55.0f)) + this.video_edit_add_onemin_tv.getPaint().measureText(this.video_edit_add_onemin_tv.getText().toString())) + 1.0f);
             if (Constants.OPEN_ACTIVE_ONE_MINUTE) {
                 finalWidth = Math.max(Math.max(addAlbumWidth, addTextGapWidth), addOneMineWidth);
-                this.video_edit_add_onemin_tab.setVisibility(0);
+                this.video_edit_add_onemin_tab.setVisibility(View.VISIBLE);
             } else {
                 finalWidth = Math.max(addAlbumWidth, addTextGapWidth);
-                this.video_edit_add_onemin_tab.setVisibility(8);
+                this.video_edit_add_onemin_tab.setVisibility(View.GONE);
             }
-            LogUtil.d(TAG, String.format("initVideoEditAddLayout addAlbumWidth : %s , addTextGapWidth : %s , finalWidth : %s ", new Object[]{Integer.valueOf(addAlbumWidth), Integer.valueOf(addTextGapWidth), Integer.valueOf(finalWidth)}));
+            LogUtil.d(TAG, String.format("initVideoEditAddLayout addAlbumWidth : %s , addTextGapWidth : %s , finalWidth : %s ", addAlbumWidth, addTextGapWidth, finalWidth));
             ViewUtil.setViewWidth(this.video_edit_add_album_tab, finalWidth);
             ViewUtil.setViewWidth(this.video_edit_add_textgap_tab, finalWidth);
             ViewUtil.setViewWidth(this.video_edit_add_onemin_tab, finalWidth);
-            this.video_edit_add_cancel_iv = (ImageView) this.video_edit_add_parent.findViewById(2131691618);
-            this.video_edit_add_parent.setOnClickListener(13.lambdaFactory$(this));
+            this.video_edit_add_cancel_iv = this.video_edit_add_parent.findViewById(R.id.video_edit_add_cancel_iv);
+            //this.video_edit_add_parent.setOnClickListener(13.lambdaFactory$(this));
+            video_edit_add_parent.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoEditAddLayout$13(v);
+                }
+            });
             this.video_edit_add_album_tab.setOnTouchListener(new OnTouchListener() {
                 public boolean onTouch(android.view.View v, MotionEvent event) {
                     switch (event.getAction()) {
-                        case 0:
-                            FilterActivity.this.video_edit_add_album_iv.setAlpha(0.3f);
-                            FilterActivity.this.video_edit_add_album_tv.setAlpha(0.3f);
+                        case MotionEvent.ACTION_DOWN:
+                            video_edit_add_album_iv.setAlpha(0.3f);
+                            video_edit_add_album_tv.setAlpha(0.3f);
                             break;
-                        case 1:
-                        case 3:
-                            FilterActivity.this.mHandler.postDelayed(new Runnable() {
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL:
+                            mHandler.postDelayed(new Runnable() {
                                 public void run() {
-                                    FilterActivity.this.video_edit_add_album_iv.setAlpha(1.0f);
-                                    FilterActivity.this.video_edit_add_album_tv.setAlpha(1.0f);
+                                    video_edit_add_album_iv.setAlpha(1.0f);
+                                    video_edit_add_album_tv.setAlpha(1.0f);
                                 }
                             }, 100);
                             break;
@@ -3485,20 +3547,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return false;
                 }
             });
-            this.video_edit_add_album_tab.setOnClickListener(14.lambdaFactory$(this));
+//            this.video_edit_add_album_tab.setOnClickListener(14.lambdaFactory$(this));
+            video_edit_add_album_tab.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoEditAddLayout$14(v);
+                }
+            });
             this.video_edit_add_textgap_tab.setOnTouchListener(new OnTouchListener() {
                 public boolean onTouch(android.view.View v, MotionEvent event) {
                     switch (event.getAction()) {
-                        case 0:
-                            FilterActivity.this.video_edit_add_textgap_iv.setAlpha(0.3f);
-                            FilterActivity.this.video_edit_add_textgap_tv.setAlpha(0.3f);
+                        case MotionEvent.ACTION_DOWN:
+                            video_edit_add_textgap_iv.setAlpha(0.3f);
+                            video_edit_add_textgap_tv.setAlpha(0.3f);
                             break;
-                        case 1:
-                        case 3:
-                            FilterActivity.this.mHandler.postDelayed(new Runnable() {
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL:
+                            mHandler.postDelayed(new Runnable() {
                                 public void run() {
-                                    FilterActivity.this.video_edit_add_textgap_iv.setAlpha(1.0f);
-                                    FilterActivity.this.video_edit_add_textgap_tv.setAlpha(1.0f);
+                                    video_edit_add_textgap_iv.setAlpha(1.0f);
+                                    video_edit_add_textgap_tv.setAlpha(1.0f);
                                 }
                             }, 100);
                             break;
@@ -3506,20 +3574,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return false;
                 }
             });
-            this.video_edit_add_textgap_tab.setOnClickListener(15.lambdaFactory$(this));
+//            this.video_edit_add_textgap_tab.setOnClickListener(15.lambdaFactory$(this));
+            video_edit_add_textgap_tab.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(),"video_edit_add_textgap_tab onclick",Toast.LENGTH_LONG).show();
+                }
+            });
             this.video_edit_add_onemin_tab.setOnTouchListener(new OnTouchListener() {
                 public boolean onTouch(android.view.View v, MotionEvent event) {
                     switch (event.getAction()) {
-                        case 0:
-                            FilterActivity.this.video_edit_add_onemin_iv.setAlpha(0.3f);
-                            FilterActivity.this.video_edit_add_onemin_tv.setAlpha(0.3f);
+                        case MotionEvent.ACTION_DOWN:
+                            video_edit_add_onemin_iv.setAlpha(0.3f);
+                            video_edit_add_onemin_tv.setAlpha(0.3f);
                             break;
-                        case 1:
-                        case 3:
-                            FilterActivity.this.mHandler.postDelayed(new Runnable() {
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_CANCEL:
+                            mHandler.postDelayed(new Runnable() {
                                 public void run() {
-                                    FilterActivity.this.video_edit_add_onemin_iv.setAlpha(1.0f);
-                                    FilterActivity.this.video_edit_add_onemin_tv.setAlpha(1.0f);
+                                    video_edit_add_onemin_iv.setAlpha(1.0f);
+                                    video_edit_add_onemin_tv.setAlpha(1.0f);
                                 }
                             }, 100);
                             break;
@@ -3529,25 +3603,34 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             });
             this.video_edit_add_onemin_tab.setOnClickListener(new OnClickListener() {
                 public void onClick(android.view.View v) {
-                    FilterActivity.this.callVideoPause();
-                    FilterActivity.this.insertBlackImageOnCurList(true);
-                    FilterActivity.this.hideVideoEditAddLayout();
+                    callVideoPause();
+                    insertBlackImageOnCurList(true);
+                    hideVideoEditAddLayout();
                 }
             });
             this.video_edit_add_cancel_iv.setOnTouchListener(ColorFilterUtil.TouchFocusChange());
-            this.video_edit_add_cancel_iv.setOnClickListener(16.lambdaFactory$(this));
+//            this.video_edit_add_cancel_iv.setOnClickListener(16.lambdaFactory$(this));
+            video_edit_add_cancel_iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(),"video_edit_add_cancel_iv onclick",Toast.LENGTH_LONG).show();
+                    //onAddVideosClick(0);
+                    hideSaveAndBack();
+                }
+            });
         }
     }
 
     private /* synthetic */ void lambda$initVideoEditAddLayout$13(android.view.View v) {
-        BuglyLogUtil.writeBuglyLog("video jump to add local");
+        //BuglyLogUtil.writeBuglyLog("video jump to add local");
         callVideoPause();
         ArrayList<String> pathList = new ArrayList();
         Iterator it = this.mVideoAudioManager.getVideosModelList().iterator();
         while (it.hasNext()) {
             pathList.add(((LongVideosModel) it.next()).getOriginalMediaPath());
         }
-        IntentUtil.toVideo2FromFilter(getActivity(), VideoActivity2.FromFilter, "", "", 0, "", 0, this.mFilterName, pathList);
+        //IntentUtil.toVideo2FromFilter(getActivity(), VideoActivity2.FromFilter, "", "", 0, "", 0, this.mFilterName, pathList);
+        Toast.makeText(this,"go to VideoActivity2",Toast.LENGTH_LONG).show();
         hideVideoEditAddLayout();
     }
 
@@ -3570,11 +3653,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.mVideoEditHelper.changeTextDurationAfterInsert(this.mCurInsertPosition, longVideosModel.getCurrentDuration(), true);
         }
         if (this.mVideoAudioManager.getVideosModelList().size() > 0) {
-            LongVideosModel firstModel = (LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(0);
+            LongVideosModel firstModel = this.mVideoAudioManager.getVideosModelList().get(0);
             VideoInputRatio inputRatio = firstModel.getInputRatioWithRotate();
             longVideosModel.setInputRatio(new VideoInputRatio(inputRatio.ratioHeight, inputRatio.ratioWidth));
             longVideosModel.setVideoFPS(firstModel.getVideoFPS());
-            LogUtil.d(TAG, String.format("insertBlackImageOnCurList h : %s , w : %s ", new Object[]{Integer.valueOf(inputRatio.ratioHeight), Integer.valueOf(inputRatio.ratioWidth)}));
+            LogUtil.d(TAG, String.format("insertBlackImageOnCurList h : %s , w : %s ", inputRatio.ratioHeight, inputRatio.ratioWidth));
         }
         this.mVideoAudioManager.getVideosModelList().add(this.mCurInsertPosition, longVideosModel);
         setUndoData(1);
@@ -3602,9 +3685,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void showVideoEditAddLayout() {
         this.onViewAnimating = true;
         initVideoEditAddLayout();
-        AnimationUtil.appearFromBottom(DensityUtil.dip2px(140.0f), this.video_edit_add_parent, new AnimationCallback() {
+        AnimationUtil.appearFromBottom(DensityUtil.dip2px(140.0f), this.video_edit_add_parent, new AnimationUtil.AnimationCallback() {
             public void onAnimationEnd() {
-                FilterActivity.this.onViewAnimating = false;
+                onViewAnimating = false;
             }
         });
         showVideoEditAddTextLayout();
@@ -3613,24 +3696,24 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void showVideoEditAddTextLayout() {
         if (this.video_edit_remove_parent != null) {
-            this.video_edit_remove_parent.setVisibility(8);
+            this.video_edit_remove_parent.setVisibility(View.GONE);
         }
-        this.video_edit_add_type_tv.setVisibility(0);
+        this.video_edit_add_type_tv.setVisibility(View.VISIBLE);
     }
 
     private void hideVideoEditAddTextLayout() {
         if (this.video_edit_remove_parent != null) {
-            this.video_edit_remove_parent.setVisibility(0);
+            this.video_edit_remove_parent.setVisibility(View.VISIBLE);
         }
-        this.video_edit_add_type_tv.setVisibility(8);
+        this.video_edit_add_type_tv.setVisibility(View.GONE);
     }
 
     private void hideVideoEditAddLayout() {
         if (this.video_edit_add_parent != null) {
             this.onViewAnimating = true;
-            AnimationUtil.disappearFromBottom(DensityUtil.dip2px(140.0f), this.video_edit_add_parent, new AnimationCallback() {
+            AnimationUtil.disappearFromBottom(DensityUtil.dip2px(140.0f), this.video_edit_add_parent, new AnimationUtil.AnimationCallback() {
                 public void onAnimationEnd() {
-                    FilterActivity.this.onViewAnimating = false;
+                    onViewAnimating = false;
                 }
             });
             changeVideoEditVisible();
@@ -3641,38 +3724,38 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void changeVideoEditVisibleForMusicTab() {
         if (this.video_edit_parent_ll != null) {
-            this.video_edit_parent_ll.setVisibility(0);
+            this.video_edit_parent_ll.setVisibility(View.VISIBLE);
         }
         if (this.video_edit_remove_parent != null) {
-            this.video_edit_remove_parent.setVisibility(0);
+            this.video_edit_remove_parent.setVisibility(View.VISIBLE);
         }
         showVideoTimeSlideBar();
         if (this.video_edit_text_rv != null && this.mVideoEditHelper != null && this.mVideoEditHelper.isCanShowTextRV()) {
-            this.video_edit_text_rv.setVisibility(0);
+            this.video_edit_text_rv.setVisibility(View.VISIBLE);
         }
     }
 
     private void changeVideoEditVisible() {
         if (this.video_edit_parent_ll != null) {
-            this.video_edit_parent_ll.setVisibility(0);
+            this.video_edit_parent_ll.setVisibility(View.VISIBLE);
         }
         showEditCenterLine();
         if (this.video_edit_remove_parent != null) {
-            this.video_edit_remove_parent.setVisibility(0);
+            this.video_edit_remove_parent.setVisibility(View.VISIBLE);
         }
         showVideoTimeSlideBar();
         if (this.video_edit_text_rv != null && this.mVideoEditHelper != null && this.mVideoEditHelper.isCanShowTextRV()) {
-            this.video_edit_text_rv.setVisibility(0);
+            this.video_edit_text_rv.setVisibility(View.VISIBLE);
         }
     }
 
     private void showEditCenterLine() {
-        this.filter_tab_center_line_parent.setVisibility(0);
+        this.filter_tab_center_line_parent.setVisibility(View.VISIBLE);
     }
 
     private void showVideoTimeSlideBar() {
-        this.video_time_slide_bar.setVisibility(0);
-        this.video_time_slide_bar_backgroud_view.setVisibility(0);
+        this.video_time_slide_bar.setVisibility(View.VISIBLE);
+        this.video_time_slide_bar_backgroud_view.setVisibility(View.VISIBLE);
     }
 
     private void initVideoMusicVolumeLayout() {
@@ -3702,12 +3785,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             ValueAnimator valueAnimator = ValueAnimator.ofFloat(1.0f);
             valueAnimator.setInterpolator(new LinearInterpolator());
             valueAnimator.setDuration(200);
-            valueAnimator.addUpdateListener(17.lambdaFactory$(this, height));
+            //valueAnimator.addUpdateListener(17.lambdaFactory$(this, height));
+            valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    lambda$hideVideoMusicVolumeLayout$16(height,animation);
+                }
+            });
             valueAnimator.addListener(new AnimatorEndListener() {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    ViewCompat.setTranslationY(FilterActivity.this.video_music_volume_ll, (float) height);
-                    FilterActivity.this.video_music_volume_ll.setVisibility(8);
+                    ViewCompat.setTranslationY(video_music_volume_ll, (float) height);
+                    video_music_volume_ll.setVisibility(View.GONE);
                 }
             });
             valueAnimator.start();
@@ -3715,13 +3804,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private /* synthetic */ void lambda$hideVideoMusicVolumeLayout$16(int height, ValueAnimator animation) {
-        ViewCompat.setTranslationY(this.video_music_volume_ll, ((float) height) * ((Float) animation.getAnimatedValue()).floatValue());
+        ViewCompat.setTranslationY(this.video_music_volume_ll, ((float) height) * (Float) animation.getAnimatedValue());
     }
 
     private void setVideoStartPause(boolean shouldPause) {
         if (this.playbackPercent == 1.0d) {
             this.player_rl.changePlayState(false);
-            if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == 0) {
+            if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == View.VISIBLE) {
                 this.mAudioTrimLayout.changePlayState(false);
             }
             if (this.mSurfaceView.getLongVideoPlayState()) {
@@ -3742,13 +3831,19 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (viewHeight <= 0) {
             viewHeight = DensityUtil.dip2px(140.0f);
         }
-        int height = viewHeight;
+        final int height = viewHeight;
         ViewCompat.setTranslationY(this.video_music_split_parent, (float) height);
-        this.video_music_split_parent.setVisibility(0);
+        this.video_music_split_parent.setVisibility(View.VISIBLE);
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(1.0f);
         valueAnimator.setInterpolator(new LinearInterpolator());
         valueAnimator.setDuration(100);
-        valueAnimator.addUpdateListener(18.lambdaFactory$(this, height));
+        //valueAnimator.addUpdateListener(18.lambdaFactory$(this, height));
+        valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                lambda$showVideoMusicSplitLayout$17(height,animation);
+            }
+        });
         valueAnimator.start();
     }
 
@@ -3760,15 +3855,41 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (this.video_music_split_vs != null) {
             this.video_music_split_parent = (VideoMusicSplitLayout) this.video_music_split_vs.inflate();
             this.video_music_split_vs = null;
-            this.video_music_split_tv_parent = (FrameLayout) this.video_music_split_parent.findViewById(2131691737);
-            this.video_music_split_awv = (AudioWaveView) this.video_music_split_parent.findViewById(2131691738);
+            this.video_music_split_tv_parent = this.video_music_split_parent.findViewById(R.id.video_music_split_tv_parent);
+            this.video_music_split_awv = this.video_music_split_parent.findViewById(R.id.video_music_split_awv);
             this.video_music_split_awv.setWaveDrawType(2);
-            this.video_music_split_cancel_iv = (ImageView) this.video_music_split_parent.findViewById(2131691744);
-            this.video_music_split_confirm_iv = (ImageView) this.video_music_split_parent.findViewById(2131691745);
-            this.video_music_split_cancel_iv.setOnClickListener(19.lambdaFactory$(this));
-            this.video_music_split_confirm_iv.setOnClickListener(20.lambdaFactory$(this));
-            this.video_music_split_parent.setPlayBtnClickListener(21.lambdaFactory$(this));
-            this.video_music_split_parent.setCallback(22.lambdaFactory$(this));
+            this.video_music_split_cancel_iv = this.video_music_split_parent.findViewById(R.id.video_music_split_cancel_iv);
+            this.video_music_split_confirm_iv = this.video_music_split_parent.findViewById(R.id.video_music_split_confirm_iv);
+            //this.video_music_split_cancel_iv.setOnClickListener(19.lambdaFactory$(this));
+            video_music_split_cancel_iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoMusicSplitLayout$18(v);
+                }
+            });
+            //this.video_music_split_confirm_iv.setOnClickListener(20.lambdaFactory$(this));
+            video_music_split_confirm_iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoMusicSplitLayout$19(v);
+                }
+            });
+            //this.video_music_split_parent.setPlayBtnClickListener(21.lambdaFactory$(this));
+            video_music_split_parent.setPlayBtnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoMusicSplitLayout$20(v);
+                }
+            });
+            //this.video_music_split_parent.setCallback(22.lambdaFactory$(this));
+            video_music_split_parent.setCallback(new VideoMusicSplitLayout.VideoPlayControlCallback() {
+                @Override
+                public void pauseVideo() {
+                    //lambda$initVideoOrderLayout$22();
+                    Toast.makeText(getActivity(),"video_music_split_parent pauseVideo",Toast.LENGTH_LONG).show();
+                    pauseVideoForSplitView();
+                }
+            });
         }
     }
 
@@ -3815,39 +3936,42 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         restoreSaveAndBack();
         showPlayButton();
         if (this.video_music_split_parent != null) {
-            this.video_music_split_parent.setVisibility(8);
+            this.video_music_split_parent.setVisibility(View.GONE);
         }
     }
 
     private void hideMusicVolumeAndRemove() {
-        this.filter_music_volume.setVisibility(8);
-        this.filter_music_delete.setVisibility(8);
-        this.filter_music_add.setFilterEffectText(getString(2131296340));
+        this.filter_music_volume.setVisibility(View.GONE);
+        this.filter_music_delete.setVisibility(View.GONE);
+        this.filter_music_add.setFilterEffectText(getString(R.string.BUTTON_AUDIO_EDIT_ADD));
     }
 
     private void showMusicVolumeAndRemove() {
-        this.filter_music_volume.setVisibility(0);
-        this.filter_music_delete.setVisibility(0);
-        this.filter_music_add.setFilterEffectText(getString(2131296343));
+        this.filter_music_volume.setVisibility(View.VISIBLE);
+        this.filter_music_delete.setVisibility(View.VISIBLE);
+        this.filter_music_add.setFilterEffectText(getString(R.string.BUTTON_AUDIO_EDIT_REPLACE));
     }
 
     private void showVideoMusicDialog() {
         initVideoMusicDialog();
-        this.mVideoMusicDialog.show();
+        //this.mVideoMusicDialog.show();
+        Toast.makeText(getActivity(),"showVideoMusicDialog",Toast.LENGTH_LONG).show();
     }
 
     private void initVideoMusicDialog() {
-        if (this.mVideoMusicDialog == null) {
-            this.mVideoMusicDialog = new VideoMusicDialog(getActivity(), this.needScreenWidth, this.needScreenHeight).build();
-        }
+//        if (this.mVideoMusicDialog == null) {
+//            this.mVideoMusicDialog = new VideoMusicDialog(getActivity(), this.needScreenWidth, this.needScreenHeight).build();
+//        }
+        Toast.makeText(getActivity(),"initVideoMusicDialog",Toast.LENGTH_LONG).show();
     }
 
     private void showVideoMusicLayout() {
+        Toast.makeText(getActivity(),"showVideoMusicLayout",Toast.LENGTH_LONG).show();
     }
 
     private void hideVideoMusicLayout() {
         if (this.filter_music_ll != null) {
-            this.filter_music_ll.setVisibility(8);
+            this.filter_music_ll.setVisibility(View.GONE);
             this.filter_music_icon_bottom.setVisibility(4);
         }
         hideVideoMusicNameLayout();
@@ -3868,14 +3992,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         return false;
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(VideoAudioUseEvent event) {
         dealVideoAudioUseEvent(event);
     }
 
     private void addToUsedBgm(AudioTrackBean bean, LongVideosModel model, int position, boolean isAudioReplace) {
         if (bean != null) {
-            LogUtil.d(TAG, String.format("addToUsedBgm position : %s ", new Object[]{Integer.valueOf(position)}));
+            LogUtil.d(TAG, String.format("addToUsedBgm position : %s ", position));
             getBgmList().add(position, model);
             if (this.mVideoEditHelper != null) {
                 this.mVideoEditHelper.refreshAudioViewAfterInsertOrReplace(position, isAudioReplace);
@@ -3900,7 +4024,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (audioTrackBean.isLocal()) {
                 file = new File(audioFileName);
             } else {
-                file = new File(com.blink.academy.onetake.Config.getAudiosDownloadPath(), audioFileName);
+                file = new File(Config.getAudiosDownloadPath(), audioFileName);
             }
             String filePath = file.getAbsolutePath();
             long duration = (long) (Float.valueOf(audioTrackBean.getDuration()).floatValue() * 1000.0f);
@@ -3930,7 +4054,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 if (this.mVideoEditHelper != null) {
                     this.mVideoEditHelper.cancelGetWaveRunnableByModelPos(this.addMusicPosition);
                 }
-                LongVideosModel old = (LongVideosModel) getBgmList().remove(this.addMusicPosition);
+                LongVideosModel old = getBgmList().remove(this.addMusicPosition);
                 audioVideosModel.setAudioVolumes(old.getAudioVolumes());
                 audioVideosModel.setAudioStartTime(old.getAudioStartTime());
                 audioVideosModel.setAudioDuration(old.getAudioDuration());
@@ -3945,7 +4069,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     LongVideosModel model;
                     long audioStartTime;
                     if (this.addMusicPosition == getBgmList().size()) {
-                        model = (LongVideosModel) getBgmList().get(this.addMusicPosition - 1);
+                        model = getBgmList().get(this.addMusicPosition - 1);
                         audioVideosModel.setAudioStartTime(model.getAudioStartTime() + model.getAudioDuration());
                         audioStartTime = audioVideosModel.getAudioStartTime();
                         if (audioStartTime >= sumTime) {
@@ -3955,9 +4079,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                             audioVideosModel.setAudioDuration(sumTime - audioStartTime);
                         }
                     } else {
-                        model = (LongVideosModel) getBgmList().get(this.addMusicPosition);
+                        model = getBgmList().get(this.addMusicPosition);
                         if (this.addMusicPosition > 0) {
-                            LongVideosModel prev = (LongVideosModel) getBgmList().get(this.addMusicPosition - 1);
+                            LongVideosModel prev = getBgmList().get(this.addMusicPosition - 1);
                             audioStartTime = prev.getAudioStartTime() + prev.getAudioDuration();
                             audioVideosModel.setAudioStartTime(audioStartTime);
                             audioVideosModel.setAudioDuration(model.getAudioStartTime() - audioStartTime);
@@ -3977,7 +4101,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (isFirst) {
             selectMusicFromEditPointAnim(new AnimatorEndListener() {
                 public void onAnimationEnd(Animator animation) {
-                    FilterActivity.this.onMusicTabClick(true);
+                    onMusicTabClick(true);
                 }
             });
         }
@@ -3990,7 +4114,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private synchronized void setUndoData(final int type) {
         if (FilterViewUtils.isVideoModel(this.mDataType)) {
-            LogUtil.d("UNDOMODE", String.format("setUndoData type : %s", new Object[]{Integer.valueOf(type)}));
+            LogUtil.d("UNDOMODE", String.format("setUndoData type : %s", Integer.valueOf(type)));
             if (type != 2 && this.isFirstSaveDraft) {
                 this.isFirstSaveDraft = false;
                 SharedPrefUtil.setUserFirstSaveDraft();
@@ -3998,8 +4122,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             PriorityThreadPoolManager.executeInSingleThreadPool(new PriorityRunnable(1) {
                 public void run() {
-                    FilterActivity.this.mVideoAudioManager.setUndoModel(type, FilterActivity.this.mFilterEffectManager.copyCurrentList(), FilterActivity.this.mFilterName);
-                    FilterActivity.this.saveDraft(FilterActivity.this.mFilterModel, FilterActivity.this.mDraftLongVideoBean, false);
+                    mVideoAudioManager.setUndoModel(type, mFilterEffectManager.copyCurrentList(), mFilterName);
+                    saveDraft(mFilterModel, mDraftLongVideoBean, false);
                 }
             });
         }
@@ -4007,25 +4131,25 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void hideVideoMusicNameLayout() {
         if (this.video_music_name_parent != null) {
-            this.video_music_name_parent.setVisibility(8);
+            this.video_music_name_parent.setVisibility(View.GONE);
         }
     }
 
     private void showVideoMusicNameLayout() {
         initVideoMusicNameLayout();
-        this.video_music_name_parent.setVisibility(0);
+        this.video_music_name_parent.setVisibility(View.VISIBLE);
     }
 
     private void setVideoMusicName(String name) {
         if (TextUtil.isValidate(name)) {
-            this.video_music_name_iv.setImageResource(2130837732);
+            this.video_music_name_iv.setImageResource(R.drawable.icon_15_current_music);
             this.video_music_name_tv.setText(name);
             this.video_music_name_parent.setAlpha(1.0f);
             showMusicVolumeAndRemove();
             return;
         }
-        this.video_music_name_iv.setImageResource(2130837754);
-        this.video_music_name_tv.setText(2131296929);
+        this.video_music_name_iv.setImageResource(R.drawable.icon_15_no_music);
+        this.video_music_name_tv.setText(R.string.TEXT_NO_MUSIC);
         this.video_music_name_parent.setAlpha(0.3f);
         hideMusicVolumeAndRemove();
     }
@@ -4033,8 +4157,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void initVideoMusicNameLayout() {
         if (this.video_music_name_vs != null) {
             this.video_music_name_parent = this.video_music_name_vs.inflate();
-            this.video_music_name_iv = (ImageView) this.video_music_name_parent.findViewById(2131691734);
-            this.video_music_name_tv = (TextView) this.video_music_name_parent.findViewById(2131691735);
+            this.video_music_name_iv = this.video_music_name_parent.findViewById(R.id.video_music_name_iv);
+            this.video_music_name_tv = this.video_music_name_parent.findViewById(R.id.video_music_name_tv);
             this.video_music_name_vs = null;
         }
     }
@@ -4042,23 +4166,23 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void initVideoEditLayout() {
         if (this.video_edit_parent_new_view_stub != null) {
             this.video_edit_parent_ll = (FrameLayout) this.video_edit_parent_new_view_stub.inflate();
-            this.video_edit_time_rv = (RecyclerView) this.video_edit_parent_ll.findViewById(2131691689);
-            this.video_edit_image_rv = (RecyclerView) this.video_edit_parent_ll.findViewById(2131691690);
-            this.video_edit_audio_rv = (RecyclerView) this.video_edit_parent_ll.findViewById(2131691696);
-            this.video_edit_audio_mute_tv = (TextView) this.video_edit_parent_ll.findViewById(2131691698);
-            this.video_edit_image_mute_tv = (TextView) this.video_edit_parent_ll.findViewById(2131691693);
-            this.video_edit_mute_indicator = this.video_edit_parent_ll.findViewById(2131691691);
-            this.video_edit_mute_indicator_cover = this.video_edit_parent_ll.findViewById(2131691692);
-            this.video_edit_audio_mute_indicator = this.video_edit_parent_ll.findViewById(2131691697);
-            this.video_edit_video_duration_tv = (TextView) this.video_edit_parent_ll.findViewById(2131691694);
-            this.video_edit_add_music_tv = (TextView) this.video_edit_parent_ll.findViewById(2131691699);
-            this.video_edit_missing_footage_fl = (FrameLayout) this.video_edit_parent_ll.findViewById(2131691695);
-            this.video_edit_image_volume_line = this.video_edit_parent_ll.findViewById(2131691664);
-            this.video_edit_image_volume_touch = (VolumeSlideView) this.video_edit_parent_ll.findViewById(2131691700);
-            this.video_edit_audio_volume_line = this.video_edit_parent_ll.findViewById(2131691626);
-            this.video_edit_audio_volume_touch = (VolumeSlideView) this.video_edit_parent_ll.findViewById(2131691703);
-            this.leftTouchView = this.video_edit_parent_ll.findViewById(2131691701);
-            this.rightTouchView = this.video_edit_parent_ll.findViewById(2131691702);
+            this.video_edit_time_rv = this.video_edit_parent_ll.findViewById(R.id.video_edit_time_rv);
+            this.video_edit_image_rv = this.video_edit_parent_ll.findViewById(R.id.video_edit_image_rv);
+            this.video_edit_audio_rv = this.video_edit_parent_ll.findViewById(R.id.video_edit_audio_rv);
+            this.video_edit_audio_mute_tv = this.video_edit_parent_ll.findViewById(R.id.video_edit_audio_mute_tv);
+            this.video_edit_image_mute_tv = this.video_edit_parent_ll.findViewById(R.id.video_edit_image_mute_tv);
+            this.video_edit_mute_indicator = this.video_edit_parent_ll.findViewById(R.id.video_edit_mute_indicator);
+            this.video_edit_mute_indicator_cover = this.video_edit_parent_ll.findViewById(R.id.video_edit_mute_indicator_cover);
+            this.video_edit_audio_mute_indicator = this.video_edit_parent_ll.findViewById(R.id.video_edit_audio_mute_indicator);
+            this.video_edit_video_duration_tv = this.video_edit_parent_ll.findViewById(R.id.video_edit_video_duration_tv);
+            this.video_edit_add_music_tv = this.video_edit_parent_ll.findViewById(R.id.video_edit_add_music_tv);
+            this.video_edit_missing_footage_fl = this.video_edit_parent_ll.findViewById(R.id.video_edit_missing_footage_fl);
+            this.video_edit_image_volume_line = this.video_edit_parent_ll.findViewById(R.id.video_edit_image_volume_line);
+            this.video_edit_image_volume_touch = this.video_edit_parent_ll.findViewById(R.id.video_edit_image_volume_touch);
+            this.video_edit_audio_volume_line = this.video_edit_parent_ll.findViewById(R.id.video_edit_audio_volume_line);
+            this.video_edit_audio_volume_touch = this.video_edit_parent_ll.findViewById(R.id.video_edit_audio_volume_touch);
+            this.leftTouchView = this.video_edit_parent_ll.findViewById(R.id.left_touch_view);
+            this.rightTouchView = this.video_edit_parent_ll.findViewById(R.id.right_touch_view);
             this.videoEditMissingFootageIvList = new ArrayList();
             this.video_edit_parent_new_view_stub = null;
         }
@@ -4071,8 +4195,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.video_edit_remove_vs = null;
             this.video_edit_remove_parent.setOnClickListener(new OnClickListener() {
                 public void onClick(android.view.View v) {
-                    if (FilterActivity.this.mVideoEditHelper != null) {
-                        FilterActivity.this.mVideoEditHelper.clearIfExistSelect();
+                    if (mVideoEditHelper != null) {
+                        mVideoEditHelper.clearIfExistSelect();
                     }
                 }
             });
@@ -4100,11 +4224,23 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 public void onClick(android.view.View v) {
                 }
             });
-            this.video_order_rv = (RecyclerView) this.video_order_parent_rl.findViewById(2131691433);
-            this.video_order_cancel_iv = (ImageView) this.video_order_parent_rl.findViewById(2131691435);
-            this.video_order_confirm_iv = (ImageView) this.video_order_parent_rl.findViewById(2131691436);
-            this.video_order_cancel_iv.setOnClickListener(23.lambdaFactory$(this));
-            this.video_order_confirm_iv.setOnClickListener(24.lambdaFactory$(this));
+            this.video_order_rv = (RecyclerView) this.video_order_parent_rl.findViewById(R.id.video_order_rv);
+            this.video_order_cancel_iv = (ImageView) this.video_order_parent_rl.findViewById(R.id.video_order_cancel_iv);
+            this.video_order_confirm_iv = (ImageView) this.video_order_parent_rl.findViewById(R.id.video_order_confirm_iv);
+//            this.video_order_cancel_iv.setOnClickListener(23.lambdaFactory$(this));
+//            this.video_order_confirm_iv.setOnClickListener(24.lambdaFactory$(this));
+            video_order_cancel_iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoOrderLayout$21(v);
+                }
+            });
+            video_order_confirm_iv.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    lambda$initVideoOrderLayout$22(v);
+                }
+            });
             this.delayOrderRunnable = new ArrayList();
             this.order_video_vs = null;
         }
@@ -4144,16 +4280,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void hideVideoOrderLayout() {
-        int dp = DensityUtil.dip2px(140.0f);
+        final int dp = DensityUtil.dip2px(140.0f);
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(1.0f);
         valueAnimator.setDuration(100);
-        valueAnimator.addUpdateListener(25.lambdaFactory$(this, dp));
+//        valueAnimator.addUpdateListener(25.lambdaFactory$(this, dp));
+        valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                lambda$hideVideoOrderLayout$23(dp,animation);
+            }
+        });
         valueAnimator.addListener(new AnimatorEndListener() {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                FilterActivity.this.video_order_parent_rl.setVisibility(8);
-                if (FilterActivity.this.mVideoEditSwitchTabsHolder != null) {
-                    FilterActivity.this.mVideoEditSwitchTabsHolder.setVisibility(0);
+                video_order_parent_rl.setVisibility(View.GONE);
+                if (mVideoEditSwitchTabsHolder != null) {
+                    mVideoEditSwitchTabsHolder.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -4179,18 +4321,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.specific_combination_rl = (RecyclerView) this.specific_combination_stub.inflate();
             this.specific_combination_stub = null;
             if (this.mSpecificCombinationAdapter == null) {
-                this.mSpecificCombinationAdapter = new SpecificCombinationAdapter(App.sSpecificCombinations, getActivity());
+                this.mSpecificCombinationAdapter = new SpecificCombinationAdapter(null,getActivity());//(App.sSpecificCombinations, getActivity());
                 this.mSpecificCombinationAdapter.setListener(new RecyclerViewItemClickListener<SpecificCombination>() {
-                    public void onItemClickListener(SpecificCombination specificCombination, int position, android.view.View view) {
+                    public void onItemClickListener(SpecificCombination specificCombination, final int position, android.view.View view) {
                         if (specificCombination.getCombination_id() == 0) {
-                            FilterActivity.this.clearCurrFilterEffectAndClearViewAnim(false);
-                            FilterActivity.this.loadFilterInfos(false, false, false);
-                            FilterActivity.this.setNormalFilter();
+                            clearCurrFilterEffectAndClearViewAnim(false);
+                            loadFilterInfos(false, false, false);
+                            setNormalFilter();
                         } else {
                             Iterator it;
                             List<FilterEffectBean> trueFinalResult = new ArrayList();
-                            List<FilterEffectBean> lastFilterEffectBeanList = FilterActivity.this.mFilterEffectManager.copyCurrentList();
-                            ArrayList<EffectType> lastEffectTypeList = new ArrayList();
+                            List<FilterEffectBean> lastFilterEffectBeanList = mFilterEffectManager.copyCurrentList();
+                            ArrayList<FilterEffectManager.EffectType> lastEffectTypeList = new ArrayList();
                             for (FilterEffectBean effectBean : lastFilterEffectBeanList) {
                                 lastEffectTypeList.add(effectBean.effectType);
                             }
@@ -4198,7 +4340,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                             List<SpecificsBean> specifics = specificCombination.getSpecifics();
                             if (specifics != null) {
                                 for (SpecificsBean bean : specifics) {
-                                    EffectType effectTypeByType;
+                                    FilterEffectManager.EffectType effectTypeByType;
                                     float valueMax;
                                     float valueMin;
                                     int value;
@@ -4207,25 +4349,31 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                     FilterEffectBean beanByName;
                                     FilterEffectBean defaultBean;
                                     if ("Preset".equals(bean.getType())) {
-                                        if (TextUtil.isNull(FilterActivity.this.mFilterName) || FilterActivity.NONE_FILTER.equals(FilterActivity.this.mFilterName)) {
-                                            FilterActivity.this.mFilterName = bean.getMode();
-                                            if (FilterActivity.this.mFilterName == null) {
-                                                FilterActivity.this.mFilterName = FilterActivity.NONE_FILTER;
+                                        if (TextUtil.isNull(mFilterName) || FilterActivity.NONE_FILTER.equals(mFilterName)) {
+                                            mFilterName = bean.getMode();
+                                            if (mFilterName == null) {
+                                                mFilterName = FilterActivity.NONE_FILTER;
                                             }
-                                            FilterActivity.this.mCurrentFilterInfo = FilterActivity.this.mHelper.getFilterInfoByFilterName(FilterActivity.this.mFilterInfos, FilterActivity.this.mFilterName);
-                                            int filterPosition = FilterActivity.this.mFilterInfos.indexOf(FilterActivity.this.mCurrentFilterInfo);
-                                            int selectFilterGroupPosition = FilterActivity.this.mHelper.shouldSelectFilterGroupPosition(FilterActivity.this.mFilterGroupNames, FilterActivity.this.mFilterInfos, filterPosition);
-                                            FilterActivity.this.filterGroupNameAdapter.setSelectPosition(selectFilterGroupPosition);
-                                            FilterActivity.this.filterGroupNameAdapter.notifyDataSetChanged();
-                                            FilterActivity.this.filter_group_name_rv.scrollToPosition(selectFilterGroupPosition);
-                                            FilterActivity.this.filter_group_name_rv.post(FilterActivity$19$.Lambda.1.lambdaFactory$(this, selectFilterGroupPosition));
-                                            FilterActivity.this.isChangeFilterCombination = true;
-                                            FilterActivity.this.filterAdapter.firstClickFilter(filterPosition, FilterActivity.this.mCurrentFilterInfo, null, true);
+                                            mCurrentFilterInfo = mHelper.getFilterInfoByFilterName(mFilterInfos, mFilterName);
+                                            int filterPosition = mFilterInfos.indexOf(mCurrentFilterInfo);
+                                            final int selectFilterGroupPosition = mHelper.shouldSelectFilterGroupPosition(mFilterGroupNames, mFilterInfos, filterPosition);
+                                            filterGroupNameAdapter.setSelectPosition(selectFilterGroupPosition);
+                                            filterGroupNameAdapter.notifyDataSetChanged();
+                                            filter_group_name_rv.scrollToPosition(selectFilterGroupPosition);
+                                            //filter_group_name_rv.post(FilterActivity$19$.Lambda.1.lambdaFactory$(this, selectFilterGroupPosition));
+                                            filter_group_name_rv.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    lambda$onItemClickListener$0(selectFilterGroupPosition);
+                                                }
+                                            });
+                                            isChangeFilterCombination = true;
+                                            filterAdapter.firstClickFilter(filterPosition, mCurrentFilterInfo, null, true);
                                         }
                                     } else if ("Leak".equals(bean.getType())) {
-                                        if (FilterActivity.this.mDataType == 1) {
+                                        if (mDataType == 1) {
                                             effectTypeByType = FilterEffectManager.getEffectTypeByType(bean.getType());
-                                            if (!FilterActivity.this.isVideoType() || !FilterEffectManager.VideoHideEffectTypes.contains(effectTypeByType)) {
+                                            if (!isVideoType() || !FilterEffectManager.VideoHideEffectTypes.contains(effectTypeByType)) {
                                                 valueMax = StaticLayoutUtil.DefaultSpacingadd;
                                                 try {
                                                     valueMax = Float.parseFloat(bean.getValueMax());
@@ -4241,22 +4389,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                                 value = (int) ((Math.random() * ((double) ((valueMax - valueMin) + 1.0f))) + ((double) valueMin));
                                                 depth = (int) (Math.random() * 4.0d);
                                                 select = (int) (Math.random() * 4.0d);
-                                                FilterEffectBean leakItem = FilterActivity.this.mFilterEffectManager.getDefaultBean(EffectType.LEAK);
+                                                FilterEffectBean leakItem = mFilterEffectManager.getDefaultBean(FilterEffectManager.EffectType.LEAK);
                                                 beanByName = FilterEffectManager.getEffectBeanByName(lastFilterEffectBeanList, bean.getType());
-                                                defaultBean = FilterActivity.this.mFilterEffectManager.getDefaultBean(leakItem.effectType);
+                                                defaultBean = mFilterEffectManager.getDefaultBean(leakItem.effectType);
                                                 if (beanByName != null) {
-                                                    FilterActivity.this.loadFilterEffectJustInit(beanByName);
+                                                    loadFilterEffectJustInit(beanByName);
                                                     lastFilterEffectBeanList.remove(beanByName);
                                                 } else {
-                                                    FilterActivity.this.loadFilterEffectJustInit(defaultBean);
-                                                    FilterActivity.this.mFilterEffectManager.setCurrentListItem(defaultBean);
+                                                    loadFilterEffectJustInit(defaultBean);
+                                                    mFilterEffectManager.setCurrentListItem(defaultBean);
                                                 }
                                                 leakItem.value[1] = (float) value;
                                                 leakItem.selectPosition[0] = (float) select;
                                                 leakItem.selectPosition[1] = (float) depth;
                                                 finalEffectBeanList.add(leakItem);
                                                 trueFinalResult.add(leakItem);
-                                                FilterActivity.this.setFilterViewAnim(effectTypeByType, (List) finalEffectBeanList);
+                                                setFilterViewAnim(effectTypeByType, finalEffectBeanList);
                                                 if (lastEffectTypeList.contains(effectTypeByType)) {
                                                     lastEffectTypeList.remove(effectTypeByType);
                                                 }
@@ -4266,16 +4414,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                     } else if (!"Dust".equals(bean.getType())) {
                                         String value2 = bean.getValue();
                                         effectTypeByType = FilterEffectManager.getEffectTypeByType(bean.getType());
-                                        if (!FilterActivity.this.isVideoType() || !FilterEffectManager.VideoHideEffectTypes.contains(effectTypeByType)) {
-                                            FilterEffectBean filterEffectBeanByName = FilterActivity.this.mFilterEffectManager.getFilterEffectBeanByName(bean.getType());
+                                        if (!isVideoType() || !FilterEffectManager.VideoHideEffectTypes.contains(effectTypeByType)) {
+                                            FilterEffectBean filterEffectBeanByName = mFilterEffectManager.getFilterEffectBeanByName(bean.getType());
                                             beanByName = FilterEffectManager.getEffectBeanByName(lastFilterEffectBeanList, bean.getType());
-                                            defaultBean = FilterActivity.this.mFilterEffectManager.getDefaultBean(filterEffectBeanByName.effectType);
+                                            defaultBean = mFilterEffectManager.getDefaultBean(filterEffectBeanByName.effectType);
                                             if (beanByName != null) {
-                                                FilterActivity.this.loadFilterEffectJustInit(beanByName);
+                                                loadFilterEffectJustInit(beanByName);
                                                 lastFilterEffectBeanList.remove(beanByName);
                                             } else {
-                                                FilterActivity.this.loadFilterEffectJustInit(defaultBean);
-                                                FilterActivity.this.mFilterEffectManager.setCurrentListItem(defaultBean);
+                                                loadFilterEffectJustInit(defaultBean);
+                                                mFilterEffectManager.setCurrentListItem(defaultBean);
                                             }
                                             if (TextUtil.isValidate(value2)) {
                                                 filterEffectBeanByName.value[1] = Float.parseFloat(value2);
@@ -4290,14 +4438,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                             }
                                             finalEffectBeanList.add(filterEffectBeanByName);
                                             trueFinalResult.add(filterEffectBeanByName);
-                                            FilterActivity.this.setFilterViewAnim(effectTypeByType, (List) finalEffectBeanList);
+                                            setFilterViewAnim(effectTypeByType, (List) finalEffectBeanList);
                                             if (lastEffectTypeList.contains(effectTypeByType)) {
                                                 lastEffectTypeList.remove(effectTypeByType);
                                             }
                                         }
-                                    } else if (FilterActivity.this.mDataType == 1) {
+                                    } else if (mDataType == 1) {
                                         effectTypeByType = FilterEffectManager.getEffectTypeByType(bean.getType());
-                                        if (!FilterActivity.this.isVideoType() || !FilterEffectManager.VideoHideEffectTypes.contains(effectTypeByType)) {
+                                        if (!isVideoType() || !FilterEffectManager.VideoHideEffectTypes.contains(effectTypeByType)) {
                                             valueMax = StaticLayoutUtil.DefaultSpacingadd;
                                             try {
                                                 valueMax = Float.parseFloat(bean.getValueMax());
@@ -4313,22 +4461,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                             value = (int) ((Math.random() * ((double) ((valueMax - valueMin) + 1.0f))) + ((double) valueMin));
                                             depth = (int) (Math.random() * 4.0d);
                                             select = (int) (Math.random() * 3.0d);
-                                            FilterEffectBean dustItem = FilterActivity.this.mFilterEffectManager.getDefaultBean(EffectType.DUST);
+                                            FilterEffectBean dustItem = mFilterEffectManager.getDefaultBean(FilterEffectManager.EffectType.DUST);
                                             beanByName = FilterEffectManager.getEffectBeanByName(lastFilterEffectBeanList, bean.getType());
-                                            defaultBean = FilterActivity.this.mFilterEffectManager.getDefaultBean(dustItem.effectType);
+                                            defaultBean = mFilterEffectManager.getDefaultBean(dustItem.effectType);
                                             if (beanByName != null) {
-                                                FilterActivity.this.loadFilterEffectJustInit(beanByName);
+                                                loadFilterEffectJustInit(beanByName);
                                                 lastFilterEffectBeanList.remove(beanByName);
                                             } else {
-                                                FilterActivity.this.loadFilterEffectJustInit(defaultBean);
-                                                FilterActivity.this.mFilterEffectManager.setCurrentListItem(defaultBean);
+                                                loadFilterEffectJustInit(defaultBean);
+                                                mFilterEffectManager.setCurrentListItem(defaultBean);
                                             }
                                             dustItem.value[1] = (float) value;
                                             dustItem.selectPosition[0] = (float) select;
                                             dustItem.selectPosition[1] = (float) depth;
                                             finalEffectBeanList.add(dustItem);
                                             trueFinalResult.add(dustItem);
-                                            FilterActivity.this.setFilterViewAnim(effectTypeByType, (List) finalEffectBeanList);
+                                            setFilterViewAnim(effectTypeByType, (List) finalEffectBeanList);
                                             if (lastEffectTypeList.contains(effectTypeByType)) {
                                                 lastEffectTypeList.remove(effectTypeByType);
                                             }
@@ -4337,53 +4485,64 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                     }
                                 }
                                 for (FilterEffectBean bean2 : lastFilterEffectBeanList) {
-                                    if (bean2.effectType != EffectType.BEAUTIFY && bean2.effectType != EffectType.CROP && bean2.effectType != EffectType.ROTATE && bean2.effectType != EffectType.VERTICAL && bean2.effectType != EffectType.HORIZONTAL && bean2.effectType != EffectType.MIRROR) {
-                                        finalEffectBeanList.add(FilterActivity.this.mFilterEffectManager.getDefaultBean(bean2.effectType));
+                                    if (bean2.effectType != FilterEffectManager.EffectType.BEAUTIFY &&
+                                            bean2.effectType != FilterEffectManager.EffectType.CROP &&
+                                            bean2.effectType != FilterEffectManager.EffectType.ROTATE &&
+                                            bean2.effectType != FilterEffectManager.EffectType.VERTICAL &&
+                                            bean2.effectType != FilterEffectManager.EffectType.HORIZONTAL &&
+                                            bean2.effectType != FilterEffectManager.EffectType.MIRROR) {
+                                        finalEffectBeanList.add(mFilterEffectManager.getDefaultBean(bean2.effectType));
                                     } else if (!finalEffectBeanList.contains(bean2)) {
                                         finalEffectBeanList.add(bean2);
                                     }
                                 }
                                 it = lastEffectTypeList.iterator();
                                 while (it.hasNext()) {
-                                    FilterActivity.this.setFilterViewAnim((EffectType) it.next(), (List) finalEffectBeanList);
+                                    setFilterViewAnim((FilterEffectManager.EffectType) it.next(), (List) finalEffectBeanList);
                                 }
-                                if (FilterActivity.this.isFirstClick) {
+                                if (isFirstClick) {
                                     final List<FilterEffectBean> list = finalEffectBeanList;
                                     final List<FilterEffectBean> list2 = trueFinalResult;
                                     PriorityThreadPoolManager.execute(new PriorityRunnable(5) {
                                         public void run() {
-                                            FilterActivity.this.setSpecialFilter();
-                                            FilterActivity.this.loadFilterInfosSpecial(list);
-                                            FilterActivity.this.mFilterEffectManager.clearCurrentFilterEffect();
-                                            FilterActivity.this.mFilterEffectManager.setDraftFilterData(list2);
+                                            setSpecialFilter();
+                                            loadFilterInfosSpecial(list);
+                                            mFilterEffectManager.clearCurrentFilterEffect();
+                                            mFilterEffectManager.setDraftFilterData(list2);
                                         }
                                     });
-                                    FilterActivity.this.isFirstClick = false;
+                                    isFirstClick = false;
                                 } else {
-                                    FilterActivity.this.setSpecialFilter();
-                                    FilterActivity.this.loadFilterInfosSpecial(finalEffectBeanList);
-                                    FilterActivity.this.mFilterEffectManager.clearCurrentFilterEffect();
-                                    FilterActivity.this.mFilterEffectManager.setDraftFilterData(trueFinalResult);
+                                    setSpecialFilter();
+                                    loadFilterInfosSpecial(finalEffectBeanList);
+                                    mFilterEffectManager.clearCurrentFilterEffect();
+                                    mFilterEffectManager.setDraftFilterData(trueFinalResult);
                                 }
                             } else {
                                 return;
                             }
                         }
-                        FilterActivity.this.specific_combination_rl.scrollToPosition(position);
-                        FilterActivity.this.specific_combination_rl.post(FilterActivity$19$.Lambda.2.lambdaFactory$(this, position));
+                        specific_combination_rl.scrollToPosition(position);
+                        //specific_combination_rl.post(FilterActivity$19$.Lambda.2.lambdaFactory$(this, position));
+                        specific_combination_rl.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                lambda$onItemClickListener$1(position);
+                            }
+                        });
                     }
 
                     private /* synthetic */ void lambda$onItemClickListener$0(int selectFilterGroupPosition) {
-                        android.view.View viewByPosition = FilterActivity.this.mFilterGroupNameManager.findViewByPosition(selectFilterGroupPosition);
+                        android.view.View viewByPosition = mFilterGroupNameManager.findViewByPosition(selectFilterGroupPosition);
                         if (viewByPosition != null) {
-                            FilterActivity.this.filter_group_name_rv.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                            filter_group_name_rv.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
                         }
                     }
 
                     private /* synthetic */ void lambda$onItemClickListener$1(int position) {
-                        android.view.View viewByPosition = FilterActivity.this.specific_combination_rl.getLayoutManager().findViewByPosition(position);
+                        android.view.View viewByPosition = specific_combination_rl.getLayoutManager().findViewByPosition(position);
                         if (viewByPosition != null) {
-                            FilterActivity.this.specific_combination_rl.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                            specific_combination_rl.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
                         }
                     }
 
@@ -4398,14 +4557,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void clearCurrFilterEffectAndClearViewAnim(boolean fromUndo) {
         List<FilterEffectBean> currentList = this.mFilterEffectManager.getCurrentList();
-        ArrayList<EffectType> effectTypeList = new ArrayList();
+        ArrayList<FilterEffectManager.EffectType> effectTypeList = new ArrayList();
         for (FilterEffectBean effectBean : currentList) {
             effectTypeList.add(effectBean.effectType);
         }
         this.mFilterEffectManager.clearCurrentFilterEffect();
         Iterator it = effectTypeList.iterator();
         while (it.hasNext()) {
-            setFilterViewAnim((EffectType) it.next(), fromUndo);
+            setFilterViewAnim((FilterEffectManager.EffectType) it.next(), fromUndo);
         }
     }
 
@@ -4413,22 +4572,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         hideWhiteAlphaCoverViewWhenSwitchTab();
         switchBottomIconAndCircleShowState(3);
         if (this.specific_combination_rl != null) {
-            this.specific_combination_rl.setVisibility(8);
+            this.specific_combination_rl.setVisibility(View.GONE);
         }
         checkSurfaceNeedScale(false);
-        this.filter_stablize_rl.setVisibility(0);
+        this.filter_stablize_rl.setVisibility(View.VISIBLE);
     }
 
     private void onVideoEditTabClick() {
         switchBottomIconAndCircleShowState(4);
         if (this.specific_combination_rl != null) {
-            this.specific_combination_rl.setVisibility(8);
+            this.specific_combination_rl.setVisibility(View.GONE);
         }
-        this.filter_stablize_rl.setVisibility(8);
+        this.filter_stablize_rl.setVisibility(View.GONE);
         checkSurfaceNeedScale(false);
-        this.video_edit_parent_ll.setVisibility(0);
+        this.video_edit_parent_ll.setVisibility(View.VISIBLE);
         showEditCenterLine();
-        this.video_edit_remove_parent.setVisibility(0);
+        this.video_edit_remove_parent.setVisibility(View.VISIBLE);
         hideVideoMusicLayout();
         showWhiteAlphaCoverViewWhenNeed();
         showTextRecyclerView();
@@ -4448,27 +4607,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void showBottomCoverView() {
-        this.filter_tab_bottom_cover_view.setVisibility(0);
+        this.filter_tab_bottom_cover_view.setVisibility(View.VISIBLE);
     }
 
     private void hideBottomCoverView() {
-        this.filter_tab_bottom_cover_view.setVisibility(8);
+        this.filter_tab_bottom_cover_view.setVisibility(View.GONE);
     }
 
     private void onEffectTabShowHideOthers() {
         initSpecificCombinationRl();
-        this.filter_stablize_rl.setVisibility(8);
+        this.filter_stablize_rl.setVisibility(View.GONE);
         checkSurfaceNeedScale(false);
-        this.specific_combination_rl.setVisibility(0);
+        this.specific_combination_rl.setVisibility(View.VISIBLE);
     }
 
     private void onEffectTabClick() {
         hideWhiteAlphaCoverViewWhenSwitchTab();
         switchBottomIconAndCircleShowState(2);
         initSpecificCombinationRl();
-        this.filter_stablize_rl.setVisibility(8);
+        this.filter_stablize_rl.setVisibility(View.GONE);
         checkSurfaceNeedScale(false);
-        this.specific_combination_rl.setVisibility(0);
+        this.specific_combination_rl.setVisibility(View.VISIBLE);
         hideVideoEditView();
         hideVideoMusicLayout();
     }
@@ -4477,9 +4636,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         hideWhiteAlphaCoverViewWhenSwitchTab();
         switchBottomIconAndCircleShowState(1);
         if (this.specific_combination_rl != null) {
-            this.specific_combination_rl.setVisibility(8);
+            this.specific_combination_rl.setVisibility(View.GONE);
         }
-        this.filter_stablize_rl.setVisibility(8);
+        this.filter_stablize_rl.setVisibility(View.GONE);
         checkSurfaceNeedScale(true);
         hideVideoEditView();
         hideVideoMusicLayout();
@@ -4490,8 +4649,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         LayoutParams layoutParams;
         ArrayList<LongVideosModel> textModelList;
         if (show) {
-            this.filter_group_name_rv.setVisibility(0);
-            this.filter_select_mode_rl.setVisibility(0);
+            this.filter_group_name_rv.setVisibility(View.VISIBLE);
+            this.filter_select_mode_rl.setVisibility(View.VISIBLE);
             if (FilterViewUtils.isVideoModel(this.mDataType)) {
                 int realHeight;
                 resetFilterModeView();
@@ -4521,20 +4680,20 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     }
                     textModelList = this.mVideoAudioManager.getTextModelList();
                     if (TextUtil.isValidate(textModelList)) {
-                        invalidateVtContainView((LongVideosModel) textModelList.get(0), true);
+                        invalidateVtContainView(textModelList.get(0), true);
                         return;
                     }
                     return;
                 }
                 return;
             }
-            this.filter_select_mode_rl.setVisibility(8);
+            this.filter_select_mode_rl.setVisibility(View.GONE);
             return;
         }
-        this.filter_group_name_rv.setVisibility(8);
-        this.filter_select_mode_rl.setVisibility(8);
+        this.filter_group_name_rv.setVisibility(View.GONE);
+        this.filter_select_mode_rl.setVisibility(View.GONE);
         if (!FilterViewUtils.isVideoModel(this.mDataType)) {
-            this.filter_select_mode_rl.setVisibility(8);
+            this.filter_select_mode_rl.setVisibility(View.GONE);
         } else if (this.changeSurfaceSize) {
             this.changeSurfaceSize = false;
             layoutParams = this.surfaceParams;
@@ -4552,7 +4711,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             textModelList = this.mVideoAudioManager.getTextModelList();
             if (TextUtil.isValidate(textModelList)) {
-                invalidateVtContainView((LongVideosModel) textModelList.get(0), false);
+                invalidateVtContainView(textModelList.get(0), false);
             }
         }
     }
@@ -4563,7 +4722,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 iconBottom.setAlpha(1.0f);
             }
             if (circle != null) {
-                circle.setVisibility(0);
+                circle.setVisibility(View.VISIBLE);
                 return;
             }
             return;
@@ -4572,7 +4731,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             iconBottom.setAlpha(0.4f);
         }
         if (circle != null) {
-            circle.setVisibility(4);
+            circle.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -4594,47 +4753,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void switchBottomIconAndCircleShowState(int tabIndex) {
-        boolean z;
-        boolean z2 = true;
         refreshBottomViewState(tabIndex == 1, this.filter_tag_filter_iv, this.filter_filter_icon_bottom, this.filter_filter_root_rl);
-        if (tabIndex == 2) {
-            z = true;
-        } else {
-            z = false;
-        }
-        refreshBottomViewState(z, this.filter_tag_effect_iv, this.filter_effect_icon_bottom, this.filter_effect_root_ll);
+        refreshBottomViewState(tabIndex==2, this.filter_tag_effect_iv, this.filter_effect_icon_bottom, this.filter_effect_root_ll);
         if (isVideoType()) {
+            setTabBottomSelected(tabIndex==4, this.filter_tag_loop_iv, this.filter_edit_icon_bottom);
             if (tabIndex == 4) {
-                z = true;
-            } else {
-                z = false;
-            }
-            setTabBottomSelected(z, this.filter_tag_loop_iv, this.filter_edit_icon_bottom);
-            if (tabIndex == 4) {
-                if (this.video_edit_parent_ll.getVisibility() != 0) {
+                if (this.video_edit_parent_ll.getVisibility() != View.VISIBLE) {
                     alphaEnterBottomView(this.video_edit_parent_ll);
                 }
-            } else if (tabIndex != 5 && this.video_edit_parent_ll.getVisibility() == 0) {
+            } else if (tabIndex != 5 && this.video_edit_parent_ll.getVisibility() == View.VISIBLE) {
                 alphaExitBottomView(this.video_edit_parent_ll);
             }
         } else {
-            if (tabIndex == 3) {
-                z = true;
-            } else {
-                z = false;
-            }
-            refreshBottomViewState(z, this.filter_tag_loop_iv, this.filter_edit_icon_bottom, this.filter_loop_root_rl);
+            refreshBottomViewState(tabIndex==3, this.filter_tag_loop_iv, this.filter_edit_icon_bottom, this.filter_loop_root_rl);
         }
         if (isVideoType()) {
-            if (tabIndex != 5) {
-                z2 = false;
-            }
-            setTabBottomSelected(z2, this.filter_tag_music_iv, this.filter_music_icon_bottom);
+            setTabBottomSelected(tabIndex==5, this.filter_tag_music_iv, this.filter_music_icon_bottom);
             if (tabIndex == 5) {
-                if (this.video_edit_parent_ll.getVisibility() != 0) {
+                if (this.video_edit_parent_ll.getVisibility() != View.VISIBLE) {
                     alphaEnterBottomView(this.video_edit_parent_ll);
                 }
-            } else if (tabIndex != 4 && this.video_edit_parent_ll.getVisibility() == 0) {
+            } else if (tabIndex != 4 && this.video_edit_parent_ll.getVisibility() == View.VISIBLE) {
                 alphaExitBottomView(this.video_edit_parent_ll);
             }
         }
@@ -4645,18 +4784,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.mDataType = intent.getIntExtra(DATA_TYPE, 0);
         this.mBundle = intent.getExtras();
         this.orientation = intent.getIntExtra(ORIENTATION_INTENT, 0);
-        this.mCreationDate = intent.getLongExtra(PublishActivity.INTENT_KEY_CREATION_DATE, System.currentTimeMillis() / 1000);
+        this.mCreationDate = intent.getLongExtra("intent_key_creation_date", System.currentTimeMillis() / 1000);
         this.mGifPath = intent.getStringExtra(GIF_LOCAL_PATH);
-        Bundle bundleExtra = intent.getBundleExtra(VideoActivity2.BundleIntent);
+        Bundle bundleExtra = intent.getBundleExtra("BundleIntent");
         if (bundleExtra != null) {
-            this.mBundle.putString(VideoActivity2.ActivityFromBundle, bundleExtra.getString(VideoActivity2.ActivityFromBundle));
-            this.mBundle.putString(VideoActivity2.FromUserNameBundle, bundleExtra.getString(VideoActivity2.FromUserNameBundle));
-            this.mBundle.putString(VideoActivity2.FromCurrentTimeStampBundle, bundleExtra.getString(VideoActivity2.FromCurrentTimeStampBundle));
+            this.mBundle.putString("ActivityFromBundle", bundleExtra.getString("ActivityFromBundle"));
+            this.mBundle.putString("FromUserNameBundle", bundleExtra.getString("FromUserNameBundle"));
+            this.mBundle.putString("FromCurrentTimeStampBundle", bundleExtra.getString("FromCurrentTimeStampBundle"));
         }
-        this.mActivityFrom = this.mBundle.getString(VideoActivity2.ActivityFromBundle);
-        this.hasAudioPermission = this.mBundle.getBoolean(VideoActivity2.HAS_AUDIO_PERMISSION, false);
-        this.mFromUserName = this.mBundle.getString(VideoActivity2.FromUserNameBundle);
-        this.mFromCurrentTimeStamp = this.mBundle.getString(VideoActivity2.FromCurrentTimeStampBundle);
+        this.mActivityFrom = this.mBundle.getString("ActivityFromBundle");
+        this.hasAudioPermission = this.mBundle.getBoolean("has_audio_permission", false);
+        this.mFromUserName = this.mBundle.getString("FromUserNameBundle");
+        this.mFromCurrentTimeStamp = this.mBundle.getString("FromCurrentTimeStampBundle");
         this.mIsBackCamera = intent.getBooleanExtra(BACK_OR_FRONT_CAMERA, false);
         this.mIsSquare = intent.getBooleanExtra(IS_SQUARE_INTENT, false);
         this.mCameraLensType = intent.getIntExtra(TRANSFORM_INTENT, 0);
@@ -4666,7 +4805,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.mOffsetY = intent.getFloatExtra(OFFSETY_INTENT, StaticLayoutUtil.DefaultSpacingadd);
         this.mFps = intent.getFloatExtra(FPS_INTENT, StaticLayoutUtil.DefaultSpacingadd);
         this.hasRecordVideo = intent.getBooleanExtra(RECORD_VIDEO, false);
-        this.mMovieBean = (MovieBean) intent.getParcelableExtra(LOCATION_INTENT);
+        this.mMovieBean = intent.getParcelableExtra(LOCATION_INTENT);
     }
 
     private void initSomeConstantAndSettings() {
@@ -4684,10 +4823,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(128);
-        setContentView(2130968615);
-        ButterKnife.inject(this);
+        setContentView(R.layout.activity_filter);
+        ButterKnife.bind(this);
         App.RegisterEventBus(this);
-        BuglyLogUtil.writeBuglyLog(TAG);
+//        BuglyLogUtil.writeBuglyLog(TAG);
         Intent intent = getIntent();
         getIntentData(intent);
         initSomeConstantAndSettings();
@@ -4740,14 +4879,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             boolean notFromDraft = this.mDataFrom != 0;
             boolean shouldOrientation270 = (notFromDraft && notFromCamera && (this.mDataType == 0)) || ((notFromCamera && (3 == this.mDataType)) || (isPicture && notFromDraft));
             if (shouldOrientation270) {
-                this.mCaptureOrientation = Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE;
+                this.mCaptureOrientation = BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE;
             }
             boolean captureSquare = this.mCaptureMode == 5;
             boolean notVideoModel = !FilterViewUtils.isVideoModel(this.mDataType);
             boolean notFromLocal = 1 != this.mDataFrom;
             if (captureSquare && notFromLocal && notVideoModel) {
                 this.mFilterEffectManager.setCurrentListItem(this.mFilterEffectManager.getModel5Bean());
-                setCropFilterForModel5(this.mFilterEffectManager.getSelectEffectValues(EffectType.CROP));
+                setCropFilterForModel5(this.mFilterEffectManager.getSelectEffectValues(FilterEffectManager.EffectType.CROP));
             }
             this.minUnLoopCount = 12;
             if (this.mFps == StaticLayoutUtil.DefaultSpacingadd) {
@@ -4766,7 +4905,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.videoRatio = (((float) this.mVideoHeight) * 1.0f) / ((float) this.mVideoWidth);
             }
             if (this.mFps == StaticLayoutUtil.DefaultSpacingadd) {
-                this.stack_frame_switch_rl.setVisibility(4);
+                this.stack_frame_switch_rl.setVisibility(View.INVISIBLE);
             }
             if (this.mDataType == 0 && 3 == this.mDataFrom) {
                 this.mIsShort = this.mVideoFrames.size() == 10;
@@ -4795,14 +4934,20 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.translateAnimationShow.setDuration(200);
             this.translateAnimationHide = new TranslateAnimation(1, StaticLayoutUtil.DefaultSpacingadd, 1, StaticLayoutUtil.DefaultSpacingadd, 1, StaticLayoutUtil.DefaultSpacingadd, 1, 1.5f);
             this.translateAnimationHide.setDuration(200);
-            this.mirrorSetText = new String[]{getString(2131296388), getString(2131296387), getString(2131296384), getString(2131296385), getString(2131296386)};
+            this.mirrorSetText = new String[]{getString(R.string.BUTTON_EFFECT_NONE), getString(R.string.BUTTON_EFFECT_MIRROR_TOP), getString(R.string.BUTTON_EFFECT_MIRROR_BOTTOM), getString(R.string.BUTTON_EFFECT_MIRROR_LEFT), getString(R.string.BUTTON_EFFECT_MIRROR_RIGHT)};
             this.mFilterActivityPresenter = new FilterActivityPresenter(this);
-            android.view.View viewById = findViewById(2131689747);
-            viewById.post(26.lambdaFactory$(this, viewById));
+            final android.view.View viewById = findViewById(R.id.filter_root);
+            //viewById.post(26.lambdaFactory$(this, viewById));
+            viewById.post(new Runnable() {
+                @Override
+                public void run() {
+                    lambda$onCreate$24(viewById);
+                }
+            });
             if (isVideoType()) {
                 showVideoEditView();
-                this.filter_filter_icon_bottom.setVisibility(4);
-                this.filter_edit_icon_bottom.setVisibility(0);
+                this.filter_filter_icon_bottom.setVisibility(View.INVISIBLE);
+                this.filter_edit_icon_bottom.setVisibility(View.VISIBLE);
                 getVTFontInfos(false, "");
                 return;
             }
@@ -4814,11 +4959,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private /* synthetic */ void lambda$onCreate$24(android.view.View viewById) {
         this.needScreenWidth = viewById.getWidth();
         this.needScreenHeight = viewById.getHeight();
-        LogUtil.d("needScreenSize", String.format("needScreenWidth : %s , needScreenHeight : %s ", new Object[]{Integer.valueOf(this.needScreenWidth), Integer.valueOf(this.needScreenHeight)}));
+        LogUtil.d("needScreenSize", String.format("needScreenWidth : %s , needScreenHeight : %s ", this.needScreenWidth, this.needScreenHeight));
     }
 
     private void selectMusicFromEditPointAnim(AnimatorEndListener endListener) {
-        if (this.filter_edit_icon_bottom.getVisibility() == 0) {
+        if (this.filter_edit_icon_bottom.getVisibility() == View.VISIBLE) {
             final LayoutParams layoutParams = (LayoutParams) this.filter_bottom_tab_move_point.getLayoutParams();
             int[] ints = new int[2];
             final int[] ints2 = new int[2];
@@ -4826,19 +4971,19 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filter_music_icon_bottom.getLocationOnScreen(ints2);
             layoutParams.leftMargin = ints[0];
             this.filter_bottom_tab_move_point.setLayoutParams(layoutParams);
-            this.filter_bottom_tab_move_point.setVisibility(0);
+            this.filter_bottom_tab_move_point.setVisibility(View.VISIBLE);
             ValueAnimator animator = ValueAnimator.ofInt(ints[0], ints2[0]);
             animator.setDuration(200);
             onMusicTabClick();
-            this.filter_music_icon_bottom.setVisibility(4);
+            this.filter_music_icon_bottom.setVisibility(View.INVISIBLE);
             animator.addUpdateListener(new AnimatorUpdateListener() {
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    int leftMargin = ((Integer) animation.getAnimatedValue()).intValue();
+                    int leftMargin = (Integer) animation.getAnimatedValue();
                     layoutParams.leftMargin = leftMargin;
-                    FilterActivity.this.filter_bottom_tab_move_point.setLayoutParams(layoutParams);
+                    filter_bottom_tab_move_point.setLayoutParams(layoutParams);
                     if (leftMargin == ints2[0]) {
-                        FilterActivity.this.filter_bottom_tab_move_point.setVisibility(8);
-                        FilterActivity.this.filter_music_icon_bottom.setVisibility(0);
+                        filter_bottom_tab_move_point.setVisibility(View.GONE);
+                        filter_music_icon_bottom.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -4891,16 +5036,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.mVideoWidth = this.mDraftLongVideoBean.getLongVideoWidth();
                     this.mVideoHeight = this.mDraftLongVideoBean.getLongVideoHeight();
                 }
-                LogUtil.d("longvideodraft", String.format("width:%s, height:%s,portrait:%s", new Object[]{Integer.valueOf(this.mVideoWidth), Integer.valueOf(this.mVideoHeight), Boolean.valueOf(isPortrait)}));
+                LogUtil.d("longvideodraft", String.format("width:%s, height:%s,portrait:%s", this.mVideoWidth, this.mVideoHeight, isPortrait));
             } else {
                 this.mVideoWidth = this.mVideoFrames.mCaptureWidth;
                 this.mVideoHeight = this.mVideoFrames.mCaptureHeight;
             }
             this.openStackFrame = false;
             if (this.mDataType == 0 && 3 == this.mDataFrom) {
-                this.stack_frame_switch_rl.setVisibility(0);
+                this.stack_frame_switch_rl.setVisibility(View.VISIBLE);
             } else {
-                this.stack_frame_switch_rl.setVisibility(4);
+                this.stack_frame_switch_rl.setVisibility(View.INVISIBLE);
             }
         }
         saveVideoWHToBitmapManager();
@@ -4918,7 +5063,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (mList != null && mList.size() > 0) {
             int size = mList.size();
             for (int i = 0; i < size; i++) {
-                LongVideosModel model = (LongVideosModel) mList.get(i);
+                LongVideosModel model = mList.get(i);
                 model.setVideoPath(FileUtil.getPrivateAlbumFilePath(model.getOriginalMediaPath()));
                 mList.set(i, model);
             }
@@ -4929,99 +5074,111 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.mVideoAudioManager = new VideoAudioPlaybackManager();
         this.mSurfaceView.setDataType(2, this.mDataFrom);
         this.mSurfaceView.setLongVideoCallback(new LongVideoPlayCallback() {
-            public void playlistPercent(double percent, double sumPercent, boolean moreThanOnce, long currentPlayingTimeUs) {
-                FilterActivity.this.currentPlayTimeUs = currentPlayingTimeUs;
-                if (FilterActivity.this.canControlVideo) {
-                    FilterActivity.this.canControlVideo = false;
+            public void playlistPercent(final double percent, final double sumPercent, final boolean moreThanOnce, long currentPlayingTimeUs) {
+                currentPlayTimeUs = currentPlayingTimeUs;
+                if (canControlVideo) {
+                    canControlVideo = false;
                 }
-                if (FilterActivity.this.video_music_split_parent != null && FilterActivity.this.video_music_split_parent.getVisibility() == 0) {
-                    FilterActivity.this.runOnUiThread(FilterActivity$21$.Lambda.1.lambdaFactory$(this, percent, sumPercent, moreThanOnce));
+                if (video_music_split_parent != null && video_music_split_parent.getVisibility() == View.VISIBLE) {
+                    //runOnUiThread(FilterActivity$21$.Lambda.1.lambdaFactory$(this, percent, sumPercent, moreThanOnce));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lambda$playlistPercent$0(percent,sumPercent,moreThanOnce);
+                        }
+                    });
                 }
             }
 
             private /* synthetic */ void lambda$playlistPercent$0(double percent, double sumPercent, boolean moreThanOnce) {
-                FilterActivity.this.video_music_split_parent.onPlaying(percent, sumPercent, moreThanOnce);
+                video_music_split_parent.onPlaying(percent, sumPercent, moreThanOnce);
             }
 
             public void playlistPercentForLocal(final double percent) {
-                FilterActivity.this.playbackPercent = percent;
-                LogUtil.d("playbackPercent", FilterActivity.this.playbackPercent + "");
+                playbackPercent = percent;
+                LogUtil.d("playbackPercent", playbackPercent + "");
                 if (percent >= 0.0d && percent < 1.0d) {
-                    if (FilterActivity.this.mAudioTrimLayout != null && FilterActivity.this.mAudioTrimLayout.getVisibility() == 0) {
-                        FilterActivity.this.runOnUiThread(new Runnable() {
+                    if (mAudioTrimLayout != null && mAudioTrimLayout.getVisibility() == View.VISIBLE) {
+                        runOnUiThread(new Runnable() {
                             public void run() {
-                                FilterActivity.this.mAudioTrimLayout.onVideoPlay(percent);
+                                mAudioTrimLayout.onVideoPlay(percent);
                             }
                         });
                     }
-                    if (FilterActivity.this.video_edit_parent_ll == null || FilterActivity.this.video_edit_parent_ll.getVisibility() != 0) {
-                        if (FilterActivity.this.mVideoEditHelper != null) {
-                            FilterActivity.this.runOnUiThread(new Runnable() {
+                    if (video_edit_parent_ll == null || video_edit_parent_ll.getVisibility() != View.VISIBLE) {
+                        if (mVideoEditHelper != null) {
+                            runOnUiThread(new Runnable() {
                                 public void run() {
-                                    if (FilterActivity.this.mVideoEditHelper != null) {
-                                        FilterActivity.this.mVideoEditHelper.refreshTextViewWhenInVisible(percent);
+                                    if (mVideoEditHelper != null) {
+                                        mVideoEditHelper.refreshTextViewWhenInVisible(percent);
                                     }
                                 }
                             });
                         }
-                    } else if (FilterActivity.this.mVideoEditHelper != null) {
-                        FilterActivity.this.runOnUiThread(new Runnable() {
+                    } else if (mVideoEditHelper != null) {
+                        runOnUiThread(new Runnable() {
                             public void run() {
-                                if (FilterActivity.this.mVideoEditHelper != null) {
-                                    FilterActivity.this.mVideoEditHelper.setViewScrollTo(percent);
-                                    if (FilterActivity.this.mVideoEditHelper.isMusicEdit()) {
-                                        FilterActivity.this.mVideoEditHelper.refreshTextViewWhenInVisible(percent);
+                                if (mVideoEditHelper != null) {
+                                    mVideoEditHelper.setViewScrollTo(percent);
+                                    if (mVideoEditHelper.isMusicEdit()) {
+                                        mVideoEditHelper.refreshTextViewWhenInVisible(percent);
                                     }
                                 }
                             }
                         });
                     }
                 } else if (percent == 1.0d) {
-                    FilterActivity.this.runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         public void run() {
-                            FilterActivity.this.player_rl.changePlayState(true);
-                            if (FilterActivity.this.mAudioTrimLayout != null && FilterActivity.this.mAudioTrimLayout.getVisibility() == 0) {
-                                FilterActivity.this.mAudioTrimLayout.changePlayState(true);
+                            player_rl.changePlayState(true);
+                            if (mAudioTrimLayout != null && mAudioTrimLayout. getVisibility() ==View.VISIBLE) {
+                                mAudioTrimLayout.changePlayState(true);
                             }
-                            FilterActivity.this.mSurfaceView.setVideoPauseOrResume(true);
+                            mSurfaceView.setVideoPauseOrResume(true);
                         }
                     });
                 }
             }
 
             public void startDrawFrame() {
-                if (!FilterActivity.this.mRestart) {
-                    FilterActivity.this.runOnUiThread(FilterActivity$21$.Lambda.2.lambdaFactory$(this));
+                if (!mRestart) {
+                    //runOnUiThread(FilterActivity$21$.Lambda.2.lambdaFactory$(this));
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            lambda$startDrawFrame$1();
+                        }
+                    });
                 }
             }
 
             private /* synthetic */ void lambda$startDrawFrame$1() {
-                if (FilterActivity.this.mDraftModel != null) {
-                    FilterActivity.this.restoreFilters();
+                if (mDraftModel != null) {
+                    restoreFilters();
                 }
-                ViewPropertyAnimator.animate(FilterActivity.this.filter_alpha_view).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(FilterActivity.CHANEG_FILTER_TIME).start();
-                if (FilterActivity.this.mConntNext) {
-                    FilterActivity.this.mTvSave.setEnabled(false);
-                    FilterActivity.this.mTvSave.setAlpha(0.4f);
+                ViewPropertyAnimator.animate(filter_alpha_view).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(FilterActivity.CHANEG_FILTER_TIME).start();
+                if (mConntNext) {
+                    mTvSave.setEnabled(false);
+                    mTvSave.setAlpha(0.4f);
                 } else {
-                    FilterActivity.this.mTvSave.setEnabled(true);
-                    FilterActivity.this.mTvSave.setAlpha(1.0f);
+                    mTvSave.setEnabled(true);
+                    mTvSave.setAlpha(1.0f);
                 }
-                FilterActivity.this.mRestart = true;
+                mRestart = true;
             }
 
             public void couldRenderPreview() {
-                FilterActivity.this.runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     public void run() {
-                        if (FilterActivity.this.mVideoAudioManager.compareTotalTime((float) FilterActivity.this.userLongVideoDuration) <= StaticLayoutUtil.DefaultSpacingadd) {
-                            FilterActivity.this.mTvSave.setEnabled(true);
+                        if (mVideoAudioManager.compareTotalTime((float) userLongVideoDuration) <= StaticLayoutUtil.DefaultSpacingadd) {
+                            mTvSave.setEnabled(true);
                         }
                     }
                 });
                 new Thread() {
                     public void run() {
                         super.run();
-                        FilterActivity.this.setSpecialFilter();
+                        setSpecialFilter();
                     }
                 }.start();
             }
@@ -5032,23 +5189,29 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             public void couldUseRotateButton(boolean couldUse) {
             }
         });
-        final ArrayList<LongVideosModel> longVideoModels = intent.getParcelableArrayListExtra(VideoActivity2.LONG_VIDEO_MODELS);
+        final ArrayList<LongVideosModel> longVideoModels = intent.getParcelableArrayListExtra("LongVideoPaht");
         new Thread() {
             public void run() {
                 super.run();
-                FilterActivity.this.loadVideoFrame(intent, longVideoModels);
+                loadVideoFrame(intent, longVideoModels);
             }
         }.start();
     }
 
     private void getVideoModelFilterPreview() {
-        EGL10Helper.withContext("getVideoModelFilterPreview", 27.lambdaFactory$(this));
+        //EGL10Helper.withContext("getVideoModelFilterPreview", 27.lambdaFactory$(this));
+        EGL10Helper.withContext("getVideoModelFilterPreview", new EGLRunnableVoid() {
+            @Override
+            public void run(EGL10Helper eGL10Helper) {
+                lambda$getVideoModelFilterPreview$25(eGL10Helper);
+            }
+        });
     }
 
     private /* synthetic */ void lambda$getVideoModelFilterPreview$25(EGL10Helper egl) {
-        LongVideosModel firstModel = (LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(0);
+        LongVideosModel firstModel = this.mVideoAudioManager.getVideosModelList().get(0);
         Playlist pl = new Playlist();
-        FileMedia media = FileMedia.create(firstModel);
+        Playlist.FileMedia media = Playlist.FileMedia.create(firstModel);
         if (media != null) {
             int previewFilterWidth;
             int previewFilterHeight;
@@ -5076,7 +5239,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 previewFilterWidth = (int) ((((float) (this.mVideoWidth * shortLength)) * 1.0f) / ((float) this.mVideoHeight));
             }
             this.forFilterBitmap = Bitmap.createScaledBitmap(this.forFilterBitmap, previewFilterWidth, previewFilterHeight, false);
-            BitmapUtil.saveBitmap2PrivateFile(this.forFilterBitmap);
+            BitmapUtils.saveBitmap2PrivateFile(this.forFilterBitmap);
             generatePreviewBitmaps(this.forFilterBitmap, 0, this.mFilterInfos.size(), 0);
             if (this.forFilterBitmap != null && !this.forFilterBitmap.isRecycled()) {
                 this.forFilterBitmap.recycle();
@@ -5114,7 +5277,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 if (bean != null) {
                     this.mFirstVideoBean = bean.cloneData();
                 } else if (modelList.size() > 0) {
-                    model = (LongVideosModel) modelList.get(0);
+                    model = modelList.get(0);
                     this.mFirstVideoBean.setVideoWidth(model.getOriVideoWidth());
                     this.mFirstVideoBean.setVideoHeight(model.getOriVideoHeight());
                     this.mFirstVideoBean.setRotation(model.getVideoRotate());
@@ -5130,7 +5293,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         } else if (1 == this.mDataFrom) {
             ArrayList<LongVideosModel> mList = intent.getParcelableArrayListExtra(LONG_VIDEO_MODELS);
             if (mList.size() > 0) {
-                model = (LongVideosModel) mList.get(0);
+                model = mList.get(0);
                 this.mFirstVideoBean.setRotation(model.getVideoRotate());
                 this.mFirstVideoBean.setVideoWidth(model.getOriVideoWidth());
                 this.mFirstVideoBean.setVideoHeight(model.getOriVideoHeight());
@@ -5147,7 +5310,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 getActivity().finish();
                 return;
             }
-            model = (LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(0);
+            model = this.mVideoAudioManager.getVideosModelList().get(0);
             this.mFirstVideoBean.setRotation(model.getVideoRotate());
             this.mFirstVideoBean.setVideoWidth(model.getOriVideoWidth());
             this.mFirstVideoBean.setVideoHeight(model.getOriVideoHeight());
@@ -5162,13 +5325,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         runOnUiThread(new Runnable() {
             public void run() {
-                FilterActivity.this.refreshVideoEditView();
+                refreshVideoEditView();
             }
         });
         this.mSurfaceView.setVideoModelList(this.mVideoAudioManager.getVideosModelList(), this.mVideoAudioManager.getMusicModelList(), this.mVideoAudioManager.getMediaMute());
         runOnUiThread(new Runnable() {
             public void run() {
-                FilterActivity.this.getFirstPlaylistDuration();
+                getFirstPlaylistDuration();
             }
         });
     }
@@ -5176,18 +5339,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private boolean getFirstPlaylistDuration() {
         long playlistDuration = this.mVideoAudioManager.getPlaylistDuration();
         if (playlistDuration > ((long) (this.userLongVideoDuration * 1000))) {
-            this.title_alert_out_time.setVisibility(0);
-            this.title_preview.setVisibility(8);
+            this.title_alert_out_time.setVisibility(View.VISIBLE);
+            this.title_preview.setVisibility(View.GONE);
             String format = new DecimalFormat("0.0").format((double) (((((float) playlistDuration) * 1.0f) / 1000.0f) - ((float) this.userLongVideoDuration)));
-            this.title_alert_out_time.setTextColor(getResources().getColor(2131755083));
-            this.title_alert_out_time.setText(String.format(getResources().getString(2131297031), new Object[]{format}));
+            this.title_alert_out_time.setTextColor(getResources().getColor(R.color.colorRed));
+            this.title_alert_out_time.setText(String.format(getResources().getString(R.string.TEXT_VIDEO_EDIT_MAX_LENGTH_EXCEEDED), format));
             this.mConntNext = true;
             return true;
         }
-        this.title_alert_out_time.setVisibility(0);
-        this.title_preview.setVisibility(8);
-        this.title_alert_out_time.setTextColor(getResources().getColor(2131755096));
-        this.title_alert_out_time.setText(String.format(getResources().getString(2131297032), new Object[]{"" + this.userLongVideoDuration}));
+        this.title_alert_out_time.setVisibility(View.VISIBLE);
+        this.title_preview.setVisibility(View.GONE);
+        this.title_alert_out_time.setTextColor(getResources().getColor(R.color.colorWhite));
+        this.title_alert_out_time.setText(String.format(getResources().getString(R.string.TEXT_VIDEO_EDIT_MAX_LENGTH_NOT_EXCEEDED), "" + this.userLongVideoDuration));
         this.mConntNext = false;
         return false;
     }
@@ -5219,7 +5382,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void restoreFilters() {
         int i = 8;
-        BuglyLogUtil.writeBuglyLog(TAG);
+//        BuglyLogUtil.writeBuglyLog(TAG);
         if (this.mFilterModel != null && this.mVideoFrames != null) {
             this.orientation = this.mFilterModel.getOrientation();
             this.rotation = this.mFilterModel.getRotation();
@@ -5259,9 +5422,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.mVideoFrames.setPlayType(this.mIsVideoLooped ? 2222 : 1111);
                 android.view.View view = this.filter_loop_slider_root_rl;
                 if (this.mIsVideoLooped) {
-                    i2 = 0;
+                    i2 = View.VISIBLE;
                 } else {
-                    i2 = 8;
+                    i2 = View.GONE;
                 }
                 view.setVisibility(i2);
                 android.view.View view2 = this.filter_unloop_root_rl;
@@ -5274,26 +5437,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 } else {
                     slideLoop(-1, false);
                 }
-                this.filter_loop_toggle_img.setImageResource(this.mIsVideoLooped ? 2130837919 : 2130837918);
-                this.filter_loop_toggle_ancrt.setText(this.mIsVideoLooped ? 2131296444 : 2131296442);
+                this.filter_loop_toggle_img.setImageResource(this.mIsVideoLooped ? R.drawable.icon_20_loop_rebound : R.drawable.icon_20_loop_forward);
+                this.filter_loop_toggle_ancrt.setText(this.mIsVideoLooped ? R.string.BUTTON_LOOP_REBOUND : R.string.BUTTON_LOOP_FORWARD);
             } else {
                 this.mVideoFrames.setPlayType(3333);
                 slideLoop(-2, false);
-                this.filter_loop_toggle_img.setImageResource(2130837920);
-                this.filter_loop_toggle_ancrt.setText(2131296445);
+                this.filter_loop_toggle_img.setImageResource(R.drawable.icon_20_loop_reverse);
+                this.filter_loop_toggle_ancrt.setText(R.string.BUTTON_LOOP_REVERSE);
             }
             LogUtil.i("restoreFilters", "mFinalEffectState = " + this.mFinalEffectState + ",orientation = " + this.orientation + ",slideLevel = " + this.slideLevel + ",unloopStart = " + this.unloopStart + ",unloopEnd = " + this.unloopEnd + ",mIsVideoLooped = " + this.mIsVideoLooped + ",mEnableStabilizer = " + this.mEnableStabilizer);
         }
     }
 
     private void initGestute() {
-        this.mGestureDetectorCompat = new GestureDetectorCompat(this, new GestureListener(this, null));
-        this.mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener(this, null));
-        this.mMoveGestureDetector = new MoveGestureDetector(this, new MoveListener(this, null));
+        this.mGestureDetectorCompat = new GestureDetectorCompat(this, new GestureListener());//new GestureListener(this, null));
+        this.mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());//new ScaleListener(this, null));
+        this.mMoveGestureDetector = new MoveGestureDetector(this, new MoveListener());//new MoveListener(this, null));
         this.text_draw_rl.setOnTouchListener(this.touch_listener);
         this.changeFilterGesture = new GestureDetector(getActivity(), new OnGestureListener() {
             public boolean onDown(MotionEvent e) {
-                FilterActivity.this.filterOnScroll = false;
+                filterOnScroll = false;
                 return false;
             }
 
@@ -5305,10 +5468,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
 
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                if (FilterActivity.this.isPressedVideoArea) {
+                if (isPressedVideoArea) {
                     return true;
                 }
-                FilterActivity.this.mHandler.removeCallbacks(FilterActivity.this.pressVideoRunnable);
+                mHandler.removeCallbacks(pressVideoRunnable);
                 if (e1 == null || e2 == null) {
                     return false;
                 }
@@ -5321,7 +5484,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 if (isVertical) {
                     return true;
                 }
-                FilterActivity.this.startChangeFilterH(e1, e2);
+                //startChangeFilterH(e1, e2);
                 return true;
             }
 
@@ -5332,57 +5495,59 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 return true;
             }
         });
-        this.mLoopGestureDetector = new GestureDetector(this, new LoopListener(this, null));
+        this.mLoopGestureDetector = new GestureDetector(this, new LoopListener());//new LoopListener(this, null));
         this.filter_loop_gesture.setOnTouchListener(new OnTouchListener() {
             public boolean onTouch(android.view.View v, MotionEvent event) {
-                if (FilterActivity.this.filter_loop_slider_root_rl.getVisibility() != 0) {
+                if (filter_loop_slider_root_rl.getVisibility() != View.VISIBLE) {
                     return false;
                 }
                 if (event.getAction() == 1) {
-                    FilterActivity.this.isPressed = false;
-                    FilterActivity.this.mSurfaceView.start();
+                    isPressed = false;
+                    mSurfaceView.start();
                     LogUtil.d(FilterActivity.TAG, "refreshTransform : onTouch_UP");
-                    if (FilterActivity.this.va != null && FilterActivity.this.hadStartStablize) {
-                        FilterActivity.this.createTransformMethod();
+                    //if (va != null && hadStartStablize) {
+                    if (hadStartStablize){
+                        createTransformMethod();
                     }
-                    FilterActivity.this.refreshTransform();
-                    FilterActivity.this.saveDraft(FilterActivity.this.mFilterModel, FilterActivity.this.mDraftLongVideoBean, true);
+                    refreshTransform();
+                    saveDraft(mFilterModel, mDraftLongVideoBean, true);
                 }
-                FilterActivity.this.mLoopGestureDetector.onTouchEvent(event);
+                mLoopGestureDetector.onTouchEvent(event);
                 return true;
             }
         });
-        this.mUnLoopGestureDetector = new GestureDetector(this, new UnLoopListener(this, null));
+        this.mUnLoopGestureDetector = new GestureDetector(this, new UnLoopListener());//new UnLoopListener(this, null));
         this.filter_unloop_gesture.setOnTouchListener(new OnTouchListener() {
             public boolean onTouch(android.view.View v, MotionEvent event) {
-                if (FilterActivity.this.filter_unloop_root_rl.getVisibility() != 0) {
+                if (filter_unloop_root_rl.getVisibility() != View.VISIBLE) {
                     return false;
                 }
                 if (event.getAction() == 1) {
-                    FilterActivity.this.isPressed2 = false;
-                    FilterActivity.this.mSurfaceView.start();
+                    isPressed2 = false;
+                    mSurfaceView.start();
                     LogUtil.d(FilterActivity.TAG, "refreshTransform : onTouch_UP");
-                    if (FilterActivity.this.va != null && FilterActivity.this.hadStartStablize) {
-                        FilterActivity.this.createTransformMethod();
+                    //if (va != null && hadStartStablize) {
+                    if (hadStartStablize){
+                        createTransformMethod();
                     }
-                    FilterActivity.this.refreshTransform();
-                    FilterActivity.this.setNormalFilter();
-                    FilterActivity.this.saveDraft(FilterActivity.this.mFilterModel, FilterActivity.this.mDraftLongVideoBean, true);
+                    refreshTransform();
+                    setNormalFilter();
+                    saveDraft(mFilterModel, mDraftLongVideoBean, true);
                 }
-                FilterActivity.this.mUnLoopGestureDetector.onTouchEvent(event);
+                mUnLoopGestureDetector.onTouchEvent(event);
                 return true;
             }
         });
     }
 
-    private void setTextAlign(AlignType alignType, int verticalPos) {
+    private void setTextAlign(VTContainerView.AlignType alignType, int verticalPos) {
         if (this.draw_text_view.getText() != null && this.draw_text_view.getText().length() != 0) {
             this.draw_text_view.setTextAlign(alignType, verticalPos);
             iconLocation();
         }
     }
 
-    private void setFontSize(FontSizeType fontSizeType) {
+    private void setFontSize(VTContainerView.FontSizeType fontSizeType) {
         if (this.draw_text_view.getText() != null && this.draw_text_view.getText().length() != 0) {
             this.draw_text_view.setFontSizeType(fontSizeType);
             iconLocation();
@@ -5408,16 +5573,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void openTextFingerViewAnimation() {
-        if (this.text_finger_iv.getVisibility() != 0 && this.draw_text_view.getText() != null && this.draw_text_view.getText().length() != 0) {
+        if (this.text_finger_iv.getVisibility() != View.VISIBLE && this.draw_text_view.getText() != null && this.draw_text_view.getText().length() != 0) {
             this.text_finger_iv.setAlpha(StaticLayoutUtil.DefaultSpacingadd);
             if (this.isTextCenter) {
-                this.gold_line_view.setVisibility(0);
+                this.gold_line_view.setVisibility(View.VISIBLE);
             }
             this.isFingerOpenAnimation = true;
             ViewPropertyAnimator.animate(this.text_finger_iv).alpha(1.0f).setDuration(200).setListener(new AnimatorEndListener() {
                 public void onAnimationStart(Animator animation) {
-                    FilterActivity.this.text_finger_iv.setVisibility(0);
-                    ViewPropertyAnimator.animate(FilterActivity.this.draw_text_view).alpha(0.7f).setDuration(200).start();
+                    text_finger_iv.setVisibility(View.VISIBLE);
+                    ViewPropertyAnimator.animate(draw_text_view).alpha(0.7f).setDuration(200).start();
                 }
             }).start();
         }
@@ -5427,21 +5592,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (this.isFingerOpenAnimation) {
             this.isFingerOpenAnimation = false;
             this.text_finger_iv.setAlpha(1.0f);
-            this.gold_line_view.setVisibility(8);
+            this.gold_line_view.setVisibility(View.GONE);
             ViewPropertyAnimator.animate(this.text_finger_iv).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(200).setListener(new AnimatorEndListener() {
                 public void onAnimationStart(Animator animation) {
-                    ViewPropertyAnimator.animate(FilterActivity.this.draw_text_view).alpha(1.0f).setDuration(200).start();
+                    ViewPropertyAnimator.animate(draw_text_view).alpha(1.0f).setDuration(200).start();
                 }
 
                 public void onAnimationEnd(Animator animation) {
-                    FilterActivity.this.text_finger_iv.setVisibility(8);
+                    text_finger_iv.setVisibility(View.GONE);
                 }
             }).start();
         }
     }
 
     private void iconLocation() {
-        this.draw_text_view.geticonLocations(28.lambdaFactory$(this));
+        //this.draw_text_view.geticonLocations(28.lambdaFactory$(this));
+        draw_text_view.geticonLocations(new VTContainerView.OnFingerIconLocationListener() {
+            @Override
+            public void onLocation(int i, int i2, boolean z) {
+                lambda$iconLocation$26(i,i2,z);
+            }
+        });
     }
 
     private /* synthetic */ void lambda$iconLocation$26(int x, int y, boolean isCenter) {
@@ -5453,83 +5624,85 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         layoutParams.topMargin = y;
         LogUtil.d("layout", "x:" + x + ", y:" + y);
         this.text_finger_iv.setLayoutParams(layoutParams);
-        if (isCenter && this.text_finger_iv.getVisibility() == 0) {
-            this.gold_line_view.setVisibility(0);
+        if (isCenter && this.text_finger_iv.getVisibility() == View.VISIBLE) {
+            this.gold_line_view.setVisibility(View.VISIBLE);
         } else {
-            this.gold_line_view.setVisibility(8);
+            this.gold_line_view.setVisibility(View.GONE);
         }
     }
 
     private void toTextInputActivity(String text) {
-        this.isIntentText = true;
-        Intent intent = new Intent(getActivity(), TextInputActivity.class);
-        intent.putExtra(TextInputActivity.InputTextIntent, text);
-        intent.putExtra(TextInputActivity.IsEnterIntent, false);
-        intent.putExtra(TextInputActivity.Source, FILTER_SOURCE);
-        startActivity(intent);
-        overridePendingTransition(2131034134, 2131034134);
-        getVTFontInfos(false, "");
+//        this.isIntentText = true;
+//        Intent intent = new Intent(getActivity(), TextInputActivity.class);
+//        intent.putExtra(TextInputActivity.InputTextIntent, text);
+//        intent.putExtra(TextInputActivity.IsEnterIntent, false);
+//        intent.putExtra(TextInputActivity.Source, FILTER_SOURCE);
+//        startActivity(intent);
+//        overridePendingTransition(2131034134, 2131034134);
+//        getVTFontInfos(false, "");
+        Toast.makeText(this,"go to TextInputActivity",Toast.LENGTH_LONG).show();
     }
 
     private void getVTFontInfos(final boolean restoreFilters, final String fontName) {
-        if (this.mZHConverter == null) {
-            this.mZHConverter = ZHConverter.getInstance(0);
-        }
+//        if (this.mZHConverter == null) {
+//            this.mZHConverter = ZHConverter.getInstance(0);
+//        }
         if (this.mVTFontDesBeanList == null) {
             this.mVTFontDesBeanList = new ArrayList();
         }
         if (this.mVTFontDesBeanList.size() <= 0) {
             PriorityThreadPoolManager.execute(new PriorityRunnable(6) {
                 public void run() {
-                    FilterActivity.this.requestVTFontInfos(restoreFilters, fontName);
+                    requestVTFontInfos(restoreFilters, fontName);
                 }
             });
         }
     }
 
     private void requestVTFontInfos(final boolean restoreFilters, final String fontName) {
-        UserController.getVTFontInfos(new IControllerCallback<List<VTFontDesBean>>() {
-            public void success(final List<VTFontDesBean> vtFontDesBeanList, String jsonContent, long cursorId, boolean isAllDone) {
-                FilterActivity.this.mHandler.post(new Runnable() {
-                    public void run() {
-                        if (vtFontDesBeanList != null) {
-                            FilterActivity.this.mVTFontDesBeanList.clear();
-                            FilterActivity.this.mVTFontDesBeanList.addAll(vtFontDesBeanList);
-                            if (!restoreFilters) {
-                                int size = vtFontDesBeanList.size();
-                                for (int i = 0; i < size; i++) {
-                                    VTFontDesBean vtFontDesBean = (VTFontDesBean) vtFontDesBeanList.get(i);
-                                    if (vtFontDesBean.selected) {
-                                        FilterActivity.this.draw_text_view.setTypeface(vtFontDesBean);
-                                        FilterActivity.this.mIsTraditional = TextUtils.equals(vtFontDesBean.cnonly, Constants.IsTraditionalFont);
-                                        FilterActivity.this.setTraditionalFont();
-                                        return;
-                                    }
-                                }
-                            } else if (FilterActivity.this.mVTFontDesBeanList != null && FilterActivity.this.mVTFontDesBeanList.size() > 0) {
-                                Iterator it = FilterActivity.this.mVTFontDesBeanList.iterator();
-                                while (it.hasNext()) {
-                                    ((VTFontDesBean) it.next()).selected = false;
-                                }
-                                it = FilterActivity.this.mVTFontDesBeanList.iterator();
-                                while (it.hasNext()) {
-                                    VTFontDesBean bean = (VTFontDesBean) it.next();
-                                    if (fontName.equals(bean.name)) {
-                                        FilterActivity.this.draw_text_view.setTypeface(bean);
-                                        bean.selected = true;
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            public void error(ErrorBean error) {
-                super.error(error);
-            }
-        });
+//        UserController.getVTFontInfos(new IControllerCallback<List<VTFontDesBean>>() {
+//            public void success(final List<VTFontDesBean> vtFontDesBeanList, String jsonContent, long cursorId, boolean isAllDone) {
+//                mHandler.post(new Runnable() {
+//                    public void run() {
+//                        if (vtFontDesBeanList != null) {
+//                            mVTFontDesBeanList.clear();
+//                            mVTFontDesBeanList.addAll(vtFontDesBeanList);
+//                            if (!restoreFilters) {
+//                                int size = vtFontDesBeanList.size();
+//                                for (int i = 0; i < size; i++) {
+//                                    VTFontDesBean vtFontDesBean = (VTFontDesBean) vtFontDesBeanList.get(i);
+//                                    if (vtFontDesBean.selected) {
+//                                        draw_text_view.setTypeface(vtFontDesBean);
+//                                        mIsTraditional = TextUtils.equals(vtFontDesBean.cnonly, Constants.IsTraditionalFont);
+//                                        setTraditionalFont();
+//                                        return;
+//                                    }
+//                                }
+//                            } else if (mVTFontDesBeanList != null && mVTFontDesBeanList.size() > 0) {
+//                                Iterator it = mVTFontDesBeanList.iterator();
+//                                while (it.hasNext()) {
+//                                    ((VTFontDesBean) it.next()).selected = false;
+//                                }
+//                                it = mVTFontDesBeanList.iterator();
+//                                while (it.hasNext()) {
+//                                    VTFontDesBean bean = (VTFontDesBean) it.next();
+//                                    if (fontName.equals(bean.name)) {
+//                                        draw_text_view.setTypeface(bean);
+//                                        bean.selected = true;
+//                                        return;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//
+//            public void error(ErrorBean error) {
+//                super.error(error);
+//            }
+//        });
+        runOnUiThread(() -> Toast.makeText(getActivity(),"requestVTFontInfos",Toast.LENGTH_LONG).show());
     }
 
     public void onEventMainThread(TextInputEvent event) {
@@ -5541,31 +5714,31 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void dealTextInputEvent(TextInputEvent event) {
         this.mTextContent = event.getTextContent();
         if (TextUtil.isValidate(this.mTextContent)) {
-            this.text_draw_rl.setVisibility(0);
+            this.text_draw_rl.setVisibility(View.VISIBLE);
             setTraditionalFont();
             if (this.draw_text_view.hasText()) {
                 animShowAddTag(false);
             } else {
                 animHideAddTag();
             }
-            this.gold_line_view.setVisibility(8);
+            this.gold_line_view.setVisibility(View.GONE);
             showAddTextEditLayout();
             this.filter_addition_parent.post(new Runnable() {
                 public void run() {
-                    int measuredWidth = FilterActivity.this.filter_addition_parent.getMeasuredWidth();
-                    LogUtil.d("filter_addition_parent", String.format("measuredWidth : %s , metricsWidth : %s ", new Object[]{Integer.valueOf(measuredWidth), Integer.valueOf(FilterActivity.this.metricsWidth)}));
-                    if (measuredWidth < FilterActivity.this.metricsWidth) {
-                        FilterActivity.this.filter_addition_parent.setPadding(0, 0, 0, 0);
+                    int measuredWidth = filter_addition_parent.getMeasuredWidth();
+                    LogUtil.d("filter_addition_parent", String.format("measuredWidth : %s , metricsWidth : %s ", new Object[]{Integer.valueOf(measuredWidth), Integer.valueOf(metricsWidth)}));
+                    if (measuredWidth < metricsWidth) {
+                        filter_addition_parent.setPadding(0, 0, 0, 0);
                         return;
                     }
-                    FilterActivity.this.filter_addition_parent.setPadding(0, 0, 0, 0);
-                    FilterActivity.this.filter_addition_root_hsv.scrollBy((measuredWidth - FilterActivity.this.metricsWidth) / 2, 0);
+                    filter_addition_parent.setPadding(0, 0, 0, 0);
+                    filter_addition_root_hsv.scrollBy((measuredWidth - metricsWidth) / 2, 0);
                 }
             });
             return;
         }
         this.isAfterInsertBlackAddText = false;
-        this.text_draw_rl.setVisibility(8);
+        this.text_draw_rl.setVisibility(View.GONE);
     }
 
     private void animHideAddTag() {
@@ -5613,8 +5786,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filter_list_recyclerview.scrollToPosition(this.filterChoosePosition);
             this.filter_list_recyclerview.post(new Runnable() {
                 public void run() {
-                    if (FilterActivity.this.mFilterListLayoutManager.findViewByPosition(FilterActivity.this.filterChoosePosition) != null) {
-                        FilterActivity.this.filter_list_recyclerview.smoothScrollBy(FilterActivity.this.mFilterListLayoutManager.findViewByPosition(FilterActivity.this.filterChoosePosition).getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - FilterActivity.this.mFilterListLayoutManager.findViewByPosition(FilterActivity.this.filterChoosePosition).getWidth())) / 2.0f)), 0);
+                    if (mFilterListLayoutManager.findViewByPosition(filterChoosePosition) != null) {
+                        filter_list_recyclerview.smoothScrollBy(mFilterListLayoutManager.findViewByPosition(filterChoosePosition).getLeft() - ((int) (((float) (metricsWidth - mFilterListLayoutManager.findViewByPosition(filterChoosePosition).getWidth())) / 2.0f)), 0);
                     }
                 }
             });
@@ -5629,8 +5802,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filter_list_recyclerview.scrollToPosition(this.filterChoosePosition);
             this.filter_list_recyclerview.post(new Runnable() {
                 public void run() {
-                    if (FilterActivity.this.mFilterListLayoutManager.findViewByPosition(FilterActivity.this.filterChoosePosition) != null) {
-                        FilterActivity.this.filter_list_recyclerview.smoothScrollBy(FilterActivity.this.mFilterListLayoutManager.findViewByPosition(FilterActivity.this.filterChoosePosition).getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - FilterActivity.this.mFilterListLayoutManager.findViewByPosition(FilterActivity.this.filterChoosePosition).getWidth())) / 2.0f)), 0);
+                    if (mFilterListLayoutManager.findViewByPosition(filterChoosePosition) != null) {
+                        filter_list_recyclerview.smoothScrollBy(mFilterListLayoutManager.findViewByPosition(filterChoosePosition).getLeft() - ((int) (((float) (metricsWidth - mFilterListLayoutManager.findViewByPosition(filterChoosePosition).getWidth())) / 2.0f)), 0);
                     }
                 }
             });
@@ -5643,7 +5816,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         FilterInfo info = (FilterInfo) this.mFilterInfos.get(this.filterChoosePosition);
         this.mFilterName = info.name_en;
         setFilterNameForLongVideosModel();
-        if (this.text_draw_rl.getVisibility() != 0) {
+        if (this.text_draw_rl.getVisibility() != View.VISIBLE) {
             showFilterNameInPreview(this.filterChoosePosition);
         }
         this.currentFilterName = this.mFilterName;
@@ -5676,14 +5849,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (grantResults.length <= 0 || grantResults[0] != 0) {
                 granted = false;
             }
-            if (this.mVideoMusicDialog == null) {
-                return;
-            }
-            if (granted) {
-                this.mVideoMusicDialog.doLoadLocalData();
-            } else {
-                this.mVideoMusicDialog.access$lambda$2();
-            }
+//            if (this.mVideoMusicDialog == null) {
+//                return;
+//            }
+//            if (granted) {
+//                this.mVideoMusicDialog.doLoadLocalData();
+//            } else {
+//                this.mVideoMusicDialog.access$lambda$2();
+//            }
         }
     }
 
@@ -5691,21 +5864,21 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         new Thread() {
             public void run() {
                 super.run();
-                FilterActivity.this.exposureFilter = FilterActivity.this.getToneCurveFilter();
-                FilterActivity.this.contrastFilter = FilterActivity.this.getToneCurveFilter();
-                FilterActivity.this.saturationFilter = FilterActivity.this.getSaturationFilter();
-                FilterActivity.this.whiteBalanceFilter = FilterActivity.this.getWhiteBalanceFilter();
-                FilterActivity.this.tiltFilter = FilterActivity.this.getGaussianFilter();
-                FilterActivity.this.mBilateralFilter = FilterActivity.this.getBilateralFilter();
-                FilterActivity.this.grainFilter = FilterActivity.this.getGrainFilter();
-                FilterActivity.this.movieFilter = FilterActivity.this.getMoviewFilter2();
-                if (FilterViewUtils.isPictureModel(FilterActivity.this.mDataType)) {
-                    FilterActivity.this.initScreenFilter();
+                exposureFilter = getToneCurveFilter();
+                contrastFilter = getToneCurveFilter();
+                saturationFilter = getSaturationFilter();
+                whiteBalanceFilter = getWhiteBalanceFilter();
+                tiltFilter = getGaussianFilter();
+                mBilateralFilter = getBilateralFilter();
+                grainFilter = getGrainFilter();
+                movieFilter = getMoviewFilter2();
+                if (FilterViewUtils.isPictureModel(mDataType)) {
+                    initScreenFilter();
                 }
-                FilterActivity.this.fadeFilter = FilterActivity.this.getToneCurveFilter();
-                FilterActivity.this.shadowFilter = FilterActivity.this.getToneCurveFilter();
-                FilterActivity.this.highLightFilter = FilterActivity.this.getToneCurveFilter();
-                FilterActivity.this.skyFilter = FilterActivity.this.getSkyFilter();
+                fadeFilter = getToneCurveFilter();
+                shadowFilter = getToneCurveFilter();
+                highLightFilter = getToneCurveFilter();
+                skyFilter = getSkyFilter();
             }
         }.start();
     }
@@ -5736,35 +5909,37 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void initView() {
-        RenderMode mode;
+        FrameRenderer.RenderMode mode;
         int i;
-        this.mTvSave.setText(getResources().getString(2131296368));
-        this.text_draw_rl = findViewById(2131689771);
-        this.draw_text_view = (VTContainerView) findViewById(2131689773);
-        this.text_finger_iv = (ImageView) findViewById(2131689774);
-        this.gold_line_view = findViewById(2131689772);
-        this.text_draw_rl.setVisibility(8);
+        this.mTvSave.setText(getResources().getString(R.string.BUTTON_DONE));
+        this.text_draw_rl = findViewById(R.id.text_draw_rl);
+        this.draw_text_view = findViewById(R.id.draw_text_view);
+        this.text_finger_iv = findViewById(R.id.text_finger_iv);
+        this.gold_line_view = findViewById(R.id.gold_line_view);
+        this.text_draw_rl.setVisibility(View.GONE);
         initFilters();
         this.capture_filter_name_tv.getPaint().setFakeBoldText(true);
         if (this.mCaptureMode == 1 || 2 == this.mDataFrom || this.mIsSquare) {
-            mode = RenderMode.RENDER_CROP;
+            mode = FrameRenderer.RenderMode.RENDER_CROP;
         } else {
-            mode = RenderMode.RENDER_FILL;
+            mode = FrameRenderer.RenderMode.RENDER_FILL;
         }
         this.mSurfaceView.setCaptureMode(this.mCaptureMode);
         this.mSurfaceView.setFrameRendererMode(mode);
+        Log.e("debug","surfaceStartGL started=====================>");
         this.mSurfaceView.startGL("filteractivity");
+        Log.e("debug","surfaceStartGL end=====================>");
         this.filterEffectLeakList = new ArrayList();
         this.filterEffectLeakList.add(this.filter_effect_leak1);
         this.filterEffectLeakList.add(this.filter_effect_leak2);
         this.filterEffectLeakList.add(this.filter_effect_leak3);
         this.filterEffectLeakList.add(this.filter_effect_leak4);
         this.filterEffectLeakList.add(this.filter_effect_leak5);
-        TintColorUtil.tintDrawable(getActivity(), (ImageView) this.mIvBack, 2131755096);
-        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_filter_iv, 2131755096);
-        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_effect_iv, 2131755096);
-        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_loop_iv, 2131755096);
-        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_music_iv, 2131755096);
+        TintColorUtil.tintDrawable(getActivity(), (ImageView) this.mIvBack, R.color.colorWhite);
+        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_filter_iv, R.color.colorWhite);
+        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_effect_iv, R.color.colorWhite);
+        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_loop_iv, R.color.colorWhite);
+        TintColorUtil.tintDrawable(getActivity(), this.filter_tag_music_iv, R.color.colorWhite);
         this.filter_tag_filter_iv.setAlpha(isVideoType() ? 0.4f : 1.0f);
         this.filter_tag_effect_iv.setAlpha(0.4f);
         this.filter_tag_loop_iv.setAlpha(isVideoType() ? 1.0f : 0.4f);
@@ -5794,7 +5969,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filter_tag_effect_rl.getLayoutParams().width = this.metricsWidth / 4;
             this.filter_tag_loop_rl.getLayoutParams().width = this.metricsWidth / 4;
             this.filter_tag_music_rl.getLayoutParams().width = this.metricsWidth / 4;
-            this.filter_filter_root_rl.setVisibility(8);
+            this.filter_filter_root_rl.setVisibility(View.GONE);
         } else {
             this.filter_tag_filter_rl.getLayoutParams().width = this.metricsWidth / 3;
             this.filter_tag_effect_rl.getLayoutParams().width = this.metricsWidth / 3;
@@ -5818,7 +5993,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         setPreviewParent();
         FilterInfo noneFilter = new FilterInfo("无", "無", NONE_FILTER, new GPUImageFilter(), false);
         this.mFilterInfos.add(noneFilter);
-        this.mFilterGroupNames.add(new FilterInfo("无", "無", getString(2131296664), new GPUImageFilter(), false));
+        this.mFilterGroupNames.add(new FilterInfo("无", "無", getString(R.string.LABEL_NO_FILTER), new GPUImageFilter(), false));
         this.mFilterGroupNames.addAll(App.jsonGroupInfoList2);
         App.mFilterMap.put(NONE_FILTER, noneFilter);
         if (App.mFilterInfos != null) {
@@ -5826,10 +6001,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             String collectString = SharedPrefUtils.getString(Constants.COLLECT_FILTER + GlobalHelper.getUserId(), "");
             if (!("".equals(collectString) || collectString.length() == 0)) {
                 FilterInfo filterInfo = new FilterInfo(FilterAdapter.GROUP_COLLECT);
-                filterInfo.name_chs = getResources().getString(2131296406);
-                filterInfo.name_cht = getResources().getString(2131296406);
+                filterInfo.name_chs = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+                filterInfo.name_cht = getResources().getString(R.string.BUTTON_FAV_PRESETS);
                 filterInfo.filter_id = -10001;
-                filterInfo.name_en = getResources().getString(2131296406);
+                filterInfo.name_en = getResources().getString(R.string.BUTTON_FAV_PRESETS);
                 filterInfo.filename = FilterAdapter.GROUP_COLLECT;
                 this.mFilterInfos.add(this.filterAdapter.getNoneFilterIndex() + 1, filterInfo);
                 this.mFilterGroupNames.add(1, filterInfo);
@@ -5839,14 +6014,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 List<FilterInfo> removeList = new ArrayList();
                 if (collectFilterInfos != null && collectFilterInfos.size() > 0) {
                     for (i = 0; i < collectFilterInfos.size(); i++) {
-                        FilterInfo filterInfo2 = (FilterInfo) collectFilterInfos.get(i);
+                        FilterInfo filterInfo2 = collectFilterInfos.get(i);
                         if (App.mFilterMap.get(filterInfo2.name_en) == null) {
                             removeList.add(filterInfo2);
                         } else {
                             for (int j = 0; j < this.mFilterInfos.size(); j++) {
-                                if (((FilterInfo) this.mFilterInfos.get(j)).name_en.equals(filterInfo2.name_en)) {
-                                    filterInfo2.filter = ((FilterInfo) this.mFilterInfos.get(j)).filter;
-                                    ((FilterInfo) this.mFilterInfos.get(j)).isCollected = true;
+                                if (this.mFilterInfos.get(j).name_en.equals(filterInfo2.name_en)) {
+                                    filterInfo2.filter = this.mFilterInfos.get(j).filter;
+                                    this.mFilterInfos.get(j).isCollected = true;
                                     break;
                                 }
                             }
@@ -5885,7 +6060,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         i = 0;
         int size = this.filterAdapter.getItemCount();
         while (i < size) {
-            if (((FilterInfo) this.mFilterInfos.get(i)).name_en != null && ((FilterInfo) this.mFilterInfos.get(i)).name_en.equalsIgnoreCase(this.mFilterName)) {
+            if (this.mFilterInfos.get(i).name_en != null && this.mFilterInfos.get(i).name_en.equalsIgnoreCase(this.mFilterName)) {
                 hadName = true;
                 this.filterChoosePosition = i;
                 break;
@@ -5903,7 +6078,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filterGroupNameAdapter.setSelectPosition(0);
             this.filterGroupNameAdapter.notifyDataSetChanged();
         } else {
-            this.filter_list_recyclerview.post(29.lambdaFactory$(this));
+            //this.filter_list_recyclerview.post(29.lambdaFactory$(this));
+            filter_list_recyclerview.post(new Runnable() {
+                @Override
+                public void run() {
+                    lambda$initView$27();
+                }
+            });
         }
         try {
             int bitmapWidth;
@@ -5935,18 +6116,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             LogUtil.d("MSCV", "RuntimeException");
             e.printStackTrace();
         }
-        PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("translationX", new float[]{(float) this.metricsWidth, StaticLayoutUtil.DefaultSpacingadd});
-        ObjectAnimator.ofPropertyValuesHolder(this.filter_title_bar, new PropertyValuesHolder[]{translationY}).setDuration((long) this.AnimationTime).start();
-        if (this.title_preview.getVisibility() == 0) {
-            ObjectAnimator.ofPropertyValuesHolder(this.title_preview, new PropertyValuesHolder[]{translationY}).setDuration((long) this.AnimationTime).start();
+        PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("translationX", (float) this.metricsWidth, StaticLayoutUtil.DefaultSpacingadd);
+        ObjectAnimator.ofPropertyValuesHolder(this.filter_title_bar, translationY).setDuration((long) this.AnimationTime).start();
+        if (this.title_preview.getVisibility() == View.VISIBLE) {
+            ObjectAnimator.ofPropertyValuesHolder(this.title_preview, translationY).setDuration((long) this.AnimationTime).start();
         }
-        if (this.title_alert_out_time.getVisibility() == 0) {
-            ObjectAnimator.ofPropertyValuesHolder(this.title_alert_out_time, new PropertyValuesHolder[]{translationY}).setDuration((long) this.AnimationTime).start();
+        if (this.title_alert_out_time.getVisibility() == View.VISIBLE) {
+            ObjectAnimator.ofPropertyValuesHolder(this.title_alert_out_time, translationY).setDuration((long) this.AnimationTime).start();
         }
-        if (this.title_add_text.getVisibility() == 0) {
-            ObjectAnimator.ofPropertyValuesHolder(this.title_add_text, new PropertyValuesHolder[]{translationY}).setDuration((long) this.AnimationTime).start();
+        if (this.title_add_text.getVisibility() == View.VISIBLE) {
+            ObjectAnimator.ofPropertyValuesHolder(this.title_add_text, translationY).setDuration((long) this.AnimationTime).start();
         }
-        ObjectAnimator.ofPropertyValuesHolder(this.filter_list_recyclerview, new PropertyValuesHolder[]{translationY}).setDuration((long) this.AnimationTime).start();
+        ObjectAnimator.ofPropertyValuesHolder(this.filter_list_recyclerview, translationY).setDuration((long) this.AnimationTime).start();
         this.mTvSave.setOnClickListener(this);
         this.mIvBack.setOnClickListener(this);
         this.filter_tag_filter_rl.setOnClickListener(this);
@@ -5958,30 +6139,30 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.surface_click_view.setOnClickListener(this);
         this.player_rl.setPlayButtonCallback(new FilterPlayButtonCallback() {
             public void playClick(boolean isPlaying) {
-                FilterActivity.this.setVideoStartPause(isPlaying);
+                setVideoStartPause(isPlaying);
             }
 
             public void leftClick() {
-                final boolean isPause = FilterActivity.this.mSurfaceView.getLongVideoPlayState();
-                FilterActivity.this.setVideoStartPause(true);
-                FilterActivity.this.mVideoEditHelper.getModelCurrentDuration(2);
-                FilterActivity.this.mHandler.postDelayed(new Runnable() {
+                final boolean isPause = mSurfaceView.getLongVideoPlayState();
+                setVideoStartPause(true);
+                mVideoEditHelper.getModelCurrentDuration(2);
+                mHandler.postDelayed(new Runnable() {
                     public void run() {
                         if (!isPause) {
-                            FilterActivity.this.setVideoStartPause(false);
+                            setVideoStartPause(false);
                         }
                     }
                 }, 300);
             }
 
             public void rightClick() {
-                final boolean isPause = FilterActivity.this.mSurfaceView.getLongVideoPlayState();
-                FilterActivity.this.setVideoStartPause(true);
-                FilterActivity.this.mVideoEditHelper.getModelCurrentDuration(1);
-                FilterActivity.this.mHandler.postDelayed(new Runnable() {
+                final boolean isPause = mSurfaceView.getLongVideoPlayState();
+                setVideoStartPause(true);
+                mVideoEditHelper.getModelCurrentDuration(1);
+                mHandler.postDelayed(new Runnable() {
                     public void run() {
                         if (!isPause) {
-                            FilterActivity.this.setVideoStartPause(false);
+                            setVideoStartPause(false);
                         }
                     }
                 }, 300);
@@ -5995,55 +6176,55 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             public boolean onTouch(android.view.View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case 0:
-                        if (FilterActivity.this.filter_rule_ll != null && FilterActivity.this.filter_rule_ll.getVisibility() == 0) {
-                            FilterActivity.this.onConfirmPress(FilterActivity.this.currentEffectType);
+                        if (filter_rule_ll != null && filter_rule_ll.getVisibility() == View.VISIBLE) {
+                            onConfirmPress(currentEffectType);
                         }
-                        if (FilterActivity.this.isVideoType()) {
-                            if (FilterActivity.this.isInVideoArea(event)) {
+                        if (isVideoType()) {
+                            if (isInVideoArea(event)) {
                                 this.downX = event.getX();
                                 this.downY = event.getY();
                                 this.downTime = System.currentTimeMillis();
                             } else {
-                                if (FilterActivity.this.mVideoEditHelper != null) {
-                                    FilterActivity.this.mVideoEditHelper.clearIfExistSelect();
+                                if (mVideoEditHelper != null) {
+                                    mVideoEditHelper.clearIfExistSelect();
                                 }
-                                if (!FilterActivity.this.mSurfaceView.getLongVideoPlayState()) {
-                                    FilterActivity.this.callVideoPause();
+                                if (!mSurfaceView.getLongVideoPlayState()) {
+                                    callVideoPause();
                                 }
                             }
                         }
-                        FilterActivity.this.mHandler.postDelayed(FilterActivity.this.pressVideoRunnable, FilterActivity.CHANEG_FILTER_TIME);
+                        mHandler.postDelayed(pressVideoRunnable, FilterActivity.CHANEG_FILTER_TIME);
                         break;
                     case 1:
                     case 3:
-                        if (FilterActivity.this.isVideoType() && System.currentTimeMillis() - this.downTime < FilterActivity.CHANEG_FILTER_TIME && FilterActivity.this.isInVideoArea(event) && Math.abs(event.getX() - this.downX) <= 20.0f && Math.abs(event.getY() - this.downY) <= 20.0f) {
-                            if (FilterActivity.this.mSurfaceView.getLongVideoPlayState()) {
-                                FilterActivity.this.callVideoPlay();
+                        if (isVideoType() && System.currentTimeMillis() - this.downTime < FilterActivity.CHANEG_FILTER_TIME && isInVideoArea(event) && Math.abs(event.getX() - this.downX) <= 20.0f && Math.abs(event.getY() - this.downY) <= 20.0f) {
+                            if (mSurfaceView.getLongVideoPlayState()) {
+                                callVideoPlay();
                             } else {
-                                FilterActivity.this.callVideoPause();
+                                callVideoPause();
                             }
                         }
-                        FilterActivity.this.mHandler.removeCallbacks(FilterActivity.this.pressVideoRunnable);
-                        if (!FilterActivity.NONE_FILTER.equals(FilterActivity.this.currentFilterName) && FilterActivity.this.isPressedVideoArea) {
-                            FilterActivity.this.isPressedVideoArea = false;
-                            FilterActivity.this.mFilterName = FilterActivity.this.currentFilterName;
-                            FilterActivity.this.currentFilterName = FilterActivity.NONE_FILTER;
-                            FilterActivity.this.mFilterEffectManager.returnSelectFilterBeans();
-                            if (!FilterActivity.this.isBackOrNextPressed) {
-                                FilterActivity.this.setNormalFilter();
+                        mHandler.removeCallbacks(pressVideoRunnable);
+                        if (!FilterActivity.NONE_FILTER.equals(currentFilterName) && isPressedVideoArea) {
+                            isPressedVideoArea = false;
+                            mFilterName = currentFilterName;
+                            currentFilterName = FilterActivity.NONE_FILTER;
+                            mFilterEffectManager.returnSelectFilterBeans();
+                            if (!isBackOrNextPressed) {
+                                setNormalFilter();
                                 break;
                             }
                         }
                         break;
                 }
-                FilterActivity.this.changeFilterGesture.onTouchEvent(event);
+                changeFilterGesture.onTouchEvent(event);
                 return true;
             }
         });
         this.filter_max_click_view.setOnClickListener(new OnClickListener() {
             public void onClick(android.view.View v) {
-                if (FilterActivity.this.mVideoEditHelper != null) {
-                    FilterActivity.this.mVideoEditHelper.clearIfExistSelect();
+                if (mVideoEditHelper != null) {
+                    mVideoEditHelper.clearIfExistSelect();
                 }
             }
         });
@@ -6057,7 +6238,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             int historyPos = 1;
             int i = 0;
             while (i < this.mFilterInfos.size()) {
-                if (((FilterInfo) this.mFilterInfos.get(i)).name_en != null && ((FilterInfo) this.mFilterInfos.get(i)).name_en.equals(this.mFilterName)) {
+                if (this.mFilterInfos.get(i).name_en != null && this.mFilterInfos.get(i).name_en.equals(this.mFilterName)) {
                     historyPos = i;
                     break;
                 }
@@ -6102,8 +6283,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (x > ((float) startX) && x < ((float) endX) && y > ((float) startY) && y < ((float) endY)) {
             result = true;
         }
-        LogUtil.d(TAG, String.format("isInVideoArea  rawX : %s , rawY : %s , x : %s , y : %s , leakFilterReqWidth : %s , leakFilterReqHeight : %s , result : %s ", new Object[]{Float.valueOf(rawX), Float.valueOf(rawY), Float.valueOf(x), Float.valueOf(y), Integer.valueOf(this.leakFilterReqWidth), Integer.valueOf(this.leakFilterReqHeight), Boolean.valueOf(result)}));
-        LogUtil.d(TAG, String.format("isInVideoArea width : %s , height : %s , startX : %s , endX : %s , startY : %s , endY : %s", new Object[]{Integer.valueOf(width), Integer.valueOf(height), Integer.valueOf(startX), Integer.valueOf(endX), Integer.valueOf(startY), Integer.valueOf(endY)}));
+        //LogUtil.d(TAG, "isInVideoArea  rawX : " + rawX + " , rawY : " + rawY + " , x : " + x + " , y : " + y + " , leakFilterReqWidth : " + this.leakFilterReqWidth + " , leakFilterReqHeight : " + this.leakFilterReqHeight + " , result : " + result);
+        //LogUtil.d(TAG, String.format("isInVideoArea width : %s , height : %s , startX : %s , endX : %s , startY : %s , endY : %s", width, Integer.valueOf(height), startX, endX, startY, endY));
         return result;
     }
 
@@ -6123,7 +6304,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         MSCVController.getPromoteTags(new IControllerCallback<List<OfficialTagBean>>() {
             public void success(final List<OfficialTagBean> officialTagBeen, String jsonContent, long cursorId, boolean isAllDone) {
                 super.success(officialTagBeen, jsonContent, cursorId, isAllDone);
-                FilterActivity.this.runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     public void run() {
                         MscvModel.getInstance().setPromoteTagsList(officialTagBeen);
                     }
@@ -6149,7 +6330,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         } else if (((double) ((((float) height) * 1.0f) / ((float) width))) > 1.2d) {
         }
         if (2 == this.mDataFrom) {
-            return BitmapUtil.ImageCrop(bitmap, true);
+            return BitmapUtils.ImageCrop(bitmap, true);
         }
         int y;
         int x;
@@ -6175,7 +6356,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     finalHeight = bitmap.getHeight();
                 }
             }
-            return BitmapUtil.createBitmap(bitmap, x, y, finalWidth, finalHeight, null, false);
+            return BitmapUtils.createBitmap(bitmap, x, y, finalWidth, finalHeight, null, false);
         }
         float newWidth = (float) ((bitmap.getHeight() * width) / height);
         x = (int) ((((float) (bitmap.getWidth() / 2)) - ((this.mOffsetX * newWidth) / 2.0f)) - (newWidth / 2.0f));
@@ -6197,16 +6378,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 finalHeight = bitmap.getHeight();
             }
         }
-        return BitmapUtil.createBitmap(bitmap, x, y, finalWidth, finalHeight, null, false);
+        return BitmapUtils.createBitmap(bitmap, x, y, finalWidth, finalHeight, null, false);
     }
 
     private void clickAddition(android.view.View v) {
         switch (v.getId()) {
-            case 2131691125:
+            case R.id.filter_tab_choose_cancle:
                 this.filter_tab_choose_cancle.setEnabled(false);
-                if (this.filter_effect_root_ll.getVisibility() == 0) {
+                if (this.filter_effect_root_ll.getVisibility() == View.VISIBLE) {
                     this.filter_tab_ll.setAlpha(StaticLayoutUtil.DefaultSpacingadd);
-                    this.filter_tab_ll.setVisibility(0);
+                    this.filter_tab_ll.setVisibility(View.VISIBLE);
                     startAnimation(this.filter_tab_ll, 1.0f, 200, 0);
                     startAnimation(this.filter_tab_choose_ll, StaticLayoutUtil.DefaultSpacingadd, 200, 8);
                     this.mFilterEffectManager.masterCancelFilterEffect();
@@ -6214,7 +6395,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 } else if (this.mOnVideoTextSelectListener == null) {
                     return;
                 } else {
-                    if (isVideoType() && this.currentEffectType == EffectType.CROP) {
+                    if (isVideoType() && this.currentEffectType == FilterEffectManager.EffectType.CROP) {
                         this.mOnVideoTextSelectListener.videoCropCancel(this.currentEffectType);
                         return;
                     } else {
@@ -6222,12 +6403,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         return;
                     }
                 }
-            case 2131691126:
+            case R.id.filter_tab_choose_confirm:
                 this.filter_tab_choose_confirm.setEnabled(false);
                 if (this.mOnVideoTextSelectListener == null) {
                     return;
                 }
-                if (isVideoType() && this.currentEffectType == EffectType.CROP) {
+                if (isVideoType() && this.currentEffectType == FilterEffectManager.EffectType.CROP) {
                     this.mOnVideoTextSelectListener.videoCropConfirm(this.currentEffectType);
                     return;
                 } else {
@@ -6255,14 +6436,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.filter_loop_slider_root_rll.getLayoutParams().width = (int) ((((float) this.minLoopCount) * this.SLIDER_DELTA) + 0.5f);
         this.TAB_HEIGHT_1_4 = DensityUtil.dip2px(12.5f);
         if (this.mIsShort || 1 == this.mDataType) {
-            this.filter_tag_loop_iv.setVisibility(4);
+            this.filter_tag_loop_iv.setVisibility(View.INVISIBLE);
         }
     }
 
     private void fixSurfaceViewSize(float scale, float xPercent, float yPercent, boolean setFrameCrop) {
         float usableWidth = (float) DensityUtil.getMetricsWidth(this);
         float usableHeight = (float) (DensityUtil.getMetricsHeight(this) - getTopAndBottomSumViewHeight());
-        float titleBarHeight = getResources().getDimension(2131427423);
+        float titleBarHeight = getResources().getDimension(R.dimen._63dp);
         if (scale > usableWidth / usableHeight) {
             int realHeight = (int) (((float) ((int) usableWidth)) / scale);
         } else {
@@ -6304,7 +6485,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void fixGridViewSize(float degree, boolean needCheckCrop) {
-        boolean containItem = this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.CROP);
+        boolean containItem = this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.CROP);
         if (!containItem || !needCheckCrop) {
             if (!containItem) {
                 baseFixGridView(degree);
@@ -6382,7 +6563,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             buttonParams.leftMargin = leftMargin;
             buttonParams.rightMargin = rightMargin;
             this.player_rl.setLayoutParams(buttonParams);
-            this.player_rl.setVisibility(0);
+            this.player_rl.setVisibility(View.VISIBLE);
         }
     }
 
@@ -6416,26 +6597,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void showFootageMissingHint() {
-        if (this.filter_missing_file_hint_rl != null && this.filter_missing_file_hint_rl.getVisibility() != 0) {
-            this.filter_missing_file_hint_rl.setVisibility(0);
+        if (this.filter_missing_file_hint_rl != null && this.filter_missing_file_hint_rl.getVisibility() != View.VISIBLE) {
+            this.filter_missing_file_hint_rl.setVisibility(View.VISIBLE);
         }
     }
 
     private void hideFootageMissingHint() {
-        if (this.filter_missing_file_hint_rl != null && this.filter_missing_file_hint_rl.getVisibility() != 8) {
-            this.filter_missing_file_hint_rl.setVisibility(8);
+        if (this.filter_missing_file_hint_rl != null && this.filter_missing_file_hint_rl.getVisibility() != View.GONE) {
+            this.filter_missing_file_hint_rl.setVisibility(View.GONE);
         }
     }
 
     private void showCurrentClipIv() {
-        if (this.filter_current_clip_iv != null && this.filter_current_clip_iv.getVisibility() != 0) {
-            this.filter_current_clip_iv.setVisibility(0);
+        if (this.filter_current_clip_iv != null && this.filter_current_clip_iv.getVisibility() != View.VISIBLE) {
+            this.filter_current_clip_iv.setVisibility(View.VISIBLE);
         }
     }
 
     private void hideCurrentClipIv() {
-        if (this.filter_current_clip_iv != null && this.filter_current_clip_iv.getVisibility() != 8) {
-            this.filter_current_clip_iv.setVisibility(8);
+        if (this.filter_current_clip_iv != null && this.filter_current_clip_iv.getVisibility() != View.GONE) {
+            this.filter_current_clip_iv.setVisibility(View.GONE);
         }
     }
 
@@ -6544,12 +6725,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         float gridScale;
         int realWidth;
         int realHeight;
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        boolean containItem = this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP);
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        boolean containItem = this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP);
         int mirrorWidth = this.mVideoWidth;
         int mirrorHeight = this.mVideoHeight;
         if (containItem) {
-            FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP);
+            FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP);
             if (cropItem != null) {
                 float[] selectPosition = cropItem.selectPosition;
                 if (selectPosition != null && selectPosition.length >= 7) {
@@ -6706,7 +6887,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             usableHeight = usedScreenHeight - getTopAndBottomSumViewHeight();
         }
         int marginT = DensityUtil.dip2px(63.0f);
-        float degree = this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+        float degree = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
         this.surfaceParams = (LayoutParams) this.mSurfaceView.getLayoutParams();
         if (degree == 90.0f || degree == 270.0f) {
             this.mVideoFrames.mCropWidth = this.mVideoFrames.mCaptureHeight;
@@ -6767,7 +6948,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             realWidth += realWidth % 2;
             realHeight += realHeight % 2;
-            marginT = (int) (((float) marginT) + getResources().getDimension(2131427423));
+            marginT = (int) (((float) marginT) + getResources().getDimension(R.dimen._63dp));
             LayoutParams layoutParams = (LayoutParams) this.text_draw_rl.getLayoutParams();
             layoutParams.width = this.metricsWidth;
             layoutParams.height = realHeight;
@@ -6792,13 +6973,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             } else {
                 i = realWidth;
             }
-            vTContainerView.setFontSizeType(i, FontSizeType.M);
-            this.draw_text_view.setAlignType(AlignType.M);
+            vTContainerView.setFontSizeType(i, VTContainerView.FontSizeType.M);
+            this.draw_text_view.setAlignType(VTContainerView.AlignType.M);
             this.draw_text_view.setVerticalPos(0);
-            this.draw_text_view.setTextColorType(TextColorType.White);
-            this.draw_text_view.setLetterSpacingType(LetterSpacingType.XS);
-            this.draw_text_view.setLineSpacingType(LineSpacingType.S);
-            this.draw_text_view.setShadowType(ShadowType.NONE);
+            this.draw_text_view.setTextColorType(VTContainerView.TextColorType.White);
+            this.draw_text_view.setLetterSpacingType(VTContainerView.LetterSpacingType.XS);
+            this.draw_text_view.setLineSpacingType(VTContainerView.LineSpacingType.S);
+            this.draw_text_view.setShadowType(VTContainerView.ShadowType.NONE);
             this.tempFontSizeType = this.draw_text_view.getFontSizeType();
             this.tempLineSpacingType = this.draw_text_view.getLineSpacingType();
             this.tempLetterSpacingType = this.draw_text_view.getLetterSpacingType();
@@ -6811,70 +6992,82 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 boolean savePicture = true;
                 super.run();
                 try {
-                    if (FilterActivity.this.mVideoFrames == null || FilterActivity.this.mVideoFrames.size() == 0) {
+                    if (mVideoFrames == null || mVideoFrames.size() == 0) {
                         System.gc();
                         return;
                     }
-                    EGL10Helper.withContext("loadFramesPicture", FilterActivity$45$.Lambda.1.lambdaFactory$(this));
+                    //EGL10Helper.withContext("loadFramesPicture", FilterActivity$45$.Lambda.1.lambdaFactory$(this));
+                    EGL10Helper.withContext("loadFramesPicture", new EGLRunnableVoid() {
+                        @Override
+                        public void run(EGL10Helper eGL10Helper) {
+                            lambda$run$0(eGL10Helper);
+                        }
+                    });
                     LogUtil.d("loadFramesForPicture", "if (!mRestart) { pre");
-                    if (!FilterActivity.this.mRestart) {
+                    if (!mRestart) {
                         LogUtil.d("loadFramesForPicture", "if (!mRestart) {");
-                        FilterActivity.this.runOnUiThread(new Runnable() {
+                        runOnUiThread(new Runnable() {
                             public void run() {
-                                if (FilterActivity.this.mVideoFrames == null || FilterActivity.this.mVideoFrames.size() == 0) {
+                                if (mVideoFrames == null || mVideoFrames.size() == 0) {
                                     LogUtil.d("loadFramesForPicture", "mVideoFrames == null || mVideoFrames.size() == 0");
                                     return;
                                 }
-                                FilterActivity.this.setNormalFilter();
-                                if (FilterActivity.this.mDraftModel != null) {
-                                    FilterActivity.this.restoreFilters();
+                                setNormalFilter();
+                                if (mDraftModel != null) {
+                                    restoreFilters();
                                 }
-                                ViewPropertyAnimator.animate(FilterActivity.this.filter_alpha_view).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(FilterActivity.CHANEG_FILTER_TIME).start();
-                                FilterActivity.this.mTvSave.setEnabled(true);
-                                FilterActivity.this.mTvSave.setAlpha(1.0f);
-                                FilterActivity.this.mRestart = true;
+                                ViewPropertyAnimator.animate(filter_alpha_view).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(FilterActivity.CHANEG_FILTER_TIME).start();
+                                mTvSave.setEnabled(true);
+                                mTvSave.setAlpha(1.0f);
+                                mRestart = true;
                                 LogUtil.d("loadFramesForPicture", "mRestart = true;");
                             }
                         });
                     }
                     System.gc();
                     int shortLength = DensityUtil.dip2px(44.0f);
-                    if (FilterActivity.this.mVideoHeight > FilterActivity.this.mVideoWidth) {
-                        int previewHeight = (int) ((((float) (FilterActivity.this.mVideoHeight * shortLength)) * 1.0f) / ((float) FilterActivity.this.mVideoWidth));
+                    if (mVideoHeight > mVideoWidth) {
+                        int previewHeight = (int) ((((float) (mVideoHeight * shortLength)) * 1.0f) / ((float) mVideoWidth));
                     } else {
-                        int access$13500 = (int) ((((float) (FilterActivity.this.mVideoWidth * shortLength)) * 1.0f) / ((float) FilterActivity.this.mVideoHeight));
+                        int access$13500 = (int) ((((float) (mVideoWidth * shortLength)) * 1.0f) / ((float) mVideoHeight));
                     }
-                    FilterActivity.this.forFilterBitmap = FilterActivity.this.getFilterPreviewBitmap();
-                    if (FilterActivity.this.forFilterBitmap != null) {
-                        EGL10Helper.withContext("forFilterBitmap", FilterActivity$45$.Lambda.2.lambdaFactory$(this));
-                        BitmapUtil.saveBitmap2PrivateFile(FilterActivity.this.forFilterBitmap);
+                    forFilterBitmap = getFilterPreviewBitmap();
+                    if (forFilterBitmap != null) {
+                        //EGL10Helper.withContext("forFilterBitmap", FilterActivity$45$.Lambda.2.lambdaFactory$(this));
+                        EGL10Helper.withContext("forFilterBitmap", new EGLRunnableVoid() {
+                            @Override
+                            public void run(EGL10Helper eGL10Helper) {
+                                lambda$run$1(eGL10Helper);
+                            }
+                        });
+                        BitmapUtils.saveBitmap2PrivateFile(forFilterBitmap);
                     }
-                    BitmapUtil.recycleBitmap(FilterActivity.this.forFilterBitmap);
+                    BitmapUtils.recycleBitmap(forFilterBitmap);
                     System.gc();
-                    if (FilterActivity.this.mDataFrom != 0) {
+                    if (mDataFrom != 0) {
                         System.gc();
                         return;
                     }
                     boolean noHavePermission;
-                    if (ContextCompat.checkSelfPermission(FilterActivity.this.getApplicationContext(), "android.permission.WRITE_EXTERNAL_STORAGE") != 0) {
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), "android.permission.WRITE_EXTERNAL_STORAGE") != 0) {
                         noHavePermission = true;
                     } else {
                         noHavePermission = false;
                     }
-                    if (!(FilterActivity.this.mDataFrom == 0 && 1 == FilterActivity.this.mDataType)) {
+                    if (!(mDataFrom == 0 && 1 == mDataType)) {
                         savePicture = false;
                     }
-                    if (FilterActivity.this.mDraftModel == null && savePicture) {
+                    if (mDraftModel == null && savePicture) {
                         if (VERSION.SDK_INT >= 23 && noHavePermission) {
                             ActivityCompat.requestPermissions(FilterActivity.this, new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"}, 102);
                         } else if (!noHavePermission) {
-                            FilterActivity.this.savePictureOriginal();
+                            savePictureOriginal();
                         }
                     }
                     System.gc();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    BitmapUtil.recycleBitmap(FilterActivity.this.forFilterBitmap);
+                    BitmapUtils.recycleBitmap(forFilterBitmap);
                     System.gc();
                 } catch (Throwable th) {
                     System.gc();
@@ -6883,30 +7076,30 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
 
             private /* synthetic */ void lambda$run$0(EGL10Helper egl) {
-                FilterActivity.this.mVideoFrames.limitDuration((long) (FilterActivity.this.mFrameCount * 100000));
-                FilterActivity.this.mSurfaceView.setVideoFrames(FilterActivity.this.mVideoFrames);
-                FilterActivity.this.mSurfaceView.setViewOffset(FilterActivity.this.mOffsetX, FilterActivity.this.mOffsetY);
-                FilterActivity.this.loadFilterInfos();
-                FilterActivity.this.setNormalFilter();
-                FilterActivity.this.mSurfaceView.waitForFrame();
+                mVideoFrames.limitDuration((long) (mFrameCount * 100000));
+                mSurfaceView.setVideoFrames(mVideoFrames);
+                mSurfaceView.setViewOffset(mOffsetX, mOffsetY);
+                loadFilterInfos();
+                setNormalFilter();
+                mSurfaceView.waitForFrame();
             }
 
             private /* synthetic */ void lambda$run$1(EGL10Helper egl) {
-                EGLSurface surface = egl.createPBuffer(FilterActivity.this.forFilterBitmap.getWidth(), FilterActivity.this.forFilterBitmap.getHeight());
+                EGLSurface surface = egl.createPBuffer(forFilterBitmap.getWidth(), forFilterBitmap.getHeight());
                 egl.makeCurrent(surface);
-                if (FilterActivity.this.mVideoFrames != null) {
+                if (mVideoFrames != null) {
                     int historyPos = 1;
                     int i = 0;
-                    while (i < FilterActivity.this.mFilterInfos.size()) {
-                        if (((FilterInfo) FilterActivity.this.mFilterInfos.get(i)).name_en != null && ((FilterInfo) FilterActivity.this.mFilterInfos.get(i)).name_en.equals(FilterActivity.this.mFilterName)) {
+                    while (i < mFilterInfos.size()) {
+                        if (((FilterInfo) mFilterInfos.get(i)).name_en != null && ((FilterInfo) mFilterInfos.get(i)).name_en.equals(mFilterName)) {
                             historyPos = i;
                             break;
                         }
                         i++;
                     }
-                    FilterActivity.this.generatePreviewBitmaps(FilterActivity.this.forFilterBitmap, 0, FilterActivity.this.mFilterInfos.size(), historyPos);
+                    generatePreviewBitmaps(forFilterBitmap, 0, mFilterInfos.size(), historyPos);
                 } else {
-                    FilterActivity.this.generatePreviewBitmaps(FilterActivity.this.forFilterBitmap, 0, FilterActivity.this.mFilterInfos.size(), 0);
+                    generatePreviewBitmaps(forFilterBitmap, 0, mFilterInfos.size(), 0);
                 }
                 if (surface != null) {
                     egl.destroySurface(surface);
@@ -6957,17 +7150,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             return BitmapFactory.decodeByteArray(imageDataBytes, 0, length, options);
         }
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
-        int mOrientation = BitmapUtil.getLocalPictureOrientation(filePath);
+        int mOrientation = BitmapUtils.getLocalPictureOrientation(filePath);
         if (1 == mOrientation) {
             mOrientation = 0;
         } else if (6 == mOrientation) {
             mOrientation = 90;
         } else if (8 == mOrientation) {
-            mOrientation = Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE;
+            mOrientation = BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE;
         } else if (3 == mOrientation) {
             mOrientation = 180;
         }
-        return BitmapUtil.adjustPhotoRotation(bitmap, mOrientation);
+        return BitmapUtils.adjustPhotoRotation(bitmap, mOrientation);
     }
 
     private GPUImageFilterGroup getFramesFilter(FrameRenderer renderer, int index, GPUImageFilter finalGroup) {
@@ -7034,16 +7227,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterName = "";
             }
             if ("".equalsIgnoreCase(groupName) || NONE_FILTER.equalsIgnoreCase(groupName) || "无".equalsIgnoreCase(groupName) || "無".equalsIgnoreCase(groupName)) {
-                this.capture_filter_group_name_tv.setVisibility(8);
-                this.capture_filter_name_tv.setText(getActivity().getResources().getString(2131296455));
+                this.capture_filter_group_name_tv.setVisibility(View.GONE);
+                this.capture_filter_name_tv.setText(getActivity().getResources().getString(R.string.BUTTON_NO_PRESET));
                 ((LinearLayout.LayoutParams) this.capture_filter_name_tv.getLayoutParams()).topMargin = 0;
             } else {
-                this.capture_filter_group_name_tv.setVisibility(0);
+                this.capture_filter_group_name_tv.setVisibility(View.VISIBLE);
                 this.capture_filter_group_name_tv.setText(groupName);
                 this.capture_filter_name_tv.setText(filterName);
                 ((LinearLayout.LayoutParams) this.capture_filter_name_tv.getLayoutParams()).topMargin = DensityUtil.dip2px(2.0f);
             }
-            this.capture_filter_name_rl.setVisibility(0);
+            this.capture_filter_name_rl.setVisibility(View.VISIBLE);
             this.mHandler.removeCallbacks(this.alphaRannable);
             this.mHandler.postDelayed(this.alphaRannable, CHANEG_FILTER_TIME);
         }
@@ -7108,24 +7301,24 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filterAdapter.setFilterChangeState(true);
             this.mSurfaceView.requestAnimation(new Runnable() {
                 public void run() {
-                    long t = System.currentTimeMillis() - FilterActivity.this.startTime;
+                    long t = System.currentTimeMillis() - startTime;
                     float durationTime = 500.0f;
                     if (width < height) {
-                        durationTime = 500.0f * ((((float) width) * 1.0f) / ((float) FilterActivity.this.metricsWidth));
+                        durationTime = 500.0f * ((((float) width) * 1.0f) / ((float) metricsWidth));
                     }
                     float alpha = (float) ((1.054d * Math.exp(-2.544d * ((double) ((((float) t) * 1.0f) / durationTime)))) - 0.06807d);
                     if (alpha <= 0.017f) {
-                        FilterActivity.this.oldFilters = FilterActivity.this.newFilters;
-                        FilterActivity.this.newFilters = null;
-                        FilterActivity.this.mSurfaceView.setFilters(FilterActivity.this.oldFilters);
-                        FilterActivity.this.mSurfaceView.setViewport(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f, 1.0f);
-                        FilterActivity.this.filterIsChanging = false;
-                        FilterActivity.this.filterAdapter.setFilterChangeState(false);
+                        oldFilters = newFilters;
+                        newFilters = null;
+                        mSurfaceView.setFilters(oldFilters);
+                        mSurfaceView.setViewport(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f, 1.0f);
+                        filterIsChanging = false;
+                        filterAdapter.setFilterChangeState(false);
                         return;
                     }
                     float x;
                     float w;
-                    if (FilterActivity.this.leftSlide) {
+                    if (leftSlide) {
                         x = alpha;
                         w = 1.0f - alpha;
                     } else {
@@ -7133,8 +7326,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         w = 1.0f - alpha;
                     }
                     LogUtil.d("filterAnimation", "x : " + x + " , w : " + w);
-                    FilterActivity.this.mSurfaceView.setViewport(x, StaticLayoutUtil.DefaultSpacingadd, w, 1.0f);
-                    FilterActivity.this.mSurfaceView.postOnAnimation(this);
+                    mSurfaceView.setViewport(x, StaticLayoutUtil.DefaultSpacingadd, w, 1.0f);
+                    mSurfaceView.postOnAnimation(this);
                 }
             });
         }
@@ -7197,10 +7390,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.previouFilters = filters;
             this.mSurfaceView.setFilters(filters);
             long t3 = System.nanoTime();
-            LogUtil.d(String.format("alpha filter create FrameTexture time : %s", new Object[]{Long.valueOf((tx - t1) / 1000000)}));
-            LogUtil.d(String.format("alpha filter getFrameTexture time : %s", new Object[]{Long.valueOf((t2 - tx) / 1000000)}));
-            LogUtil.d(String.format("alpha filter time : %s", new Object[]{Long.valueOf((t3 - t2) / 1000000)}));
-            LogUtil.d(String.format("alpha filter only set filter time : %s", new Object[]{Long.valueOf((t3 - ty) / 1000000)}));
+            LogUtil.d(String.format("alpha filter create FrameTexture time : %s", (tx - t1) / 1000000));
+            LogUtil.d(String.format("alpha filter getFrameTexture time : %s", (t2 - tx) / 1000000));
+            LogUtil.d(String.format("alpha filter time : %s", (t3 - t2) / 1000000));
+            LogUtil.d(String.format("alpha filter only set filter time : %s", (t3 - ty) / 1000000));
         }
     }
 
@@ -7256,10 +7449,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             long ty = System.nanoTime();
             setNewFilterAnimate(filters);
             long t3 = System.nanoTime();
-            LogUtil.d(String.format("alpha filter create FrameTexure time : %s", new Object[]{Long.valueOf((tx - t1) / 1000000)}));
-            LogUtil.d(String.format("alpha filter getFrameTexure time : %s", new Object[]{Long.valueOf((t2 - tx) / 1000000)}));
-            LogUtil.d(String.format("alpha filter time : %s", new Object[]{Long.valueOf((t3 - t2) / 1000000)}));
-            LogUtil.d(String.format("alpha filter only set filter time : %s", new Object[]{Long.valueOf((t3 - ty) / 1000000)}));
+            LogUtil.d(String.format("alpha filter create FrameTexure time : %s", (tx - t1) / 1000000));
+            LogUtil.d(String.format("alpha filter getFrameTexure time : %s", (t2 - tx) / 1000000));
+            LogUtil.d(String.format("alpha filter time : %s", (t3 - t2) / 1000000));
+            LogUtil.d(String.format("alpha filter only set filter time : %s", (t3 - ty) / 1000000));
         }
     }
 
@@ -7271,7 +7464,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (list != null && list.size() > 0) {
             int size = list.size();
             for (int i = 0; i < size; i++) {
-                loadFilterEffect((FilterEffectBean) list.get(i), false, false);
+                loadFilterEffect(list.get(i), false, false);
             }
         }
     }
@@ -7284,10 +7477,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (mList != null && mList.size() > 0) {
             int size = mList.size();
             for (int i = 0; i < size; i++) {
-                loadFilterEffect((FilterEffectBean) mList.get(i), needRefresh, needSetNormal);
+                loadFilterEffect(mList.get(i), needRefresh, needSetNormal);
             }
             if (needClear) {
-                this.currentEffectType = EffectType.NONE;
+                this.currentEffectType = FilterEffectManager.EffectType.NONE;
             }
         }
     }
@@ -7299,7 +7492,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (needSquare) {
                 m.postRotate(180.0f);
             } else if (this.mIsBackCamera) {
-                if (this.orientation == Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
+                if (this.orientation == BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
                     m.postRotate(180.0f);
                 }
             } else if (this.orientation == 0) {
@@ -7308,19 +7501,19 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 m.postScale(-1.0f, 1.0f);
             } else if (this.orientation == 180) {
                 m.postRotate(90.0f);
-            } else if (this.orientation == Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
+            } else if (this.orientation == BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
                 m.postRotate(180.0f);
             }
-            bitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(), resId, this.metricsWidth, this.metricsHeight);
+            bitmap = BitmapUtils.decodeSampledBitmapFromResource(getResources(), resId, this.metricsWidth, this.metricsHeight);
             if (bitmap == null) {
                 return null;
             }
             System.gc();
-            bitmap = BitmapUtil.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
+            bitmap = BitmapUtils.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
             if (bitmap == null) {
                 return null;
             }
-            bitmap = BitmapUtil.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
+            bitmap = BitmapUtils.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
             if (bitmap == null) {
                 return null;
             }
@@ -7353,7 +7546,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (needSquare) {
                 m.postRotate(180.0f);
             } else if (this.mIsBackCamera) {
-                if (this.orientation == Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
+                if (this.orientation == BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
                     m.postRotate(180.0f);
                 }
             } else if (this.orientation == 0) {
@@ -7364,11 +7557,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             } else if (this.orientation == 180) {
                 m.postRotate(-180.0f);
                 m.postScale(-1.0f, 1.0f);
-            } else if (this.orientation == Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
+            } else if (this.orientation == BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
                 m.postScale(1.0f, -1.0f);
             }
-            bitmap = BitmapUtil.decodeSampledBitmapFromResource(getResources(), resId, this.metricsWidth, this.metricsHeight);
-            bitmap = BitmapUtil.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
+            bitmap = BitmapUtils.decodeSampledBitmapFromResource(getResources(), resId, this.metricsWidth, this.metricsHeight);
+            bitmap = BitmapUtils.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
             if (bitmap == null) {
                 return null;
             }
@@ -7407,7 +7600,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     }
                 }
             }
-            bitmap = BitmapUtil.createBitmap(bitmap, bitmapX, bitmapY, bitmapWidth, bitmapHeight);
+            bitmap = BitmapUtils.createBitmap(bitmap, bitmapX, bitmapY, bitmapWidth, bitmapHeight);
             if (bitmap == null) {
                 return null;
             }
@@ -7476,7 +7669,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         view.setProgressValue(Math.abs(value));
     }
 
-    private void whichViewIsSelected(EffectType effectType) {
+    private void whichViewIsSelected(FilterEffectManager.EffectType effectType) {
         FilterEffectBean bean = this.mFilterEffectManager.getAssignedBeanByType(effectType);
         if (bean != null && bean.value != null && bean.value.length > 1) {
             float value = bean.value[1];
@@ -7599,7 +7792,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.mFilterGroupNameManager = new LinearLayoutManager(this);
         this.mFilterGroupNameManager.setOrientation(0);
         this.filter_group_name_rv.setLayoutManager(this.mFilterGroupNameManager);
-        this.filterGroupNameAdapter.setOnClickListener(30.lambdaFactory$(this));
+        //this.filterGroupNameAdapter.setOnClickListener(30.lambdaFactory$(this));
+        filterGroupNameAdapter.setOnClickListener(new FilterGroupOnclickListener() {
+            @Override
+            public void onClick(View view, int i) {
+                lambda$initFilterGroupNameInfo$28(view,i);
+            }
+        });
     }
 
     private /* synthetic */ void lambda$initFilterGroupNameInfo$28(android.view.View view, int position) {
@@ -7608,10 +7807,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void onFilterGroupNameClick(int position) {
+    private void onFilterGroupNameClick(final int position) {
         this.filterGroupNameAdapter.setSelectPosition(position);
         this.filterGroupNameAdapter.notifyDataSetChanged();
-        this.filter_group_name_rv.post(31.lambdaFactory$(this, position));
+        //this.filter_group_name_rv.post(31.lambdaFactory$(this, position));
+        filter_group_name_rv.post(new Runnable() {
+            @Override
+            public void run() {
+                lambda$onFilterGroupNameClick$29(position);
+            }
+        });
         String groupName = ((FilterInfo) this.mFilterGroupNames.get(position)).name_en;
         if (TextUtil.isNull(groupName)) {
             groupName = "";
@@ -7637,9 +7842,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.filter_group_name_rv.scrollToPosition(groupPosition);
         this.filter_group_name_rv.post(new Runnable() {
             public void run() {
-                android.view.View viewByPosition = FilterActivity.this.mFilterGroupNameManager.findViewByPosition(groupPosition);
+                android.view.View viewByPosition = mFilterGroupNameManager.findViewByPosition(groupPosition);
                 if (viewByPosition != null) {
-                    FilterActivity.this.filter_group_name_rv.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                    filter_group_name_rv.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
                 }
             }
         });
@@ -7657,59 +7862,65 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.filter_list_recyclerview.setLayoutManager(this.mFilterListLayoutManager);
         this.filter_list_recyclerview.setOnScrollListener(this.scrollListener);
         this.filterAdapter.setOnClickListener(new FilterAdapter.OnClickListener() {
-            public void onClick(android.view.View view, int position, String filterName, boolean isLeftSlide) {
-                FilterActivity.this.setFilterGroupNameState(position);
-                LogUtil.d("filterAdapter", "mFilterName : " + FilterActivity.this.mFilterName + " filterName : " + filterName);
-                if (FilterActivity.this.mFilterName == null || !FilterActivity.this.mFilterName.equals(filterName)) {
-                    FilterActivity.this.mFilterName = filterName;
+            public void onClick(android.view.View view, final int position, String filterName, boolean isLeftSlide) {
+                setFilterGroupNameState(position);
+                LogUtil.d("filterAdapter", "mFilterName : " + mFilterName + " filterName : " + filterName);
+                if (mFilterName == null || !mFilterName.equals(filterName)) {
+                    mFilterName = filterName;
                     LogUtil.d("adapterOnclick", "position : " + position);
-                    if (FilterActivity.this.mDataType == 2 || FilterActivity.this.mVideoFrames != null) {
-                        FilterActivity.this.setFilterNameForLongVideosModel();
-                        FilterActivity.this.filterAdapter.notifyDataSetChanged();
-                        FilterActivity.this.filter_list_recyclerview.scrollToPosition(position);
-                        FilterActivity.this.filter_list_recyclerview.post(FilterActivity$49$.Lambda.1.lambdaFactory$(this, position));
-                        if (FilterActivity.this.mFilterModel != null) {
-                            FilterActivity.this.mFilterModel.setmFinalEffectState(FilterActivity.this.mFinalEffectState);
-                            FilterActivity.this.mFilterModel.setFilterName(FilterActivity.this.mFilterName);
+                    if (mDataType == 2 || mVideoFrames != null) {
+                        setFilterNameForLongVideosModel();
+                        filterAdapter.notifyDataSetChanged();
+                        filter_list_recyclerview.scrollToPosition(position);
+                        //filter_list_recyclerview.post(FilterActivity$49$.Lambda.1.lambdaFactory$(this, position));
+                        filter_list_recyclerview.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                lambda$onClick$0(position);
+                            }
+                        });
+                        if (mFilterModel != null) {
+                            mFilterModel.setmFinalEffectState(mFinalEffectState);
+                            mFilterModel.setFilterName(mFilterName);
                         }
-                        FilterActivity.this.currentFilterName = filterName;
-                        if (!FilterActivity.this.isPressedVideoArea) {
-                            FilterActivity.this.leftSlide = isLeftSlide;
-                            FilterActivity.this.filterChoosePosition = position;
-                            if (FilterActivity.this.isChangeFilterCombination) {
-                                FilterActivity.this.isChangeFilterCombination = false;
+                        currentFilterName = filterName;
+                        if (!isPressedVideoArea) {
+                            leftSlide = isLeftSlide;
+                            filterChoosePosition = position;
+                            if (isChangeFilterCombination) {
+                                isChangeFilterCombination = false;
                             } else {
-                                if (FilterActivity.this.text_draw_rl.getVisibility() != 0) {
-                                    FilterActivity.this.showFilterNameInPreview(FilterActivity.this.filterChoosePosition);
+                                if (text_draw_rl.getVisibility() != View.VISIBLE) {
+                                    showFilterNameInPreview(filterChoosePosition);
                                 }
-                                FilterActivity.this.setNormalFilter();
-                                FilterActivity.this.setUndoData(0);
+                                setNormalFilter();
+                                setUndoData(0);
                             }
                         }
-                        if (FilterActivity.this.filter_effect_root_ll.getVisibility() != 0) {
-                            FilterActivity.this.filter_tag_effect_iv.setAlpha(0.4f);
-                            FilterActivity.this.filter_tag_loop_iv.setAlpha(0.4f);
-                            FilterActivity.this.filter_tag_filter_iv.setAlpha(1.0f);
-                            FilterActivity.this.filter_tag_music_iv.setAlpha(0.4f);
+                        if (filter_effect_root_ll.getVisibility() != View.VISIBLE) {
+                            filter_tag_effect_iv.setAlpha(0.4f);
+                            filter_tag_loop_iv.setAlpha(0.4f);
+                            filter_tag_filter_iv.setAlpha(1.0f);
+                            filter_tag_music_iv.setAlpha(0.4f);
                             return;
                         }
                         return;
                     }
                     return;
                 }
-                FilterActivity.this.filterEffectBeanList = FilterActivity.this.mFilterEffectManager.getCurrentList();
-                if (position != FilterActivity.this.filterAdapter.getNoneFilterIndex()) {
+                filterEffectBeanList = mFilterEffectManager.getCurrentList();
+                if (position != filterAdapter.getNoneFilterIndex()) {
                     float pro;
-                    FilterActivity.this.initRulerViewStub();
-                    FilterActivity.this.changeFilterEffectSelectState(FilterActivity.this.filterEffectBeanList);
-                    FilterEffectBean filterEffectBean = FilterActivity.this.mFilterEffectManager.getStrengthBean();
-                    FilterActivity.this.currentEffectType = filterEffectBean.effectType;
-                    FilterActivity.this.alphaStrengthEnterAndExit(FilterActivity.this.filter_tab_choose_ll, FilterActivity.this.filter_tab_ll, true);
-                    FilterActivity.this.hideSaveAndBack();
-                    FilterActivity.this.alphaEnterAndExit(FilterActivity.this.filter_rule_ll, FilterActivity.this.filter_filter_root_rl, FilterActivity.this.filter_filter_root_rl, FilterActivity.this.filter_loop_root_rl);
-                    FilterActivity.this.filter_custom_sk.setOnCustomProgressChangedListener(new FilterOnCustomProgressChangedListener(filterEffectBean.getFilterEffectBeanString()));
-                    if (FilterActivity.this.mDataType == 2) {
-                        LongVideosModel currentVideoModel = FilterActivity.this.getCurrentVideoModel();
+                    initRulerViewStub();
+                    changeFilterEffectSelectState(filterEffectBeanList);
+                    FilterEffectBean filterEffectBean = mFilterEffectManager.getStrengthBean();
+                    currentEffectType = filterEffectBean.effectType;
+                    alphaStrengthEnterAndExit(filter_tab_choose_ll, filter_tab_ll, true);
+                    hideSaveAndBack();
+                    alphaEnterAndExit(filter_rule_ll, filter_filter_root_rl, filter_filter_root_rl, filter_loop_root_rl);
+                    filter_custom_sk.setOnCustomProgressChangedListener(new FilterOnCustomProgressChangedListener(filterEffectBean.getFilterEffectBeanString()));
+                    if (mDataType == 2) {
+                        LongVideosModel currentVideoModel = getCurrentVideoModel();
                         if (currentVideoModel == null) {
                             pro = filterEffectBean.value[1];
                         } else if (currentVideoModel.getFilterState() == 0) {
@@ -7720,72 +7931,84 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     } else {
                         pro = filterEffectBean.value[1];
                     }
-                    FilterActivity.this.filter_custom_sk.isCenter(filterEffectBean.isCenterAdsorb()).min(filterEffectBean.value[0]).max(filterEffectBean.value[2]).pro(pro).type(filterEffectBean.effectType).build();
-                    FilterActivity.this.showFilterEffectSeekBar();
+                    filter_custom_sk.isCenter(filterEffectBean.isCenterAdsorb()).min(filterEffectBean.value[0]).max(filterEffectBean.value[2]).pro(pro).type(filterEffectBean.effectType).build();
+                    showFilterEffectSeekBar();
                 }
             }
 
             private /* synthetic */ void lambda$onClick$0(int position) {
-                android.view.View viewByPosition = FilterActivity.this.mFilterListLayoutManager.findViewByPosition(position);
+                android.view.View viewByPosition = mFilterListLayoutManager.findViewByPosition(position);
                 if (viewByPosition != null) {
-                    FilterActivity.this.filter_list_recyclerview.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                    filter_list_recyclerview.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
                 }
             }
 
-            public void onClickForGroupNameClick(android.view.View view, int position, String filterName, boolean isLeftSlide) {
+            public void onClickForGroupNameClick(android.view.View view, final int position, String filterName, boolean isLeftSlide) {
                 LogUtil.d("onClickForGroupNameClick", String.format("position : %s ,", new Object[]{Integer.valueOf(position)}));
-                FilterActivity.this.mFilterName = filterName;
-                if (FilterActivity.this.mDataType == 2 || FilterActivity.this.mVideoFrames != null) {
-                    FilterActivity.this.setFilterNameForLongVideosModel();
-                    FilterActivity.this.filterAdapter.notifyDataSetChanged();
-                    FilterActivity.this.filter_list_recyclerview.scrollToPosition(position);
-                    FilterActivity.this.filter_list_recyclerview.post(FilterActivity$49$.Lambda.2.lambdaFactory$(this, position));
-                    if (FilterActivity.this.mFilterModel != null) {
-                        FilterActivity.this.mFilterModel.setmFinalEffectState(FilterActivity.this.mFinalEffectState);
-                        FilterActivity.this.mFilterModel.setFilterName(FilterActivity.this.mFilterName);
+                mFilterName = filterName;
+                if (mDataType == 2 || mVideoFrames != null) {
+                    setFilterNameForLongVideosModel();
+                    filterAdapter.notifyDataSetChanged();
+                    filter_list_recyclerview.scrollToPosition(position);
+                    //filter_list_recyclerview.post(FilterActivity$49$.Lambda.2.lambdaFactory$(this, position));
+                    filter_list_recyclerview.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            lambda$onClickForGroupNameClick$1(position);
+                        }
+                    });
+                    if (mFilterModel != null) {
+                        mFilterModel.setmFinalEffectState(mFinalEffectState);
+                        mFilterModel.setFilterName(mFilterName);
                     }
-                    FilterActivity.this.currentFilterName = filterName;
-                    FilterActivity.this.displayFilterName(position, isLeftSlide);
+                    currentFilterName = filterName;
+                    displayFilterName(position, isLeftSlide);
                 }
             }
 
             private /* synthetic */ void lambda$onClickForGroupNameClick$1(int position) {
-                android.view.View viewByPosition = FilterActivity.this.mFilterListLayoutManager.findViewByPosition(position);
-                LogUtil.d("onClickForGroupNameClick", String.format("viewByPosition position : %s ,", new Object[]{Integer.valueOf(position)}));
+                android.view.View viewByPosition = mFilterListLayoutManager.findViewByPosition(position);
+                LogUtil.d("onClickForGroupNameClick", String.format("viewByPosition position : %s ,", position));
                 if (viewByPosition != null) {
-                    FilterActivity.this.filter_list_recyclerview.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
-                    LogUtil.d("onClickForGroupNameClick", String.format("position : %s , offsetX : %s ", new Object[]{Integer.valueOf(position), Integer.valueOf(offsetX)}));
+                    filter_list_recyclerview.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                    LogUtil.d("onClickForGroupNameClick", String.format("position : %s , offsetX : %s ", position, Integer.valueOf(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)))));
                 }
             }
 
-            public void onUndoReset(int position, String filterName) {
-                FilterActivity.this.setFilterGroupNameState(position);
-                LogUtil.d("filterAdapter", "mFilterName : " + FilterActivity.this.mFilterName + " filterName : " + filterName);
-                FilterActivity.this.mFilterName = filterName;
+            public void onUndoReset(final int position, String filterName) {
+                setFilterGroupNameState(position);
+                LogUtil.d("filterAdapter", "mFilterName : " + mFilterName + " filterName : " + filterName);
+                mFilterName = filterName;
                 LogUtil.d("adapterOnclick", "position : " + position);
-                FilterActivity.this.filterAdapter.notifyDataSetChanged();
-                FilterActivity.this.filter_list_recyclerview.scrollToPosition(position);
-                FilterActivity.this.filter_list_recyclerview.post(FilterActivity$49$.Lambda.3.lambdaFactory$(this, position));
-                if (FilterActivity.this.mFilterModel != null) {
-                    FilterActivity.this.mFilterModel.setmFinalEffectState(FilterActivity.this.mFinalEffectState);
-                    FilterActivity.this.mFilterModel.setFilterName(FilterActivity.this.mFilterName);
+                filterAdapter.notifyDataSetChanged();
+                filter_list_recyclerview.scrollToPosition(position);
+                //filter_list_recyclerview.post(FilterActivity$49$.Lambda.3.lambdaFactory$(this, position));
+                filter_list_recyclerview.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        lambda$onUndoReset$2(position);
+                    }
+                });
+                if (mFilterModel != null) {
+                    mFilterModel.setmFinalEffectState(mFinalEffectState);
+                    mFilterModel.setFilterName(mFilterName);
                 }
-                FilterActivity.this.currentFilterName = filterName;
-                if (!FilterActivity.this.isPressedVideoArea) {
-                    FilterActivity.this.filterChoosePosition = position;
-                    if (FilterActivity.this.isChangeFilterCombination) {
-                        FilterActivity.this.isChangeFilterCombination = false;
-                    } else if (!(FilterActivity.this.text_draw_rl.getVisibility() == 0 || FilterActivity.this.displayUndoFilter)) {
-                        FilterActivity.this.showFilterNameInPreview(FilterActivity.this.filterChoosePosition);
+                currentFilterName = filterName;
+                if (!isPressedVideoArea) {
+                    filterChoosePosition = position;
+                    if (isChangeFilterCombination) {
+                        isChangeFilterCombination = false;
+                    } else if (!(text_draw_rl.getVisibility() == View.VISIBLE || displayUndoFilter)) {
+                        showFilterNameInPreview(filterChoosePosition);
                     }
                 }
-                FilterActivity.this.displayUndoFilter = false;
+                displayUndoFilter = false;
             }
 
             private /* synthetic */ void lambda$onUndoReset$2(int position) {
-                android.view.View viewByPosition = FilterActivity.this.mFilterListLayoutManager.findViewByPosition(position);
+                android.view.View viewByPosition = mFilterListLayoutManager.findViewByPosition(position);
                 if (viewByPosition != null) {
-                    FilterActivity.this.filter_list_recyclerview.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                    filter_list_recyclerview.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
                 }
             }
         });
@@ -7795,7 +8018,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (!this.isPressedVideoArea) {
             this.leftSlide = isLeftSlide;
             this.filterChoosePosition = position;
-            if (this.text_draw_rl.getVisibility() != 0) {
+            if (this.text_draw_rl.getVisibility() != View.VISIBLE) {
                 showFilterNameInPreview(this.filterChoosePosition);
             }
             setNormalFilter();
@@ -7813,8 +8036,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         super.onPause();
         this.mIsPause = true;
         this.hadInitializeFrameTexure = false;
-        MobclickAgent.onPageEnd(FilterActivity.class.getSimpleName());
-        MobclickAgent.onPause(this);
+//        MobclickAgent.onPageEnd(FilterActivity.class.getSimpleName());
+//        MobclickAgent.onPause(this);
         if (this.mSurfaceView != null) {
             this.mSurfaceView.setVideoFrames(null);
         }
@@ -7831,13 +8054,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void videoOptDialogOnPause() {
-        if (this.mVideoOptDialog != null && this.mVideoOptDialog.isShowing()) {
-            LongVideosModel model = this.mVideoOptDialog.getModel();
-            if (model != null) {
-                model.stopCurrentClient();
-            }
+//        if (this.mVideoOptDialog != null && this.mVideoOptDialog.isShowing()) {
+//            LongVideosModel model = this.mVideoOptDialog.getModel();
+//            if (model != null) {
+//                model.stopCurrentClient();
+//            }
             dismissVideoOptDialog();
-        }
+//        }
+        Toast.makeText(getActivity(),"videoOptDialogOnPause",Toast.LENGTH_LONG).show();
     }
 
     protected void onRestart() {
@@ -7852,9 +8076,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         super.onResume();
         this.isBackOrNextPressed = false;
         this.isPressedVideoArea = false;
-        MobclickAgent.onPageStart(FilterActivity.class.getSimpleName());
-        MobclickAgent.onResume(this);
-        NotificationClickReceiver.clearNotification(this);
+//        MobclickAgent.onPageStart(FilterActivity.class.getSimpleName());
+//        MobclickAgent.onResume(this);
+//        NotificationClickReceiver.clearNotification(this);
         saving(true);
         if (this.va != null && this.isPause2Publish && this.hadStartStablize) {
             this.va.resume();
@@ -7931,7 +8155,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         GPUImageFilterGroup publicFilter = null;
         int size = videoModels.size();
         for (int i = 0; i < size; i++) {
-            LongVideosModel videoModel = (LongVideosModel) videoModels.get(i);
+            LongVideosModel videoModel = videoModels.get(i);
             GPUImageLookupFilter2 mLutFilter;
             FramebufferTexture mLUTTexture;
             if (videoModel.getFilterState() == 0) {
@@ -7953,7 +8177,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             } else if (videoModel.getFilterState() == 1) {
                 privateFilterName = videoModel.getPrivateFilterName();
                 if (privateCache.containsKey(privateFilterName)) {
-                    GPUImageFilter filter = (GPUImageFilter) privateArray.get(Integer.valueOf(((Integer) privateCache.get(privateFilterName)).intValue()));
+                    GPUImageFilter filter = privateArray.get(Integer.valueOf(((Integer) privateCache.get(privateFilterName)).intValue()));
                     privateArray.put(Integer.valueOf(i), filter);
                 } else {
                     GPUImageFilterGroup privateFilter;
@@ -7984,7 +8208,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void setFilterNameForLongVideosModel() {
         if (FilterViewUtils.isVideoModel(this.mDataType)) {
-            FilterInfo filterInfo = (FilterInfo) App.mFilterMap.get(this.mFilterName);
+            FilterInfo filterInfo = App.mFilterMap.get(this.mFilterName);
             if (filterInfo == null) {
                 return;
             }
@@ -8024,14 +8248,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         GPUImageLookupFilter2 mLutFilter = new GPUImageLookupFilter2();
         FramebufferTexture mLutTexture = this.mSurfaceView.newFramebufferTexture(1024, 32);
         mLutFilter.setExternalTexture(mLutTexture.texid());
-        LongVideosModel model = (LongVideosModel) videoModels.get(position);
+        LongVideosModel model = videoModels.get(position);
         List<Integer> filterIndexList = new ArrayList();
         if (model.getFilterState() == 0) {
             filterName = model.getPublicFilterName();
             filterIntensity = model.getPublicIntensity();
             int size = videoModels.size();
             for (int i = 0; i < size; i++) {
-                if (((LongVideosModel) videoModels.get(i)).getFilterState() == 0) {
+                if (videoModels.get(i).getFilterState() == 0) {
                     filterIndexList.add(Integer.valueOf(i));
                 }
             }
@@ -8056,9 +8280,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             setFilters(filterGroup);
         }
         long t4 = System.nanoTime();
-        LogUtil.d("ChangFilterTime", String.format("get filters time : %s", new Object[]{Long.valueOf((t2 - t1) / 1000000)}));
-        LogUtil.d("ChangFilterTime", String.format("sort out filters time : %s", new Object[]{Long.valueOf((t3 - t2) / 1000000)}));
-        LogUtil.d("ChangFilterTime", String.format("set filters time : %s", new Object[]{Long.valueOf((t4 - t3) / 1000000)}));
+        LogUtil.d("ChangFilterTime", String.format("get filters time : %s", Long.valueOf((t2 - t1) / 1000000)));
+        LogUtil.d("ChangFilterTime", String.format("sort out filters time : %s", Long.valueOf((t3 - t2) / 1000000)));
+        LogUtil.d("ChangFilterTime", String.format("set filters time : %s", Long.valueOf((t4 - t3) / 1000000)));
     }
 
     GPUImageFilter collapseFilters(GPUImageFilter filter) {
@@ -8079,10 +8303,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void getSaveFilterGroup(GPUImageFilterGroup group, FilterEffectBean bean, GPUImageFilter mFinalFilter, float strengthValue, LongVideosModel videoModel) {
         LogUtil.d(String.format("final Filter Effect Name is %s", new Object[]{bean.effectType}));
         float value;
-        if (bean.effectType == EffectType.STRENGTH) {
+        if (bean.effectType == FilterEffectManager.EffectType.STRENGTH) {
             mFinalFilter.setIntensity(strengthValue);
             group.addFilter(mFinalFilter);
-        } else if (bean.effectType == EffectType.EXPOSURE) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.EXPOSURE) {
             GPUImageToneCurveFilter exposureFilter = getToneCurveFilter();
             value = bean.value[1] / 5.0f;
             if (isCurrentTypeAndShow(bean.effectType)) {
@@ -8094,7 +8318,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             exposureFilter.setRgbCompositeControlPoints(new PointF[]{new PointF(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd), new PointF(0.5f, 0.5f + value), new PointF(1.0f, 1.0f)});
             group.addFilter(exposureFilter);
-        } else if (bean.effectType == EffectType.CONTRAST) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.CONTRAST) {
             GPUImageToneCurveFilter contrastFilter = getToneCurveFilter();
             value = bean.value[1] / 5.0f;
             if (isCurrentTypeAndShow(bean.effectType)) {
@@ -8103,7 +8327,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             value *= 0.12f;
             contrastFilter.setRgbCompositeControlPoints(new PointF[]{new PointF(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd), new PointF(0.25f, 0.25f - value), new PointF(0.5f, 0.5f), new PointF(0.75f, 0.75f + value), new PointF(1.0f, 1.0f)});
             group.addFilter(contrastFilter);
-        } else if (bean.effectType == EffectType.SATURATION) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.SATURATION) {
             GPUImageSaturationFilter saturationFilter = getSaturationFilter();
             value = bean.value[1] / 5.0f;
             if (isCurrentTypeAndShow(bean.effectType)) {
@@ -8111,12 +8335,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             saturationFilter.setSaturation((0.6f * value) + 1.0f);
             group.addFilter(saturationFilter);
-        } else if (bean.effectType == EffectType.TEMPERATURE || bean.effectType == EffectType.TINGE) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.TEMPERATURE || bean.effectType == FilterEffectManager.EffectType.TINGE) {
             if (!this.addFinalWhiteBalanceFilter) {
                 LogUtil.d(String.format("final Filter Effect Name is %s", new Object[]{bean.effectType}));
                 this.addFinalWhiteBalanceFilter = true;
                 GPUImageWhiteBalanceFilter whiteBalanceFilter = getWhiteBalanceFilter();
-                float sValue = this.mFilterEffectManager.getAssignedBeanByType(EffectType.TEMPERATURE).value[1];
+                float sValue = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.TEMPERATURE).value[1];
                 if (isCurrentTypeAndShow(bean.effectType)) {
                     sValue = this.filter_custom_sk.getProgressFloat();
                 }
@@ -8128,14 +8352,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 whiteBalanceFilter.setTemperature(sValue);
                 LogUtil.d(String.format("whiteBalanceFilter final value : %s", new Object[]{Float.valueOf(whiteBalanceFilter.getTemperatureValue())}));
-                float tValue = this.mFilterEffectManager.getAssignedBeanByType(EffectType.TINGE).value[1];
+                float tValue = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.TINGE).value[1];
                 if (isCurrentTypeAndShow(bean.effectType)) {
                     tValue = this.filter_custom_sk.getProgressFloat();
                 }
                 whiteBalanceFilter.setTint((tValue / 5.0f) * 40.0f);
                 group.addFilter(whiteBalanceFilter);
             }
-        } else if (bean.effectType == EffectType.HIGHLIGHT) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.HIGHLIGHT) {
             GPUImageToneCurveFilter highLightFilter = getToneCurveFilter();
             value = (bean.value[1] - 5.0f) / 5.0f;
             if (isCurrentTypeAndShow(bean.effectType)) {
@@ -8144,7 +8368,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             value = (1.0f + value) / 2.0f;
             highLightFilter.setRgbCompositeControlPoints(new PointF[]{new PointF(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd), new PointF(0.25f, 0.25f), new PointF(0.5f, 0.5f - (0.02f * value)), new PointF(0.75f, 0.75f - (0.13f * value)), new PointF(1.0f, 1.0f - (0.23f * value))});
             group.addFilter(highLightFilter);
-        } else if (bean.effectType == EffectType.SHADOW) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.SHADOW) {
             GPUImageToneCurveFilter shadowFilter = getToneCurveFilter();
             value = (bean.value[1] - 5.0f) / 5.0f;
             if (isCurrentTypeAndShow(bean.effectType)) {
@@ -8153,7 +8377,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             value = (1.0f + value) / 2.0f;
             shadowFilter.setRgbCompositeControlPoints(new PointF[]{new PointF(StaticLayoutUtil.DefaultSpacingadd, 0.14f * value), new PointF(0.25f, 0.25f + (0.13f * value)), new PointF(0.5f, 0.5f), new PointF(0.75f, 0.75f), new PointF(1.0f, 1.0f)});
             group.addFilter(shadowFilter);
-        } else if (bean.effectType == EffectType.FADED) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.FADED) {
             GPUImageToneCurveFilter fadeFilter = getToneCurveFilter();
             value = (bean.value[1] - 5.0f) / 5.0f;
             if (isCurrentTypeAndShow(bean.effectType)) {
@@ -8166,7 +8390,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void addFilter2Group(GPUImageFilterGroup group, FilterEffectBean bean, float filterIntensity) {
-        if (bean.effectType == EffectType.STRENGTH) {
+        if (bean.effectType == FilterEffectManager.EffectType.STRENGTH) {
             this.currentFilter.setIntensity(filterIntensity);
             if (this.filterInfo == null || !(this.filterInfo.filter_id == 7 || this.filterInfo.isBnW)) {
                 if (this.currentFilter instanceof GPUImageLookupFilter2) {
@@ -8176,60 +8400,60 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 ((GPUImageLookupFilter2) this.currentFilter).setIsBnW(1.0f);
             }
             group.addFilter(this.currentFilter);
-        } else if (bean.effectType == EffectType.EXPOSURE) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.EXPOSURE) {
             group.addFilter(this.exposureFilter);
-        } else if (bean.effectType == EffectType.CONTRAST) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.CONTRAST) {
             group.addFilter(this.contrastFilter);
-        } else if (bean.effectType == EffectType.SATURATION) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.SATURATION) {
             group.addFilter(this.saturationFilter);
-        } else if (bean.effectType == EffectType.TEMPERATURE || bean.effectType == EffectType.TINGE) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.TEMPERATURE || bean.effectType == FilterEffectManager.EffectType.TINGE) {
             if (!this.hadAddWhiteBalanceFilter) {
                 this.hadAddWhiteBalanceFilter = true;
                 group.addFilter(this.whiteBalanceFilter);
             }
-        } else if (bean.effectType == EffectType.HIGHLIGHT) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.HIGHLIGHT) {
             group.addFilter(this.highLightFilter);
-        } else if (bean.effectType == EffectType.SHADOW) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.SHADOW) {
             group.addFilter(this.shadowFilter);
-        } else if (bean.effectType == EffectType.FADED) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.FADED) {
             group.addFilter(this.fadeFilter);
         }
     }
 
     private void getNonLUTfilters(GPUImageFilterGroup filterGroup, FilterEffectBean bean) {
-        if (bean.effectType == EffectType.BEAUTIFY) {
+        if (bean.effectType == FilterEffectManager.EffectType.BEAUTIFY) {
             filterGroup.addFilter(this.mBilateralFilter);
         }
-        if (bean.effectType == EffectType.ROTATE || bean.effectType == EffectType.VERTICAL || bean.effectType == EffectType.HORIZONTAL) {
+        if (bean.effectType == FilterEffectManager.EffectType.ROTATE || bean.effectType == FilterEffectManager.EffectType.VERTICAL || bean.effectType == FilterEffectManager.EffectType.HORIZONTAL) {
             if (this.transformFilter != null && !this.hadAddTransformFilter) {
                 this.hadAddTransformFilter = true;
                 LogUtil.d("TransformFilter", "addFilter");
                 this.transformFilter.setVideoRatio(this.mVideoFrames.mCropWidth, this.mVideoFrames.mCropHeight);
                 filterGroup.addFilter(this.transformFilter);
             }
-        } else if (bean.effectType == EffectType.SKY) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.SKY) {
             filterGroup.addFilter(this.skyFilter);
-        } else if (bean.effectType == EffectType.GRAIN) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.GRAIN) {
             filterGroup.addFilter(this.grainFilter);
-        } else if (bean.effectType == EffectType.TILT) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.TILT) {
             filterGroup.addFilter(this.tiltFilter);
-        } else if (bean.effectType == EffectType.VIGNETTE) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.VIGNETTE) {
             filterGroup.addFilter(this.movieFilter);
-        } else if (bean.effectType == EffectType.LEAK) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.LEAK) {
             filterGroup.addFilter(this.leakFilter);
-        } else if (bean.effectType == EffectType.CROP) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.CROP) {
             filterGroup.addFilter(this.gpuImageCropFilter);
-        } else if (bean.effectType == EffectType.MIRROR) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.MIRROR) {
             filterGroup.addFilter(this.mGPUImageMirrorFilter);
-        } else if (bean.effectType == EffectType.SHARPEN) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.SHARPEN) {
             filterGroup.addFilter(this.sharpenFilter);
-        } else if (bean.effectType == EffectType.DATE) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.DATE) {
             if (bean.getItemSelect()) {
                 filterGroup.addFilter(this.dateFilter);
             }
-        } else if (bean.effectType == EffectType.DUST) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.DUST) {
             filterGroup.addFilter(this.dustFilter);
-        } else if (bean.effectType == EffectType.PRISM) {
+        } else if (bean.effectType == FilterEffectManager.EffectType.PRISM) {
             filterGroup.addFilter(this.prismFilter);
         }
     }
@@ -8252,8 +8476,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (videoModel != null) {
             float videoExposure = videoModel.getVideoExposure();
             if (videoExposure != StaticLayoutUtil.DefaultSpacingadd) {
-                if (!this.mFilterEffectManager.listAContainItem(mList, EffectType.EXPOSURE)) {
-                    mList.add(this.mFilterEffectManager.getDefaultBean(EffectType.EXPOSURE));
+                if (!this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.EXPOSURE)) {
+                    mList.add(this.mFilterEffectManager.getDefaultBean(FilterEffectManager.EffectType.EXPOSURE));
                 }
                 videoExposure = (videoExposure / 5.0f) * 0.12f;
                 if (this.exposureFilter == null) {
@@ -8311,8 +8535,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (videoModel != null) {
             float videoExposure = videoModel.getVideoExposure();
             if (videoExposure != StaticLayoutUtil.DefaultSpacingadd) {
-                if (!this.mFilterEffectManager.listAContainItem(mList, EffectType.EXPOSURE)) {
-                    mList.add(this.mFilterEffectManager.getDefaultBean(EffectType.EXPOSURE));
+                if (!this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.EXPOSURE)) {
+                    mList.add(this.mFilterEffectManager.getDefaultBean(FilterEffectManager.EffectType.EXPOSURE));
                 }
                 videoExposure = (videoExposure / 5.0f) * 0.12f;
                 if (this.exposureFilter == null) {
@@ -8375,24 +8599,24 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         long t4 = System.nanoTime();
         filterGroup.addFilter(mLUTFilter);
         mList.clear();
-        LogUtil.d("LUTFiltersAndOthrer", String.format("get non-lutFilters time : %s", new Object[]{Long.valueOf((t2 - t1) / 1000000)}));
-        LogUtil.d("LUTFiltersAndOthrer", String.format("get lutFilters time : %s", new Object[]{Long.valueOf((t3 - t2) / 1000000)}));
-        LogUtil.d("LUTFiltersAndOthrer", String.format("merge lutFilters time : %s", new Object[]{Long.valueOf((t4 - t3) / 1000000)}));
+        LogUtil.d("LUTFiltersAndOthrer", String.format("get non-lutFilters time : %s", (t2 - t1) / 1000000));
+        LogUtil.d("LUTFiltersAndOthrer", String.format("get lutFilters time : %s", (t3 - t2) / 1000000));
+        LogUtil.d("LUTFiltersAndOthrer", String.format("merge lutFilters time : %s", (t4 - t3) / 1000000));
         collapseFilters(filterGroup);
         return filterGroup;
     }
 
     public void onDestroy() {
-        BuglyLogUtil.writeBuglyLog(TAG);
+//        BuglyLogUtil.writeBuglyLog(TAG);
         App.UnregisterEventBus(this);
         releaseViewHolder();
-        if (this.mVideoMusicDialog != null) {
-            this.mVideoMusicDialog.release();
-        }
-        if (this.mVideoOptDialog != null) {
-            this.mVideoOptDialog.release();
-            this.mVideoOptDialog = null;
-        }
+//        if (this.mVideoMusicDialog != null) {
+//            this.mVideoMusicDialog.release();
+//        }
+//        if (this.mVideoOptDialog != null) {
+//            this.mVideoOptDialog.release();
+//            this.mVideoOptDialog = null;
+//        }
         super.onDestroy();
         destroyTempBuffers();
         if (this.mLUTTexture != null) {
@@ -8473,32 +8697,38 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void loadFrames() {
-        BuglyLogUtil.writeBuglyLog(TAG);
+//        BuglyLogUtil.writeBuglyLog(TAG);
         this.loadFramesThread = new Thread() {
             public void run() {
-                FilterActivity.this.mVideoFrames.limitDuration((long) (FilterActivity.this.mFrameCount * 100000));
-                if (FilterActivity.this.mVideoFrames != null) {
-                    if (FilterActivity.this.mIsShort) {
-                        FilterActivity.this.slideLevel = FilterActivity.this.mFilterModel.getSlideLevel();
-                        FilterActivity.this.unloopEnd = FilterActivity.this.mFilterModel.getUnloopEnd();
-                        FilterActivity.this.unloopStart = FilterActivity.this.mFilterModel.getUnloopStart();
-                        if (FilterActivity.this.mFilterModel.getLoopStart() < FilterActivity.this.mFilterModel.getLoopEnd()) {
-                            FilterActivity.this.loopStart = FilterActivity.this.mFilterModel.getLoopStart();
-                            if (FilterActivity.this.mFilterModel.getLoopEnd() != 0) {
-                                FilterActivity.this.loopEnd = FilterActivity.this.mFilterModel.getLoopEnd();
+                mVideoFrames.limitDuration((long) (mFrameCount * 100000));
+                if (mVideoFrames != null) {
+                    if (mIsShort) {
+                        slideLevel = mFilterModel.getSlideLevel();
+                        unloopEnd = mFilterModel.getUnloopEnd();
+                        unloopStart = mFilterModel.getUnloopStart();
+                        if (mFilterModel.getLoopStart() < mFilterModel.getLoopEnd()) {
+                            loopStart = mFilterModel.getLoopStart();
+                            if (mFilterModel.getLoopEnd() != 0) {
+                                loopEnd = mFilterModel.getLoopEnd();
                             }
-                            if (FilterActivity.this.loopEnd > FilterActivity.this.mVideoFrames.size2() - 1) {
-                                FilterActivity.this.loopEnd = FilterActivity.this.mVideoFrames.size2() - 1;
+                            if (loopEnd > mVideoFrames.size2() - 1) {
+                                loopEnd = mVideoFrames.size2() - 1;
                             }
                         }
-                        if (FilterActivity.this.slideLevel > 0 && FilterActivity.this.slideLevel + 5 < FilterActivity.this.mVideoFrames.size2()) {
-                            FilterActivity.this.loopStart = FilterActivity.this.slideLevel;
-                            FilterActivity.this.loopEnd = FilterActivity.this.loopStart + 5;
+                        if (slideLevel > 0 && slideLevel + 5 < mVideoFrames.size2()) {
+                            loopStart = slideLevel;
+                            loopEnd = loopStart + 5;
                         }
-                        FilterActivity.this.mVideoFrames.toggleLoop(FilterActivity.this.loopStart, FilterActivity.this.loopEnd);
-                        FilterActivity.this.mIsVideoLooped = FilterActivity.this.mVideoFrames.mIsLooped;
+                        mVideoFrames.toggleLoop(loopStart, loopEnd);
+                        mIsVideoLooped = mVideoFrames.mIsLooped;
                     }
-                    EGL10Helper.withContext("loadFrames", FilterActivity$50$.Lambda.1.lambdaFactory$(this));
+                    //EGL10Helper.withContext("loadFrames", FilterActivity$50$.Lambda.1.lambdaFactory$(this));
+                    EGL10Helper.withContext("loadFrames", new EGLRunnableVoid() {
+                        @Override
+                        public void run(EGL10Helper eGL10Helper) {
+                            lambda$run$2(eGL10Helper);
+                        }
+                    });
                 }
             }
 
@@ -8508,88 +8738,101 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     float previewHeight;
                     int i;
                     int shortLength = DensityUtil.dip2px(44.0f);
-                    if (FilterActivity.this.mVideoHeight > FilterActivity.this.mVideoWidth) {
+                    if (mVideoHeight > mVideoWidth) {
                         previewWidth = (float) shortLength;
-                        previewHeight = (((float) FilterActivity.this.mVideoHeight) * previewWidth) / ((float) FilterActivity.this.mVideoWidth);
+                        previewHeight = (((float) mVideoHeight) * previewWidth) / ((float) mVideoWidth);
                     } else {
                         previewHeight = (float) shortLength;
-                        previewWidth = (((float) FilterActivity.this.mVideoWidth) * previewHeight) / ((float) FilterActivity.this.mVideoHeight);
+                        previewWidth = (((float) mVideoWidth) * previewHeight) / ((float) mVideoHeight);
                     }
                     GPUImageFilter gpuImageFilter = new GPUImageFilter();
-                    if (FilterActivity.this.mIsShort) {
+                    if (mIsShort) {
                         Log.d(FilterActivity.TAG, String.format("foo2: %d", new Object[]{Integer.valueOf(egl.numSurfaces())}));
-                        FilterActivity.this.forFilterBitmap = (Bitmap) FilterActivity.this.mVideoFrames.getBitmaps((int) previewWidth, (int) previewHeight, new GPUImageFilter[]{gpuImageFilter}, new int[]{0}, true).get(0);
-                        FilterActivity.this.forFilterBitmap = FilterActivity.this.getRatioBitmap(FilterActivity.this.forFilterBitmap);
+                        forFilterBitmap = (Bitmap) mVideoFrames.getBitmaps((int) previewWidth, (int) previewHeight, new GPUImageFilter[]{gpuImageFilter}, new int[]{0}, true).get(0);
+                        forFilterBitmap = getRatioBitmap(forFilterBitmap);
                         Log.d(FilterActivity.TAG, String.format("foo3: %d", new Object[]{Integer.valueOf(egl.numSurfaces())}));
                     } else {
-                        int count = ((int) ((((float) (FilterActivity.this.metricsWidth - (DensityUtil.dip2px(64.0f) * 2))) * 1.0f) / ((float) shortLength))) + 1;
-                        int originalSize = FilterActivity.this.mVideoFrames.originalSize();
+                        int count = ((int) ((((float) (metricsWidth - (DensityUtil.dip2px(64.0f) * 2))) * 1.0f) / ((float) shortLength))) + 1;
+                        int originalSize = mVideoFrames.originalSize();
                         i = 0;
-                        while (i < count && ((int) (((((float) (FilterActivity.this.mVideoFrames.size() * i)) * 1.0f) / ((float) count)) + 0.5f)) <= originalSize) {
-                            Bitmap preBitmap = FilterActivity.this.getRatioBitmap((Bitmap) FilterActivity.this.mVideoFrames.getBitmaps((int) previewWidth, (int) previewHeight, new GPUImageFilter[]{gpuImageFilter}, new int[]{index}, true).get(0));
-                            ImageView imageView = new ImageView(FilterActivity.this.getApplicationContext());
+                        while (i < count && ((int) (((((float) (mVideoFrames.size() * i)) * 1.0f) / ((float) count)) + 0.5f)) <= originalSize) {
+                            int index = i;
+                            Bitmap preBitmap = getRatioBitmap((Bitmap) mVideoFrames.getBitmaps((int) previewWidth, (int) previewHeight, new GPUImageFilter[]{gpuImageFilter}, new int[]{index}, true).get(0));
+                            final ImageView imageView = new ImageView(getApplicationContext());
                             imageView.setLayoutParams(new LinearLayout.LayoutParams(shortLength, shortLength));
                             imageView.setScaleType(ScaleType.CENTER_CROP);
                             imageView.setImageBitmap(preBitmap);
-                            FilterActivity.this.runOnUiThread(FilterActivity$50$.Lambda.2.lambdaFactory$(this, imageView));
+                            //runOnUiThread(FilterActivity$50$.Lambda.2.lambdaFactory$(this, imageView));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lambda$null$0(imageView);
+                                }
+                            });
                             if (i == 0) {
-                                FilterActivity.this.forFilterBitmap = preBitmap;
+                                forFilterBitmap = preBitmap;
                             }
                             i++;
                         }
                     }
-                    Log.d(FilterActivity.TAG, String.format("foo4: %d", new Object[]{Integer.valueOf(egl.numSurfaces())}));
+                    Log.d(FilterActivity.TAG, String.format("foo4: %d", Integer.valueOf(egl.numSurfaces())));
                     LogUtil.d(FilterActivity.TAG, "filterView start time : " + System.nanoTime());
-                    FilterActivity.this.mSurfaceView.setVideoFrames(FilterActivity.this.mVideoFrames);
-                    FilterActivity.this.mSurfaceView.setViewOffset(FilterActivity.this.mOffsetX, FilterActivity.this.mOffsetY);
-                    FilterActivity.this.loadFilterInfos();
-                    FilterActivity.this.setNormalFilter();
+                    mSurfaceView.setVideoFrames(mVideoFrames);
+                    mSurfaceView.setViewOffset(mOffsetX, mOffsetY);
+                    loadFilterInfos();
+                    setNormalFilter();
                     Log.d(FilterActivity.TAG, "waiting first frame");
                     Log.d(FilterActivity.TAG, "got first frame");
-                    if (!FilterActivity.this.mRestart) {
-                        FilterActivity.this.runOnUiThread(FilterActivity$50$.Lambda.3.lambdaFactory$(this));
+                    if (!mRestart) {
+                        //runOnUiThread(FilterActivity$50$.Lambda.3.lambdaFactory$(this));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lambda$null$1();
+                            }
+                        });
                     }
-                    if (FilterActivity.this.mVideoFrames == null || FilterActivity.this.mVideoFrames.size() < 3) {
-                        FilterActivity.this.generatePreviewBitmaps(FilterActivity.this.forFilterBitmap, 0, FilterActivity.this.mFilterInfos.size(), 0);
+                    if (mVideoFrames == null || mVideoFrames.size() < 3) {
+                        generatePreviewBitmaps(forFilterBitmap, 0, mFilterInfos.size(), 0);
                     } else {
                         int historyPos = 1;
                         i = 0;
-                        while (i < FilterActivity.this.mFilterInfos.size()) {
-                            if (((FilterInfo) FilterActivity.this.mFilterInfos.get(i)).name_en != null && ((FilterInfo) FilterActivity.this.mFilterInfos.get(i)).name_en.equals(FilterActivity.this.mFilterName)) {
+                        while (i < mFilterInfos.size()) {
+                            if (((FilterInfo) mFilterInfos.get(i)).name_en != null && ((FilterInfo) mFilterInfos.get(i)).name_en.equals(mFilterName)) {
                                 historyPos = i;
                                 break;
                             }
                             i++;
                         }
-                        FilterActivity.this.generatePreviewBitmaps(FilterActivity.this.forFilterBitmap, 0, FilterActivity.this.mFilterInfos.size(), historyPos);
+                        generatePreviewBitmaps(forFilterBitmap, 0, mFilterInfos.size(), historyPos);
                     }
                     System.gc();
-                    Log.d(FilterActivity.TAG, String.format("foo5: %d", new Object[]{Integer.valueOf(egl.numSurfaces())}));
-                    if (FilterActivity.this.mDraftModel == null && FilterActivity.this.mDataFrom == 0 && FilterActivity.this.mDataType == 0) {
-                        FilterActivity.this.saveVideoAndPreViewForDraft(egl, false);
+                    Log.d(FilterActivity.TAG, String.format("foo5: %d", egl.numSurfaces()));
+                    if (mDraftModel == null && mDataFrom == 0 && mDataType == 0) {
+                        saveVideoAndPreViewForDraft(egl, false);
                         LogUtil.d("infoinfo", "first saveVideoAndPreViewForDraft");
                     }
                     Log.d(FilterActivity.TAG, String.format("foo6: %d", new Object[]{Integer.valueOf(egl.numSurfaces())}));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    BitmapUtil.recycleBitmap(FilterActivity.this.forFilterBitmap);
+                    BitmapUtils.recycleBitmap(forFilterBitmap);
                 }
                 System.gc();
             }
 
             private /* synthetic */ void lambda$null$0(ImageView imageView) {
-                FilterActivity.this.filter_loop_preview_ll.addView(imageView);
+                filter_loop_preview_ll.addView(imageView);
             }
 
             private /* synthetic */ void lambda$null$1() {
-                if (FilterActivity.this.mVideoFrames != null) {
-                    if (FilterActivity.this.mDraftModel != null) {
-                        FilterActivity.this.restoreFilters();
+                if (mVideoFrames != null) {
+                    if (mDraftModel != null) {
+                        restoreFilters();
                     }
-                    ViewPropertyAnimator.animate(FilterActivity.this.filter_alpha_view).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(FilterActivity.CHANEG_FILTER_TIME).start();
-                    FilterActivity.this.mTvSave.setEnabled(true);
-                    FilterActivity.this.mTvSave.setAlpha(1.0f);
-                    FilterActivity.this.mRestart = true;
+                    ViewPropertyAnimator.animate(filter_alpha_view).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(FilterActivity.CHANEG_FILTER_TIME).start();
+                    mTvSave.setEnabled(true);
+                    mTvSave.setAlpha(1.0f);
+                    mRestart = true;
                 }
             }
         };
@@ -8664,7 +8907,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         break;
                     }
                     break;
-                case Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
+                case BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
                     rotation = Rotation.ROTATION_180;
                     if (isFromLocal) {
                         rotation = Rotation.NORMAL;
@@ -8680,7 +8923,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         gPUImageRenderer.onSurfaceChanged(null, width, height);
         HashMap<String, Bitmap> temporaryMap = new HashMap();
         FilterInfo filterInfo;
-        int finalInt;
+        final int finalInt;
         GPUImageFilter filter;
         Bitmap preview;
         if (histroyPos > 1) {
@@ -8708,11 +8951,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     }
                     needRevert = !needRevert;
                 } else {
-                    finalInt = currentPos;
+                    final int ffint = currentPos;
                     if (temporaryMap.size() > 0) {
                         if (temporaryMap.containsKey(filterInfo.name_en)) {
                             filterInfo.bitmap = (Bitmap) temporaryMap.get(filterInfo.name_en);
-                            runOnUiThread(32.lambdaFactory$(this, finalInt));
+                            //runOnUiThread(32.lambdaFactory$(this, finalInt));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lambda$generatePreviewBitmaps$30(ffint);
+                                }
+                            });
                             currentCount++;
                             if (needRevert) {
                                 histroyPos += currentCount;
@@ -8730,11 +8979,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         gPUImageRenderer.onDrawFrame(null);
                         pixels.position(0);
                         GLES20.glReadPixels(0, 0, width, height, 6408, 5121, pixels);
-                        preview = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+                        preview = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                         preview.copyPixelsFromBuffer(pixels);
                         filterInfo.bitmap = preview;
                         temporaryMap.put(filterInfo.name_en, preview);
-                        runOnUiThread(33.lambdaFactory$(this, finalInt));
+                        //runOnUiThread(33.lambdaFactory$(this, finalInt));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lambda$generatePreviewBitmaps$31(ffint);
+                            }
+                        });
                         filter.destroy();
                     }
                     currentCount++;
@@ -8752,11 +9007,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             for (int i = start; i < end; i++) {
                 filterInfo = (FilterInfo) this.mFilterInfos.get(i);
                 if (!checkNotFilterType(filterInfo)) {
-                    finalInt = i;
+                    final int ffi = i;
                     if (temporaryMap.size() > 0) {
                         if (temporaryMap.containsKey(filterInfo.name_en)) {
                             filterInfo.bitmap = (Bitmap) temporaryMap.get(filterInfo.name_en);
-                            runOnUiThread(34.lambdaFactory$(this, finalInt));
+                            //runOnUiThread(34.lambdaFactory$(this, finalInt));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lambda$generatePreviewBitmaps$32(ffi);
+                                }
+                            });
                         }
                     }
                     filter = filterInfo.createFilterInstance(getAssets());
@@ -8765,11 +9026,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         gPUImageRenderer.onDrawFrame(null);
                         pixels.position(0);
                         GLES20.glReadPixels(0, 0, width, height, 6408, 5121, pixels);
-                        preview = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+                        preview = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                         preview.copyPixelsFromBuffer(pixels);
                         filterInfo.bitmap = preview;
                         temporaryMap.put(filterInfo.name_en, preview);
-                        runOnUiThread(35.lambdaFactory$(this, finalInt));
+                        //runOnUiThread(35.lambdaFactory$(this, finalInt));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lambda$generatePreviewBitmaps$33(ffi);
+                            }
+                        });
                         filter.destroy();
                     }
                 }
@@ -8803,9 +9070,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         return filterInfo.isGroup || filterInfo.isDownloading || filterInfo.type == 5;
     }
 
-    private Transform[] getTransforms(int[] frames) {
+    private VidStabilizer.Transform[] getTransforms(int[] frames) {
         int length = frames.length;
-        Transform[] transforms = new Transform[length];
+        VidStabilizer.Transform[] transforms = new VidStabilizer.Transform[length];
         int i = 0;
         while (i < length) {
             if (this.transformsStraight == null || frames[i] >= this.transformsStraight.length) {
@@ -8853,7 +9120,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (keyCode != 4 || event.getRepeatCount() != 0) {
             return super.onKeyDown(keyCode, event);
         }
-        if (this.filter_rule_ll.getVisibility() == 0) {
+        if (this.filter_rule_ll.getVisibility() == View.VISIBLE) {
             onCancelPress(this.currentEffectType);
             return true;
         }
@@ -8914,44 +9181,45 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void intentPublishActivity(long videoProgressTag, int width, int height) {
-        this.mBundle.putLong(PublishActivity.VIDEO_PROGRESS_TAG, videoProgressTag);
-        String value = this.mTextContent.replaceAll("[\\t\\n\\r]", " ");
-        if (TextUtil.isValidate(value.trim())) {
-            while (value.startsWith(" ")) {
-                value = value.substring(1);
-            }
-        }
-        this.mBundle.putString(PublishActivity.TEXT_CONTENT, value);
-        Intent intent = new Intent(this, PublishActivity.class);
-        intent.putExtra(DATA_FROM, this.mDataFrom);
-        intent.putExtra(DATA_TYPE, this.mDataType);
-        intent.putExtra(PublishActivity.TIME_STAMP_INTENT, this.mCurrentTimeStamp);
-        intent.putExtra(PublishActivity.CAMERA_TYPE_INTENT, this.mCameraLensType);
-        intent.putExtra("VideoWidthIntent", width);
-        intent.putExtra("VideoHeightIntent", height);
-        intent.putExtra(PublishActivity.INTENT_KEY_CREATION_DATE, this.mCreationDate);
-        intent.putExtra(VideoActivity2.BundleIntent, this.mBundle);
-        if (this.mDataType == 2) {
-            intent.putParcelableArrayListExtra(PublishActivity.LONG_VIDEOMODEL_LIST, this.mVideoAudioManager.getVideosModelList());
-            intent.putExtra(PublishActivity.VIDEO_DURATION, this.mSurfaceView.getPlayer().getPlaylist().getDurationUs() / 1000);
-            intent.putExtra(HAS_AUDIO, getLongVideoHasAudioTrack());
-            UploadVideoAllInfoBean uploadBean = this.mVideoAudioManager.getVideoUploadInfo();
-            uploadBean.setDuration((((((float) this.mSurfaceView.getPlaylistDurationMS()) * 1.0f) / 1000.0f) + 3.0f) + "");
-            uploadBean.setFPS("30");
-            int[] mVideoPreviewWidthHeights = FilterViewUtils.getUploadLongVideoWidthHeight(width, height, false);
-            int mVideoPreviewWidth = mVideoPreviewWidthHeights[0];
-            mVideoPreviewWidth += mVideoPreviewWidth % 2;
-            int mVideoPreviewHeight = mVideoPreviewWidthHeights[1];
-            mVideoPreviewHeight += mVideoPreviewHeight % 2;
-            uploadBean.setSize("{" + mVideoPreviewWidth + "," + mVideoPreviewHeight + "}");
-            uploadBean.setRatio("" + ((((float) mVideoPreviewWidth) * 1.0f) / ((float) mVideoPreviewHeight)));
-            intent.putExtra(PublishActivity.UPLOAD_VIDEO_INFO, JsonParserUtil.serializeToJson(uploadBean));
-        }
-        if (3 == this.mDataFrom) {
-            GlobalLocationManager.getInstance().refreshLocationData(this.mDraftModel.getGlobalLocation());
-            EventBus.getDefault().postSticky(new PublishDraftEvent(this.mDraftModel));
-        }
-        IntentUtil.toPublishActivity(getActivity(), intent);
+        Toast.makeText(getActivity(),"go to PublishActivity",Toast.LENGTH_LONG).show();
+//        this.mBundle.putLong("videoprogresstag", videoProgressTag);
+//        String value = this.mTextContent.replaceAll("[\\t\\n\\r]", " ");
+//        if (TextUtil.isValidate(value.trim())) {
+//            while (value.startsWith(" ")) {
+//                value = value.substring(1);
+//            }
+//        }
+//        this.mBundle.putString("TextContent", value);
+//        Intent intent = new Intent(this, PublishActivity.class);
+//        intent.putExtra(DATA_FROM, this.mDataFrom);
+//        intent.putExtra(DATA_TYPE, this.mDataType);
+//        intent.putExtra(PublishActivity.TIME_STAMP_INTENT, this.mCurrentTimeStamp);
+//        intent.putExtra(PublishActivity.CAMERA_TYPE_INTENT, this.mCameraLensType);
+//        intent.putExtra("VideoWidthIntent", width);
+//        intent.putExtra("VideoHeightIntent", height);
+//        intent.putExtra(PublishActivity.INTENT_KEY_CREATION_DATE, this.mCreationDate);
+//        intent.putExtra(VideoActivity2.BundleIntent, this.mBundle);
+//        if (this.mDataType == 2) {
+//            intent.putParcelableArrayListExtra(PublishActivity.LONG_VIDEOMODEL_LIST, this.mVideoAudioManager.getVideosModelList());
+//            intent.putExtra(PublishActivity.VIDEO_DURATION, this.mSurfaceView.getPlayer().getPlaylist().getDurationUs() / 1000);
+//            intent.putExtra(HAS_AUDIO, getLongVideoHasAudioTrack());
+//            UploadVideoAllInfoBean uploadBean = this.mVideoAudioManager.getVideoUploadInfo();
+//            uploadBean.setDuration((((((float) this.mSurfaceView.getPlaylistDurationMS()) * 1.0f) / 1000.0f) + 3.0f) + "");
+//            uploadBean.setFPS("30");
+//            int[] mVideoPreviewWidthHeights = FilterViewUtils.getUploadLongVideoWidthHeight(width, height, false);
+//            int mVideoPreviewWidth = mVideoPreviewWidthHeights[0];
+//            mVideoPreviewWidth += mVideoPreviewWidth % 2;
+//            int mVideoPreviewHeight = mVideoPreviewWidthHeights[1];
+//            mVideoPreviewHeight += mVideoPreviewHeight % 2;
+//            uploadBean.setSize("{" + mVideoPreviewWidth + "," + mVideoPreviewHeight + "}");
+//            uploadBean.setRatio("" + ((((float) mVideoPreviewWidth) * 1.0f) / ((float) mVideoPreviewHeight)));
+//            intent.putExtra(PublishActivity.UPLOAD_VIDEO_INFO, JsonParserUtil.serializeToJson(uploadBean));
+//        }
+//        if (3 == this.mDataFrom) {
+//            GlobalLocationManager.getInstance().refreshLocationData(this.mDraftModel.getGlobalLocation());
+//            EventBus.getDefault().postSticky(new PublishDraftEvent(this.mDraftModel));
+//        }
+//        IntentUtil.toPublishActivity(getActivity(), intent);
     }
 
     private boolean getLongVideoHasAudioTrack() {
@@ -8983,7 +9251,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (!hasAudio) {
                 it = videosModels.iterator();
                 while (it.hasNext()) {
-                    model2 = (LongVideosModel) it.next();
+                    LongVideosModel model2 = (LongVideosModel) it.next();
                     if (model2.mediaType == 0 && model2.getVideoVolume() != StaticLayoutUtil.DefaultSpacingadd && hasAudioFormat(model2.getPlaylistMediaPath())) {
                         hasAudio = true;
                         break;
@@ -9027,20 +9295,25 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         return 0;
     }
-
+//    @OnClick({R.id.below_surface,R.id.filter_save,R.id.surface_click_view,R.id.back_iv,R.id.filter_loop_toggle_ll,R.id.cancel_btn_iv,R.id.confirm_btn_iv
+//    ,R.id.stack_frame_switch_rl,R.id.filter_select_mode_global_rl,R.id.filter_select_mode_current_rl,R.id.filter_stablize_rl
+//    ,R.id.filter_tag_filter_rl,R.id.filter_tag_effect_rl,R.id.filter_tag_loop_rl,R.id.filter_tag_music_rl,R.id.filter_tab_like_filter_ll
+//    ,R.id.video_edit_effect_ll,R.id.video_edit_text_ll,R.id.video_edit_split_ll,R.id.video_edit_add_ll,R.id.video_edit_reorder_ll
+//    ,R.id.video_edit_remove_ll,R.id.video_edit_music_replace_ll,R.id.video_edit_music_trim_ll,R.id.video_edit_music_remove_ll
+//    ,R.id.video_edit_back_image})
     public void onClick(android.view.View view) {
         int position = 0;
         if (this.mVideoEditHelper != null) {
             position = getCurVideoEditModuleViewModelPosition();
         }
         switch (view.getId()) {
-            case 2131689749:
+            case R.id.below_surface:
                 if (!this.mSurfaceView.getLongVideoPlayState()) {
                     callVideoPause();
                     return;
                 }
                 return;
-            case 2131689758:
+            case R.id.filter_save:
                 this.isBackOrNextPressed = true;
                 if (!NONE_FILTER.equals(this.currentFilterName)) {
                     this.mFilterName = this.currentFilterName;
@@ -9076,17 +9349,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 saveVideo(videoProgressTag, width, height);
                 intentPublishActivity(videoProgressTag, width, height);
                 return;
-            case 2131689766:
-                if (this.mVideoEditEffectsLayout != null && this.mVideoEditEffectsLayout.getVisibility() == 0) {
+            case R.id.surface_click_view:
+                if (this.mVideoEditEffectsLayout != null && this.mVideoEditEffectsLayout.getVisibility() == View.VISIBLE) {
                     editConfirmClick(position);
                     return;
-                } else if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == 0) {
+                } else if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == View.VISIBLE) {
                     this.mAudioTrimLayout.performConfirmClick();
                     return;
                 } else {
                     return;
                 }
-            case 2131689864:
+            case R.id.back_iv:
                 if (this.mDataType == 2) {
                     saveLongVideoPreview();
                     ImagePropertyBean.getInstance().clear();
@@ -9110,12 +9383,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 ImagePropertyBean.getInstance().clear();
                 onBackPressed();
                 return;
-            case 2131690296:
+            case R.id.filter_loop_toggle_ll:
                 if (this.mVideoFrames != null) {
                     switch (this.mVideoFrames.getPlayType()) {
-                        case 1111:
+                        case OutputSurfaceArray.PLAY_TYPE_NORMAL:
                             if (this.mFps == StaticLayoutUtil.DefaultSpacingadd && this.mVideoFrames.size() < 6) {
-                                this.mVideoFrames.setPlayType(3333);
+                                this.mVideoFrames.setPlayType(OutputSurfaceArray.PLAY_TYPE_REVERSE);
                                 slideLoop(-2, false);
                                 this.mIsVideoLooped = this.mVideoFrames.mIsLooped;
                                 if (this.va != null && this.hadStartStablize) {
@@ -9123,13 +9396,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                 }
                                 this.mSurfaceView.setTransforms(this.transformsStraight);
                                 this.mSurfaceView.start();
-                                this.filter_loop_slider_root_rl.setVisibility(8);
-                                this.filter_unloop_root_rl.setVisibility(0);
-                                this.filter_loop_toggle_img.setImageResource(2130837920);
-                                this.filter_loop_toggle_ancrt.setText(2131296445);
+                                this.filter_loop_slider_root_rl.setVisibility(View.GONE);
+                                this.filter_unloop_root_rl.setVisibility(View.VISIBLE);
+                                this.filter_loop_toggle_img.setImageResource(R.drawable.icon_20_loop_reverse);
+                                this.filter_loop_toggle_ancrt.setText(R.string.BUTTON_LOOP_REVERSE);
                                 break;
                             }
-                            this.mVideoFrames.setPlayType(2222);
+                            this.mVideoFrames.setPlayType(OutputSurfaceArray.PLAY_TYPE_CYCLES);
                             slideLoop(this.loopStart, this.loopEnd);
                             this.mIsVideoLooped = this.mVideoFrames.mIsLooped;
                             if (this.va != null && this.hadStartStablize) {
@@ -9137,13 +9410,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                             }
                             this.mSurfaceView.setTransforms(this.transformsLooped);
                             this.mSurfaceView.start();
-                            this.filter_loop_slider_root_rl.setVisibility(0);
-                            this.filter_unloop_root_rl.setVisibility(8);
-                            this.filter_loop_toggle_img.setImageResource(2130837919);
-                            this.filter_loop_toggle_ancrt.setText(2131296444);
+                            this.filter_loop_slider_root_rl.setVisibility(View.VISIBLE);
+                            this.filter_unloop_root_rl.setVisibility(View.GONE);
+                            this.filter_loop_toggle_img.setImageResource(R.drawable.icon_20_loop_rebound);
+                            this.filter_loop_toggle_ancrt.setText(R.string.BUTTON_LOOP_REBOUND);
                             break;
-                        case 2222:
-                            this.mVideoFrames.setPlayType(3333);
+                        case OutputSurfaceArray.PLAY_TYPE_CYCLES:
+                            this.mVideoFrames.setPlayType(OutputSurfaceArray.PLAY_TYPE_REVERSE);
                             slideLoop(-2, false);
                             this.mIsVideoLooped = this.mVideoFrames.mIsLooped;
                             if (this.va != null && this.hadStartStablize) {
@@ -9151,23 +9424,23 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                             }
                             this.mSurfaceView.setTransforms(this.transformsStraight);
                             this.mSurfaceView.start();
-                            this.filter_loop_slider_root_rl.setVisibility(8);
-                            this.filter_unloop_root_rl.setVisibility(0);
-                            this.filter_loop_toggle_img.setImageResource(2130837920);
-                            this.filter_loop_toggle_ancrt.setText(2131296445);
+                            this.filter_loop_slider_root_rl.setVisibility(View.GONE);
+                            this.filter_unloop_root_rl.setVisibility(View.VISIBLE);
+                            this.filter_loop_toggle_img.setImageResource(R.drawable.icon_20_loop_reverse);
+                            this.filter_loop_toggle_ancrt.setText(R.string.BUTTON_LOOP_REVERSE);
                             break;
-                        case 3333:
-                            this.mVideoFrames.setPlayType(1111);
+                        case OutputSurfaceArray.PLAY_TYPE_REVERSE:
+                            this.mVideoFrames.setPlayType(OutputSurfaceArray.PLAY_TYPE_NORMAL);
                             slideLoop(-1, false);
                             this.mIsVideoLooped = this.mVideoFrames.mIsLooped;
                             if (this.va != null && this.hadStartStablize) {
                                 createTransformMethod();
                             }
                             this.mSurfaceView.start();
-                            this.filter_loop_slider_root_rl.setVisibility(8);
-                            this.filter_unloop_root_rl.setVisibility(0);
-                            this.filter_loop_toggle_img.setImageResource(2130837918);
-                            this.filter_loop_toggle_ancrt.setText(2131296442);
+                            this.filter_loop_slider_root_rl.setVisibility(View.GONE);
+                            this.filter_unloop_root_rl.setVisibility(View.VISIBLE);
+                            this.filter_loop_toggle_img.setImageResource(R.drawable.icon_20_loop_forward);
+                            this.filter_loop_toggle_ancrt.setText(R.string.BUTTON_LOOP_FORWARD);
                             break;
                     }
                     setNormalFilter();
@@ -9178,8 +9451,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131690543:
-                LongVideosModel longVideosModel = (LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(position);
+            case R.id.cancel_btn_iv:
+                LongVideosModel longVideosModel = this.mVideoAudioManager.getVideosModelList().get(position);
                 float realVideoExposure = longVideosModel.getRealVideoExposure();
                 this.mVideoEditEffectsLayout.cancelClick(longVideosModel);
                 if (realVideoExposure != longVideosModel.getRealVideoExposure()) {
@@ -9189,10 +9462,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.mPresenter.hideVideoEditEffectsView();
                 refreshTitleAlertOutTime();
                 return;
-            case 2131690546:
+            case R.id.confirm_btn_iv:
                 editConfirmClick(position);
                 return;
-            case 2131691147:
+            case R.id.stack_frame_switch_rl:
                 this.openStackFrame = !this.openStackFrame;
                 if (this.openStackFrame) {
                     this.stack_frame_switch_rl.setAlpha(1.0f);
@@ -9202,7 +9475,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setNormalFilter();
                 this.mFilterModel.setStackFrameState(this.openStackFrame);
                 return;
-            case 2131691164:
+            case R.id.filter_select_mode_global_rl:
                 LongVideosModel currentVideoModel1 = getCurrentVideoModel();
                 if (currentVideoModel1 != null) {
                     currentVideoModel1.setFilterState(0);
@@ -9212,7 +9485,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131691167:
+            case R.id.filter_select_mode_current_rl:
                 LongVideosModel currentVideoModel = getCurrentVideoModel();
                 if (currentVideoModel != null) {
                     currentVideoModel.setFilterState(1);
@@ -9222,19 +9495,19 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131691172:
+            case R.id.filter_stablize_rl:
                 if (!this.hadStartStablize) {
                     this.hadStartStablize = true;
                     new Thread() {
                         public void run() {
                             super.run();
-                            FilterActivity.this.va = new VidAnalysis();
-                            FilterActivity.this.va.start(FilterActivity.this.mVideoFrames, new Runnable() {
+                            va = new VidAnalysis();
+                            va.start(mVideoFrames, new Runnable() {
                                 public void run() {
-                                    int count = FilterActivity.this.va.getNumReadyFrames();
-                                    FilterActivity.this.transformCallbackCount = count;
+                                    int count = va.getNumReadyFrames();
+                                    transformCallbackCount = count;
                                     LogUtil.d(FilterActivity.TAG, String.format(Locale.getDefault(), "%d frames ready for transform", new Object[]{Integer.valueOf(count)}));
-                                    FilterActivity.this.createTransformMethod();
+                                    createTransformMethod();
                                     EventBus.getDefault().post(new VidAnalysisEvent(count));
                                 }
                             });
@@ -9256,18 +9529,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131691199:
-                if (this.filter_filter_root_rl.getVisibility() != 0) {
+            case R.id.filter_tag_filter_rl:
+                if (this.filter_filter_root_rl.getVisibility() != View.VISIBLE) {
                     onFilterTabClick();
                     return;
                 }
                 return;
-            case 2131691202:
+            case R.id.filter_tag_effect_rl:
                 if (this.filter_view_stub != null) {
                     initEffectView(this.filter_view_stub.inflate());
                     this.filter_view_stub = null;
                 }
-                if (this.filter_effect_root_ll.getVisibility() != 0) {
+                if (this.filter_effect_root_ll.getVisibility() != View.VISIBLE) {
                     this.filterEffectBeanList = this.mFilterEffectManager.getCurrentSelectEffectTypeList();
                     changeFilterEffectSelectState(this.filterEffectBeanList);
                     onEffectTabClick();
@@ -9284,65 +9557,65 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131691205:
+            case R.id.filter_tag_loop_rl:
                 if (isVideoType()) {
                     this.mFilterActivityPresenter.onVideoEditTabClick();
                     return;
-                } else if (this.filter_loop_root_rl.getVisibility() != 0) {
+                } else if (this.filter_loop_root_rl.getVisibility() != View.VISIBLE) {
                     if (this.filter_tab_choose_ll != null) {
-                        this.filter_tab_choose_ll.setVisibility(8);
+                        this.filter_tab_choose_ll.setVisibility(View.GONE);
                     }
                     if (!(this.mIsShort || 1 == this.mDataType)) {
-                        this.filter_tag_loop_rl.setVisibility(0);
+                        this.filter_tag_loop_rl.setVisibility(View.VISIBLE);
                     }
                     onLoopTabClick();
                     return;
                 } else {
                     return;
                 }
-            case 2131691208:
+            case R.id.filter_tag_music_rl:
                 onMusicTabClick();
                 return;
-            case 2131691213:
+            case R.id.filter_tab_like_filter_ll:
                 this.filterAdapter.isCollectedMode = false;
                 this.filterAdapter.notifyDataSetChanged();
                 alphaEnterAndExit(this.filter_tab_ll, this.filter_tab_like_filter_ll);
                 return;
-            case 2131691678:
+            case R.id.video_edit_effect_ll:
                 LongVideosModel model;
                 this.mSurfaceView.setVideoPauseOrResume(true);
                 this.mPresenter.initVideoEditEffectsView();
                 if (this.mVideoEditEffectsLayout != null) {
-                    model = (LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(position);
+                    model = this.mVideoAudioManager.getVideosModelList().get(position);
                     this.mVideoEditEffectsLayout.resetSpeedLoop(model.getEffectsViewShowSpeedCount());
                     this.mVideoEditEffectsLayout.resetUI(model, null);
                 }
                 this.mPresenter.openVideoEditEffectsView();
-                model = (LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(position);
+                model = this.mVideoAudioManager.getVideosModelList().get(position);
                 if (this.mVideoEditHelper != null) {
                     this.mVideoEditHelper.recordVideoEditModelData(model);
                     return;
                 }
                 return;
-            case 2131691679:
+            case R.id.video_edit_text_ll:
                 callVideoPause();
                 toTextInputActivity(this.mTextContent);
                 return;
-            case 2131691680:
+            case R.id.video_edit_split_ll:
                 callVideoPause();
                 onVideoSplitClick();
                 return;
-            case 2131691681:
+            case R.id.video_edit_add_ll:
                 if (this.mVideoEditHelper != null) {
                     this.mCurInsertPosition = this.mVideoEditHelper.getInsertPosition();
                 }
                 onAddVideosClick(this.mCurInsertPosition);
                 return;
-            case 2131691682:
+            case R.id.video_edit_reorder_ll:
                 callVideoPause();
                 this.mPresenter.openVideoEditOrderView();
                 return;
-            case 2131691683:
+            case R.id.video_edit_remove_ll:
                 callVideoPause();
                 if (this.mVideoEditHelper != null) {
                     this.mVideoEditHelper.removeCurSelectVideo();
@@ -9351,7 +9624,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 refreshLineView();
                 onVideoSelectAreaShownOrHide(false, false, null);
                 return;
-            case 2131691685:
+            case R.id.video_edit_music_replace_ll:
                 if (this.mVideoEditHelper != null) {
                     LongVideosModel curSelectAudioModel = this.mVideoEditHelper.getCurSelectAudioModel();
                     if (curSelectAudioModel != null) {
@@ -9362,17 +9635,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
                 return;
-            case 2131691686:
+            case R.id.video_edit_music_trim_ll:
                 callVideoPause();
                 this.mPresenter.openAudioTrimView();
                 return;
-            case 2131691687:
+            case R.id.video_edit_music_remove_ll:
                 if (this.mVideoEditHelper != null) {
                     this.mVideoEditHelper.removeCurSelectAudio();
                     return;
                 }
                 return;
-            case 2131691688:
+            case R.id.video_edit_back_image:
                 displayUndo();
                 return;
             default:
@@ -9381,7 +9654,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void editConfirmClick(int position) {
-        LogUtil.d("slim", "resultInt:" + this.mVideoEditEffectsLayout.confirmClick((LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(position)));
+        LogUtil.d("slim", "resultInt:" + this.mVideoEditEffectsLayout.confirmClick(this.mVideoAudioManager.getVideosModelList().get(position)));
         List<LongVideosModel> videoModels = this.mVideoAudioManager.getVideosModelList();
         this.mSurfaceView.changeSpeedZoomVideoVolume(videoModels, getBgmList(), this.currentPlayTimeUs, this.mVideoAudioManager.getMediaMute());
         this.mPresenter.hideVideoEditEffectsView();
@@ -9390,7 +9663,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         refreshTitleAlertOutTime();
         this.canVideoOptDialogShow = true;
-        ((LongVideosModel) videoModels.get(position)).judgeAndStartProxyVideo();
+        videoModels.get(position).judgeAndStartProxyVideo();
         this.mVideoAudioManager.setUndoModel(1, this.mFilterEffectManager.copyCurrentList(), this.mFilterName);
     }
 
@@ -9410,7 +9683,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             int i = 0;
             while (i < this.mFilterInfos.size()) {
-                if (((FilterInfo) this.mFilterInfos.get(i)).name_en != null && ((FilterInfo) this.mFilterInfos.get(i)).name_en.equals(mFilterName)) {
+                if (this.mFilterInfos.get(i).name_en != null && this.mFilterInfos.get(i).name_en.equals(mFilterName)) {
                     historyPos = i;
                     break;
                 }
@@ -9422,7 +9695,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filterAdapter.setFilterName(mFilterName, (FilterInfo) this.mFilterInfos.get(historyPos));
             this.filterAdapter.notifyDataSetChanged();
             this.filter_list_recyclerview.scrollToPosition(historyPos);
-            this.filter_list_recyclerview.postDelayed(36.lambdaFactory$(this, historyPos), 50);
+            //this.filter_list_recyclerview.postDelayed(36.lambdaFactory$(this, historyPos), 50);
+            final int finalHistoryPos = historyPos;
+            filter_list_recyclerview.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    lambda$resetFilterModeView$34(finalHistoryPos);
+                }
+            },50);
         }
     }
 
@@ -9443,8 +9723,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void setFilterSelectModeGlobal(boolean global) {
         if (global) {
             hideCurrentClipIv();
-            this.filter_select_mode_global_iv.setVisibility(0);
-            this.filter_select_mode_current_iv.setVisibility(4);
+            this.filter_select_mode_global_iv.setVisibility(View.VISIBLE);
+            this.filter_select_mode_current_iv.setVisibility(View.INVISIBLE);
             this.filter_select_mode_global_tv.setTypeface(FontsUtil.setAvenirNextCondensedMediumTypeFace());
             this.filter_select_mode_current_tv.setTypeface(FontsUtil.setAveNextCondensedRegularTypeFace());
             this.filter_select_mode_global_tv.setAlpha(1.0f);
@@ -9452,8 +9732,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             return;
         }
         showCurrentClipIv();
-        this.filter_select_mode_global_iv.setVisibility(4);
-        this.filter_select_mode_current_iv.setVisibility(0);
+        this.filter_select_mode_global_iv.setVisibility(View.INVISIBLE);
+        this.filter_select_mode_current_iv.setVisibility(View.VISIBLE);
         this.filter_select_mode_current_tv.setTypeface(FontsUtil.setAvenirNextCondensedMediumTypeFace());
         this.filter_select_mode_global_tv.setTypeface(FontsUtil.setAveNextCondensedRegularTypeFace());
         this.filter_select_mode_global_tv.setAlpha(0.4f);
@@ -9489,21 +9769,21 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void onMusicTabClick(boolean isSpecial) {
-        if (isSpecial || this.video_edit_parent_ll == null || this.video_edit_parent_ll.getVisibility() != 0 || this.mVideoEditHelper == null || !this.mVideoEditHelper.isMusicEdit()) {
+        if (isSpecial || this.video_edit_parent_ll == null || this.video_edit_parent_ll.getVisibility() != View.VISIBLE || this.mVideoEditHelper == null || !this.mVideoEditHelper.isMusicEdit()) {
             hideEditCenterLine();
             showVideoTimeSlideBar();
             hideWhiteAlphaCoverViewWhenSwitchTab();
             switchBottomIconAndCircleShowState(5);
             if (this.specific_combination_rl != null) {
-                this.specific_combination_rl.setVisibility(8);
+                this.specific_combination_rl.setVisibility(View.GONE);
             }
             if (this.filter_tab_choose_ll != null) {
-                this.filter_tab_choose_ll.setVisibility(8);
+                this.filter_tab_choose_ll.setVisibility(View.GONE);
             }
-            this.filter_stablize_rl.setVisibility(8);
+            this.filter_stablize_rl.setVisibility(View.GONE);
             checkSurfaceNeedScale(false);
             if (this.filter_tab_choose_ll != null) {
-                this.filter_tab_choose_ll.setVisibility(8);
+                this.filter_tab_choose_ll.setVisibility(View.GONE);
             }
             if (this.mVideoEditSwitchTabsHolder != null) {
                 this.mVideoEditSwitchTabsHolder.onSwitchTabClick(true);
@@ -9518,41 +9798,41 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void hideTextRecyclerView() {
         if (this.video_edit_text_rv != null) {
-            this.video_edit_text_rv.setVisibility(8);
+            this.video_edit_text_rv.setVisibility(View.GONE);
         }
     }
 
     private void showTextRecyclerView() {
         if (this.video_edit_text_rv != null) {
-            this.video_edit_text_rv.setVisibility(0);
+            this.video_edit_text_rv.setVisibility(View.VISIBLE);
         }
     }
 
     private void initEffectView(android.view.View v) {
-        this.filter_effect_exposure = (FilterEffectSetRelativeLayout) v.findViewById(2131691102);
-        this.filter_effect_beauty = (FilterEffectSetRelativeLayout) v.findViewById(2131691101);
-        this.filter_effect_contrast = (FilterEffectSetRelativeLayout) v.findViewById(2131691103);
-        this.filter_effect_saturation = (FilterEffectSetRelativeLayout) v.findViewById(2131691104);
-        this.filter_effect_temperature = (FilterEffectSetRelativeLayout) v.findViewById(2131691105);
-        this.filter_effect_tinge = (FilterEffectSetRelativeLayout) v.findViewById(2131691106);
-        this.filter_effect_tilt = (FilterEffectSetRelativeLayout) v.findViewById(2131691113);
-        this.filter_effect_sharpen = (FilterEffectSetRelativeLayout) v.findViewById(2131691112);
-        this.filter_effect_prism = (FilterEffectSetRelativeLayout) v.findViewById(2131691114);
-        this.filter_effect_grain = (FilterEffectSetRelativeLayout) v.findViewById(2131691107);
-        this.filter_effect_dust = (FilterEffectSetRelativeLayout) v.findViewById(2131691108);
-        this.filter_effect_vignette = (FilterEffectSetRelativeLayout) v.findViewById(2131691109);
-        this.filter_effect_leak = (FilterEffectSetRelativeLayout) v.findViewById(2131691110);
-        this.filter_effect_date = (FilterEffectSetRelativeLayout) v.findViewById(2131691111);
-        this.filter_effect_fade = (FilterEffectSetRelativeLayout) v.findViewById(2131691115);
-        this.filter_effect_highlight_shadow = (FilterEffectSetRelativeLayout) v.findViewById(2131691117);
-        this.filter_effect_sky = (FilterEffectSetRelativeLayout) v.findViewById(2131691118);
-        this.filter_effect_shade_lighten = (FilterEffectSetRelativeLayout) v.findViewById(2131691116);
-        this.filter_effect_crop = (FilterEffectSetRelativeLayout) v.findViewById(2131691119);
-        this.filter_effect_rotation = (FilterEffectSetRelativeLayout) v.findViewById(2131691120);
-        this.filter_effect_vertical = (FilterEffectSetRelativeLayout) v.findViewById(2131691121);
-        this.filter_effect_horizontal = (FilterEffectSetRelativeLayout) v.findViewById(2131691122);
-        this.filter_effect_mirror = (FilterEffectSetRelativeLayout) v.findViewById(2131691123);
-        FilterEffectOnClick filterEffectOnClick = new FilterEffectOnClick(this, null);
+        this.filter_effect_exposure = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_exposure);
+        this.filter_effect_beauty = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_beauty);
+        this.filter_effect_contrast = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_contrast);
+        this.filter_effect_saturation = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_saturation);
+        this.filter_effect_temperature = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_temperature);
+        this.filter_effect_tinge = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_tinge);
+        this.filter_effect_tilt = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_tilt);
+        this.filter_effect_sharpen = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_sharpen);
+        this.filter_effect_prism = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_prism);
+        this.filter_effect_grain = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_grain);
+        this.filter_effect_dust = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_dust);
+        this.filter_effect_vignette = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_vignette);
+        this.filter_effect_leak = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_leak);
+        this.filter_effect_date = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_date);
+        this.filter_effect_fade = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_fade);
+        this.filter_effect_highlight_shadow = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_highlight_shadow);
+        this.filter_effect_sky = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_sky);
+        this.filter_effect_shade_lighten = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_shade_lighten);
+        this.filter_effect_crop = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_crop);
+        this.filter_effect_rotation = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_rotation);
+        this.filter_effect_vertical = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_vertical);
+        this.filter_effect_horizontal = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_horizontal);
+        this.filter_effect_mirror = (FilterEffectSetRelativeLayout) v.findViewById(R.id.filter_effect_mirror);
+        FilterEffectOnClick filterEffectOnClick = new FilterEffectOnClick();//new FilterEffectOnClick(this, null);
         this.filter_effect_rotation.setOnClickListener(filterEffectOnClick);
         this.filter_effect_exposure.setOnClickListener(filterEffectOnClick);
         this.filter_effect_beauty.setOnClickListener(filterEffectOnClick);
@@ -9577,13 +9857,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         this.filter_effect_horizontal.setOnClickListener(filterEffectOnClick);
         this.filter_effect_mirror.setOnClickListener(filterEffectOnClick);
         if (1 == this.mDataType) {
-            this.filter_stablize_rl.setVisibility(8);
+            this.filter_stablize_rl.setVisibility(View.GONE);
         } else {
-            this.filter_effect_grain.setVisibility(8);
-            this.filter_effect_leak.setVisibility(8);
-            this.filter_effect_sharpen.setVisibility(8);
-            this.filter_effect_crop.setVisibility(8);
-            this.filter_effect_dust.setVisibility(8);
+            this.filter_effect_grain.setVisibility(View.GONE);
+            this.filter_effect_leak.setVisibility(View.GONE);
+            this.filter_effect_sharpen.setVisibility(View.GONE);
+            this.filter_effect_crop.setVisibility(View.GONE);
+            this.filter_effect_dust.setVisibility(View.GONE);
             if (this.mDataType == 0) {
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.filter_effect_date.getLayoutParams();
                 layoutParams.rightMargin = DensityUtil.dip2px(15.0f);
@@ -9591,50 +9871,50 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
         }
         if (2 == this.mDataFrom) {
-            this.filter_effect_crop.setVisibility(8);
+            this.filter_effect_crop.setVisibility(View.GONE);
         }
         hideVideoTypeFilters();
     }
 
     private void hideVideoTypeFilters() {
         if (isVideoType()) {
-            this.filter_effect_beauty.setVisibility(8);
-            this.filter_effect_grain.setVisibility(8);
-            this.filter_effect_leak.setVisibility(8);
-            this.filter_effect_tilt.setVisibility(8);
-            this.filter_effect_sharpen.setVisibility(8);
-            this.filter_effect_sky.setVisibility(8);
-            this.filter_effect_crop.setVisibility(0);
-            this.filter_effect_rotation.setVisibility(0);
+            this.filter_effect_beauty.setVisibility(View.GONE);
+            this.filter_effect_grain.setVisibility(View.GONE);
+            this.filter_effect_leak.setVisibility(View.GONE);
+            this.filter_effect_tilt.setVisibility(View.GONE);
+            this.filter_effect_sharpen.setVisibility(View.GONE);
+            this.filter_effect_sky.setVisibility(View.GONE);
+            this.filter_effect_crop.setVisibility(View.VISIBLE);
+            this.filter_effect_rotation.setVisibility(View.VISIBLE);
             LinearLayout.LayoutParams cropLP = (LinearLayout.LayoutParams) this.filter_effect_crop.getLayoutParams();
             cropLP.leftMargin = DensityUtil.dip2px(10.0f);
             cropLP.rightMargin = DensityUtil.dip2px(30.0f);
             this.filter_effect_crop.setLayoutParams(cropLP);
-            this.filter_effect_vertical.setVisibility(8);
-            this.filter_effect_horizontal.setVisibility(8);
-            this.filter_effect_mirror.setVisibility(8);
-            this.filter_effect_rotation.setVisibility(8);
-            this.filter_effect_date.setVisibility(8);
+            this.filter_effect_vertical.setVisibility(View.GONE);
+            this.filter_effect_horizontal.setVisibility(View.GONE);
+            this.filter_effect_mirror.setVisibility(View.GONE);
+            this.filter_effect_rotation.setVisibility(View.GONE);
+            this.filter_effect_date.setVisibility(View.GONE);
         }
     }
 
     public void printSysMemInfo() {
-        final ActivityManager mActivityManager = (ActivityManager) getSystemService(com.tencent.android.tpush.common.Constants.FLAG_ACTIVITY_NAME);
-        final MemoryInfo outInfo = new MemoryInfo();
-        new Thread() {
-            public void run() {
-                while (true) {
-                    mActivityManager.getMemoryInfo(outInfo);
-                    long availMem = outInfo.availMem;
-                    System.out.println("system meminfo: " + Formatter.formatFileSize(FilterActivity.this.getApplicationContext(), availMem) + "  (" + availMem + ")");
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
+//        final ActivityManager mActivityManager = (ActivityManager) getSystemService(com.tencent.android.tpush.common.Constants.FLAG_ACTIVITY_NAME);
+//        final MemoryInfo outInfo = new MemoryInfo();
+//        new Thread() {
+//            public void run() {
+//                while (true) {
+//                    mActivityManager.getMemoryInfo(outInfo);
+//                    long availMem = outInfo.availMem;
+//                    System.out.println("system meminfo: " + Formatter.formatFileSize(getApplicationContext(), availMem) + "  (" + availMem + ")");
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }.start();
     }
 
     private void alphaEnterAndExit(android.view.View enterView, android.view.View exitView) {
@@ -9642,9 +9922,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         exitView.clearAnimation();
         enterView.setAlpha(StaticLayoutUtil.DefaultSpacingadd);
         exitView.setAlpha(1.0f);
-        enterView.setVisibility(0);
+        enterView.setVisibility(View.VISIBLE);
         startAnimation(enterView, 1.0f, 200, 0);
-        if (exitView.getVisibility() == 0) {
+        if (exitView.getVisibility() == View.VISIBLE) {
             startAnimation(exitView, StaticLayoutUtil.DefaultSpacingadd, 200, 8);
         }
     }
@@ -9655,17 +9935,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             exitView.clearAnimation();
             enterView.setAlpha(StaticLayoutUtil.DefaultSpacingadd);
             exitView.setAlpha(1.0f);
-            enterView.setVisibility(0);
+            enterView.setVisibility(View.VISIBLE);
             ViewPropertyAnimator.animate(enterView).alpha(1.0f).setDuration(200).setListener(new AnimatorEndListener() {
                 public void onAnimationEnd(Animator animation) {
-                    FilterActivity.this.filterEffectDetailIsShow = isShow;
-                    enterView.setVisibility(0);
+                    filterEffectDetailIsShow = isShow;
+                    enterView.setVisibility(View.VISIBLE);
                 }
             }).start();
-            if (exitView.getVisibility() == 0) {
+            if (exitView.getVisibility() == View.VISIBLE) {
                 ViewPropertyAnimator.animate(exitView).alpha(StaticLayoutUtil.DefaultSpacingadd).setDuration(200).setListener(new AnimatorEndListener() {
                     public void onAnimationEnd(Animator animation) {
-                        exitView.setVisibility(8);
+                        exitView.setVisibility(View.GONE);
                     }
                 }).start();
             }
@@ -9682,15 +9962,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         exitView.setAlpha(1.0f);
         exitView2.setAlpha(1.0f);
         exitView3.setAlpha(1.0f);
-        enterView.setVisibility(0);
+        enterView.setVisibility(View.VISIBLE);
         startAnimation(enterView, 1.0f, 200, 0);
-        if (exitView.getVisibility() == 0) {
+        if (exitView.getVisibility() == View.VISIBLE) {
             startAnimation(exitView, StaticLayoutUtil.DefaultSpacingadd, 200, 8);
         }
-        if (exitView2.getVisibility() == 0) {
+        if (exitView2.getVisibility() == View.VISIBLE) {
             startAnimation(exitView2, StaticLayoutUtil.DefaultSpacingadd, 200, 8);
         }
-        if (exitView3.getVisibility() == 0) {
+        if (exitView3.getVisibility() == View.VISIBLE) {
             startAnimation(exitView3, StaticLayoutUtil.DefaultSpacingadd, 200, 8);
         }
     }
@@ -9712,9 +9992,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         exitView.clearAnimation();
         enterView.setAlpha(StaticLayoutUtil.DefaultSpacingadd);
         exitView.setAlpha(1.0f);
-        enterView.setVisibility(0);
+        enterView.setVisibility(View.VISIBLE);
         startAnimation(enterView, 1.0f, 200, animatorEndListener);
-        if (exitView.getVisibility() == 0) {
+        if (exitView.getVisibility() == View.VISIBLE) {
             startAnimation(exitView, StaticLayoutUtil.DefaultSpacingadd, 200, 8);
         }
     }
@@ -9834,13 +10114,19 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         CameraVideoPathModel.getInstance().removeVideoPath(this.mVideoAudioManager.getVideosModelList());
         App.encoders.addTask("saveLongVideoPreview", new Runnable() {
             public void run() {
-                FilterActivity.this._saveLongVideoPreview();
+                _saveLongVideoPreview();
             }
         });
     }
 
     private void _saveLongVideoPreview() {
-        EGL10Helper.withContext("_saveLongVideoPreview", 37.lambdaFactory$(this));
+//        EGL10Helper.withContext("_saveLongVideoPreview", 37.lambdaFactory$(this));
+        EGL10Helper.withContext("_saveLongVideoPreview", new EGLRunnableVoid() {
+            @Override
+            public void run(EGL10Helper eGL10Helper) {
+                lambda$_saveLongVideoPreview$35(eGL10Helper);
+            }
+        });
     }
 
     private /* synthetic */ void lambda$_saveLongVideoPreview$35(EGL10Helper egl) {
@@ -9868,10 +10154,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (textModelList != null && textModelList.size() > 0) {
                 int size = textModelList.size();
                 for (i = 0; i < size; i++) {
-                    LongVideosModel textModel = (LongVideosModel) textModelList.get(i);
+                    LongVideosModel textModel = textModelList.get(i);
                     Bitmap textBitmap = textModel.getTextBitmap(this, this.mVideoWidth, this.mVideoHeight);
                     textModel.setTextBitmap(textBitmap);
-                    Entry entry = playlist.add(textBitmap, textModel.getMediaStartTimeUs(), 0, textModel.getOriginalCurrentDuration() * 1000);
+                    Playlist.Entry entry = playlist.add(textBitmap, textModel.getMediaStartTimeUs(), 0, textModel.getOriginalCurrentDuration() * 1000);
                     entry.setSpeed(textModel.getVideoSpeed());
                     float[] textSizeInfo = textModel.getTextSizeInfo(textBitmap, this.mVideoWidth, this.mVideoHeight);
                     entry.setOutputRect(textSizeInfo[0], textSizeInfo[1], textSizeInfo[2], textSizeInfo[3]);
@@ -9879,7 +10165,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
             }
             int size1 = videosModelList.size();
-            LongVideosModel videoModel = (LongVideosModel) videosModelList.get(0);
+            LongVideosModel videoModel = videosModelList.get(0);
             if (videoModel.getFilterState() == 0) {
                 filterName = videoModel.getPublicFilterName();
                 filterIntensity = videoModel.getPublicIntensity();
@@ -9900,7 +10186,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 if (!(this.mVideoAudioManager == null)) {
                     if (!(this.mVideoAudioManager.getVideosModelList().size() <= 0)) {
                         if (!(this.mVideoAudioManager.getVideosModelList().get(0) == null)) {
-                            playlist.add(FileMedia.create((LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(0)), 0);
+                            playlist.add(Playlist.FileMedia.create((LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(0)), 0);
                             videoPreview = this.mSurfaceView.getLongVideoPreview(hashMap, playlist, previewWidth, previewHeight);
                         } else {
                             return;
@@ -9931,73 +10217,79 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             Thread t = new Thread() {
                 public void run() {
                     long t1 = System.nanoTime();
-                    EGL10Helper.withContext("saveVideoPreview", FilterActivity$58$.Lambda.1.lambdaFactory$(this));
-                    LogUtil.d(ShareConstants.WEB_DIALOG_PARAM_MESSAGE, "saveDraftPreview time : " + (System.nanoTime() - t1));
+                    //EGL10Helper.withContext("saveVideoPreview", FilterActivity$58$.Lambda.1.lambdaFactory$(this));
+                    EGL10Helper.withContext("saveVideoPreview", new EGLRunnableVoid() {
+                        @Override
+                        public void run(EGL10Helper eGL10Helper) {
+                            lambda$run$0(eGL10Helper);
+                        }
+                    });
+                    LogUtil.d("message", "saveDraftPreview time : " + (System.nanoTime() - t1));
                 }
 
                 private /* synthetic */ void lambda$run$0(EGL10Helper egl) {
-                    GPUImageFilter finalFilterNormal;
-                    FrameRenderer renderer;
+                    GPUImageFilter finalFilterNormal=null;
+                    FrameRenderer renderer=null;
                     try {
                         int previewWidth;
                         int previewHeight;
-                        finalFilterNormal = FilterActivity.this.getFinalFilterEffect(FilterActivity.this.mFilterName, FilterActivity.this.strengthValue);
-                        if (FilterActivity.this.mVideoHeight > FilterActivity.this.mVideoWidth) {
+                        finalFilterNormal = getFinalFilterEffect(mFilterName, strengthValue);
+                        if (mVideoHeight > mVideoWidth) {
                             previewWidth = Constants.PHOTO_TYPE_RIGHT_TOP_HIDE_TIME2;
-                            previewHeight = (int) ((((float) (FilterActivity.this.mVideoHeight * Constants.PHOTO_TYPE_RIGHT_TOP_HIDE_TIME2)) * 1.0f) / ((float) FilterActivity.this.mVideoWidth));
+                            previewHeight = (int) ((((float) (mVideoHeight * Constants.PHOTO_TYPE_RIGHT_TOP_HIDE_TIME2)) * 1.0f) / ((float) mVideoWidth));
                         } else {
                             previewHeight = Constants.PHOTO_TYPE_RIGHT_TOP_HIDE_TIME2;
-                            previewWidth = (int) ((((float) (FilterActivity.this.mVideoWidth * Constants.PHOTO_TYPE_RIGHT_TOP_HIDE_TIME2)) * 1.0f) / ((float) FilterActivity.this.mVideoHeight));
+                            previewWidth = (int) ((((float) (mVideoWidth * Constants.PHOTO_TYPE_RIGHT_TOP_HIDE_TIME2)) * 1.0f) / ((float) mVideoHeight));
                         }
-                        if (FilterActivity.this.mIsSquare) {
+                        if (mIsSquare) {
                             previewHeight = Math.min(previewWidth, previewHeight);
                             previewWidth = previewHeight;
                         }
                         renderer = new FrameRenderer();
-                        renderer.setVideoFrames(FilterActivity.this.mVideoFrames);
+                        renderer.setVideoFrames(mVideoFrames);
                         renderer.xOffset = StaticLayoutUtil.DefaultSpacingadd;
                         renderer.yOffset = StaticLayoutUtil.DefaultSpacingadd;
                         previewHeight += previewHeight % 2;
                         previewWidth += previewWidth % 2;
-                        renderer.setEnableStabilizer(FilterActivity.this.mSurfaceView.isStabilizerEnabled());
+                        renderer.setEnableStabilizer(mSurfaceView.isStabilizerEnabled());
                         int pictureIndex = 0;
-                        if (FilterActivity.this.stack_frame_switch_rl != null && FilterActivity.this.stack_frame_switch_rl.getVisibility() == 0 && FilterActivity.this.openStackFrame) {
+                        if (stack_frame_switch_rl != null && stack_frame_switch_rl.getVisibility() == View.VISIBLE && openStackFrame) {
                             pictureIndex = 2;
                         }
                         LogUtil.d("FilterActivityGetBitmaps", String.format("saveVideoPreview  pictureIndex : %s ", new Object[]{Integer.valueOf(pictureIndex)}));
                         int outWidth = previewWidth;
                         int outHeight = previewHeight;
-                        float degree = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                        float degree = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                         if (degree == 90.0f || degree == 270.0f) {
                             outWidth = previewHeight;
                             outHeight = previewWidth;
                         }
                         Bitmap preBitmap = (Bitmap) renderer.getBitmaps(egl, outWidth, outHeight, new GPUImageFilter[]{finalFilterNormal}, new int[]{pictureIndex}).get(0);
                         if (preBitmap != null) {
-                            preBitmap.compress(CompressFormat.JPEG, 92, new FileOutputStream(MovieFileUtil.getJPGFilePathWithIndex(FilterActivity.this.mCurrentTimeStamp, 0)));
+                            preBitmap.compress(CompressFormat.JPEG, 92, new FileOutputStream(MovieFileUtil.getJPGFilePathWithIndex(mCurrentTimeStamp, 0)));
                             preBitmap.recycle();
                         }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } catch (Throwable th) {
-                        if (FilterActivity.this.mVideoFrames != null) {
-                            if (FilterActivity.this.mSurfaceView != null) {
-                                FilterActivity.this.mSurfaceView.setVideoFrames(null);
+                        if (mVideoFrames != null) {
+                            if (mSurfaceView != null) {
+                                mSurfaceView.setVideoFrames(null);
                             }
-                            FilterActivity.this.mVideoFrames.releaseFrames();
-                            FilterActivity.this.mVideoFrames.releasePool();
+                            mVideoFrames.releaseFrames();
+                            mVideoFrames.releasePool();
                         }
                     }
-                    FilterActivity.this.saveDraft(FilterActivity.this.mFilterModel, FilterActivity.this.mDraftLongVideoBean, true);
+                    saveDraft(mFilterModel, mDraftLongVideoBean, true);
                     renderer.destroy();
                     finalFilterNormal.destroy();
                     finalFilterNormal.destroySecondary();
-                    if (FilterActivity.this.mVideoFrames != null) {
-                        if (FilterActivity.this.mSurfaceView != null) {
-                            FilterActivity.this.mSurfaceView.setVideoFrames(null);
+                    if (mVideoFrames != null) {
+                        if (mSurfaceView != null) {
+                            mSurfaceView.setVideoFrames(null);
                         }
-                        FilterActivity.this.mVideoFrames.releaseFrames();
-                        FilterActivity.this.mVideoFrames.releasePool();
+                        mVideoFrames.releaseFrames();
+                        mVideoFrames.releasePool();
                     }
                 }
             };
@@ -10025,12 +10317,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                                 outputStream.close();
                                 ImagePropertyBean instance = ImagePropertyBean.getInstance();
                                 String str = imagePath;
-                                if (FilterActivity.this.mCameraLensType != 1) {
+                                if (mCameraLensType != 1) {
                                     z = false;
                                 }
                                 instance.readGropTag(str, z);
                                 MSCVController.postExifGetOfficialTag(ImagePropertyBean.getInstance().getImagePropertyObject());
-                                FileUtil.notifySystemFileFlesh(FilterActivity.this.getActivity(), imagePath);
+                                FileUtil.notifySystemFileFlesh(getActivity(), imagePath);
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             } catch (IOException e2) {
@@ -10046,7 +10338,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     /* JADX WARNING: Removed duplicated region for block: B:88:? A:{SYNTHETIC, RETURN} */
     /* JADX WARNING: Removed duplicated region for block: B:68:0x01e0  */
     /* JADX WARNING: Removed duplicated region for block: B:77:0x01fd  */
-    private void saveVideoAndPreViewForDraft(com.blink.academy.onetake.VideoTools.EGL10Helper r23, boolean r24) {
+    private void saveVideoAndPreViewForDraft(EGL10Helper r23, boolean r24) {
         /*
         r22 = this;
         r0 = r22;
@@ -10357,47 +10649,51 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             long t1 = System.nanoTime();
             this.va.pause();
             long t2 = System.nanoTime();
-            Log.d(TAG, String.format("stopped video analysis in %d ms", new Object[]{Long.valueOf((t2 - t1) / 1000000)}));
+            Log.d(TAG, String.format("stopped video analysis in %d ms", Long.valueOf((t2 - t1) / 1000000)));
         }
     }
 
-    private AudioVolume getLastAudioVolume(List<LongVideosModel> musicModels) {
+    private LongVideosModel.AudioVolume getLastAudioVolume(List<LongVideosModel> musicModels) {
         if (TextUtil.isValidate(musicModels)) {
-            ArrayList<AudioVolume> volumes = ((LongVideosModel) musicModels.get(musicModels.size() - 1)).getAudioVolumes();
+            ArrayList<LongVideosModel.AudioVolume> volumes = musicModels.get(musicModels.size() - 1).getAudioVolumes();
             if (TextUtil.isValidate(volumes)) {
-                return (AudioVolume) volumes.get(volumes.size() - 1);
+                return volumes.get(volumes.size() - 1);
             }
         }
         return null;
     }
 
     private boolean encodeLocalVideo(int frameRate, long videoProgressTag, int localWidth, int localHeight, Playlist playlist, int startProgress, boolean needStop, String localFilePath) {
-        boolean encodeSuccess2 = this.mSurfaceView.saveLongVideo((HashMap) EGL10Helper.withContext("encodeLocalVideo", 38.lambdaFactory$(this)), videoProgressTag, localWidth, localHeight, localFilePath, frameRate, playlist, startProgress, true, needStop);
+        //boolean encodeSuccess2 = this.mSurfaceView.saveLongVideo((HashMap) EGL10Helper.withContext("encodeLocalVideo", 38.lambdaFactory$(this)), videoProgressTag, localWidth, localHeight, localFilePath, frameRate, playlist, startProgress, true, needStop);
         LogUtil.d("savevideo", "getlocalvideo");
-        return encodeSuccess2;
+        //return encodeSuccess2;
+        Toast.makeText(this,"encodeLocalVideo...",Toast.LENGTH_LONG).show();
+        return false;
     }
 
     private boolean encodeUploadVideo(int frameRate, long videoProgressTag, int mVideoPreviewWidth, int mVideoPreviewHeight, Playlist playlist, boolean needStop) {
-        boolean encodeSuccess = this.mSurfaceView.saveLongVideo((HashMap) EGL10Helper.withContext("encodeUploadVideo", 39.lambdaFactory$(this)), videoProgressTag, mVideoPreviewWidth, mVideoPreviewHeight, this.mOutPath, frameRate, playlist, 20, false, needStop);
-        LogUtil.d("savevideo", "getuploadvideo");
-        return encodeSuccess;
+//        boolean encodeSuccess = this.mSurfaceView.saveLongVideo((HashMap) EGL10Helper.withContext("encodeUploadVideo", 39.lambdaFactory$(this)), videoProgressTag, mVideoPreviewWidth, mVideoPreviewHeight, this.mOutPath, frameRate, playlist, 20, false, needStop);
+//        LogUtil.d("savevideo", "getuploadvideo");
+//        return encodeSuccess;
+        Toast.makeText(this,"encodeUploadVideo...",Toast.LENGTH_LONG).show();
+        return false;
     }
 
-    private void encodeVideoAndSavePicture(long videoProgressTag, int width, int height) {
+    private void encodeVideoAndSavePicture(final long videoProgressTag, final int width, final int height) {
         this.mSurfaceView.stopVideoFilterAnimation();
         this.mSurfaceView.stopLongVideo();
         stopProxyVideo();
-        String saveLongThumbnailPath = MovieFileUtil.getLongThumbnailFilePath(this.mCurrentTimeStamp);
-        String saveMoreShortLongThumbnailPath = MovieFileUtil.getMoreShortLongThumbnailFilePath(this.mCurrentTimeStamp);
+        final String saveLongThumbnailPath = MovieFileUtil.getLongThumbnailFilePath(this.mCurrentTimeStamp);
+        final String saveMoreShortLongThumbnailPath = MovieFileUtil.getMoreShortLongThumbnailFilePath(this.mCurrentTimeStamp);
         String previewPicturePath = MovieFileUtil.getJPGFilePathWithIndex(this.mCurrentTimeStamp, 0);
         this.mOutPath = MovieFileUtil.getOutputMediaFile(this.mCurrentTimeStamp);
-        String userName = App.isLogin() ? GlobalHelper.getUserScreenName() : "";
+        String userName = GlobalHelper.getUserScreenName();
         String artistStr = "";
         String musicStr = "";
         if (this.mVideoAudioManager != null) {
             ArrayList<LongVideosModel> musicModelList = this.mVideoAudioManager.getMusicModelList();
             if (TextUtil.isValidate(musicModelList)) {
-                LongVideosModel model = (LongVideosModel) musicModelList.get(0);
+                LongVideosModel model = musicModelList.get(0);
                 if (model != null) {
                     AudioTrackBean audioTrackBean = model.getAudioTrackBean();
                     if (audioTrackBean != null) {
@@ -10426,7 +10722,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             Bitmap endBitmap = WaterMarkBitmapUtil.getTailWaterMarkBitmap(this, mVideoPreviewWidth, mVideoPreviewHeight, userName, musicStr, artistStr, 0);
             long videoSumDurations = playlist.getDurationUs();
-            playlist.add(endBitmap, lastDurationUs, 0, 3000000, AspectMode.RENDER_CROP).setZIndex(1000).setOutputRect(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f, 1.0f).setAlpha(1.0f);
+            playlist.add(endBitmap, lastDurationUs, 0, 3000000, Player.AspectMode.RENDER_CROP).setZIndex(1000).setOutputRect(StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f, 1.0f).setAlpha(1.0f);
             checkSetEndBgmFadeOut(playlist, videoSumDurations);
             ArrayList<LongVideosModel> models = this.mVideoAudioManager.getVideosModelList();
             List<LongVideosModel> textModelList = this.mVideoAudioManager.getTextModelList();
@@ -10436,7 +10732,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     LongVideosModel textModel = (LongVideosModel) textModelList.get(i);
                     Bitmap textBitmap = textModel.getTextBitmap(this, this.mVideoWidth, this.mVideoHeight);
                     textModel.setTextBitmap(textBitmap);
-                    Entry entry = playlist.add(textBitmap, textModel.getMediaStartTimeUs(), 0, textModel.getOriginalCurrentDuration() * 1000);
+                    Playlist.Entry entry = playlist.add(textBitmap, textModel.getMediaStartTimeUs(), 0, textModel.getOriginalCurrentDuration() * 1000);
                     entry.setSpeed(textModel.getVideoSpeed());
                     float[] textSizeInfo = textModel.getTextSizeInfo(textBitmap, this.mVideoWidth, this.mVideoHeight);
                     entry.setOutputRect(textSizeInfo[0], textSizeInfo[1], textSizeInfo[2], textSizeInfo[3]);
@@ -10444,10 +10740,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     entry.setZIndex(1000);
                 }
             }
-            this.mSurfaceView.saveLongVideoPreviewPicture((HashMap) EGL10Helper.withContext("saveLongVideoPreviewPicture", 40.lambdaFactory$(this)), 0, mVideoPreviewWidth, mVideoPreviewHeight, previewPicturePath, playlist);
+            //this.mSurfaceView.saveLongVideoPreviewPicture((HashMap) EGL10Helper.withContext("saveLongVideoPreviewPicture", 40.lambdaFactory$(this)), 0, mVideoPreviewWidth, mVideoPreviewHeight, previewPicturePath, playlist);
+            Toast.makeText(this,"fake saveLongVideoPreviewPicture",Toast.LENGTH_LONG).show();
             LogUtil.d("savevideo", "getpreview");
             EventBus.getDefault().post(new VideoSavingEvent(5, "previewBimtap", videoProgressTag));
-            HashMap<HashMap<Integer, GPUImageFilter>, HashMap<Integer, GPUImageFilter>> longFilter = (HashMap) EGL10Helper.withContext("getFinalFilterFotVideo", 41.lambdaFactory$(this));
+            HashMap<HashMap<Integer, GPUImageFilter>, HashMap<Integer, GPUImageFilter>> longFilter = null;//(HashMap) EGL10Helper.withContext("getFinalFilterFotVideo", 41.lambdaFactory$(this));
             File file = new File(saveLongThumbnailPath);
             if (file.exists()) {
                 file.delete();
@@ -10463,9 +10760,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             int bitmapSize = videoLongBitmaps.size();
             LogUtil.d("savevideo", "getlongbitmaps");
-            Bitmap longThumbnailBitmap = Bitmap.createBitmap(400, (int) (400.0f * ((float) bitmapSize)), Config.RGB_565);
+            Bitmap longThumbnailBitmap = Bitmap.createBitmap(400, (int) (400.0f * ((float) bitmapSize)), Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(longThumbnailBitmap);
-            Bitmap moreShortLongThumbnailBitmap = Bitmap.createBitmap(200, (int) (200.0f * ((float) bitmapSize)), Config.RGB_565);
+            Bitmap moreShortLongThumbnailBitmap = Bitmap.createBitmap(200, (int) (200.0f * ((float) bitmapSize)), Bitmap.Config.RGB_565);
             Canvas moreShortCanvas = new Canvas(moreShortLongThumbnailBitmap);
             Paint paint = new Paint();
             paint.setAntiAlias(true);
@@ -10504,10 +10801,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     moreShortBitmap.recycle();
                 }
             }
-            FileUtil.writeJPGFileToDisk(saveLongThumbnailPath, longThumbnailBitmap, 92, true);
-            FileUtil.writeJPGFileToDisk(saveMoreShortLongThumbnailPath, moreShortLongThumbnailBitmap, 92, true);
+//            FileUtil.writeJPGFileToDisk(saveLongThumbnailPath, longThumbnailBitmap, 92, true);
+//            FileUtil.writeJPGFileToDisk(saveMoreShortLongThumbnailPath, moreShortLongThumbnailBitmap, 92, true);
             for (i = videoLongBitmaps.size() - 1; i >= 0; i--) {
-                BitmapUtil.recycleBitmap((Bitmap) videoLongBitmaps.remove(i));
+                BitmapUtils.recycleBitmap((Bitmap) videoLongBitmaps.remove(i));
             }
             EventBus.getDefault().post(new VideoSavingEvent(20, "longBitmaps", videoProgressTag));
             int frameRate = ((LongVideosModel) models.get(0)).getVideoFPS();
@@ -10523,15 +10820,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     ShareBitmapEntity entity = WaterMarkBitmapUtil.getVideoShareWaterMarkBitmap(getActivity(), localWidth, localHeight, 4);
                     playlist.add(entity.getBitmap(), 0, 0, lastDurationUs).setZIndex(1000).setOutputRect(entity.getSize()[0].floatValue(), entity.getSize()[1].floatValue(), entity.getSize()[2].floatValue(), entity.getSize()[3].floatValue()).setAlpha(entity.getSize()[4].floatValue());
                     if (PermissionUtil.verifyReadExternalPermission()) {
-                        localFilePath = com.blink.academy.onetake.Config.getVideoSavePath() + "" + System.currentTimeMillis() + ".mp4";
+                        localFilePath = Config.getVideoSavePath() + "" + System.currentTimeMillis() + ".mp4";
                     } else {
-                        localFilePath = com.blink.academy.onetake.Config.getLongVideoRecordPath() + "/" + System.currentTimeMillis() + ".mp4";
+                        localFilePath = Config.getLongVideoRecordPath() + "/" + System.currentTimeMillis() + ".mp4";
                     }
                     if (encodeLocalVideo(frameRate, videoProgressTag, localWidth, localHeight, playlist, 60, false, localFilePath)) {
                         this.mVideoAudioManager.recyclerTextBitmap();
                         VideoSavingEvent videoSavingEvent = new VideoSavingEvent();
                         videoSavingEvent.getClass();
-                        VideoBean videoBean = new VideoBean();
+                        VideoSavingEvent.VideoBean videoBean = new VideoSavingEvent.VideoBean();
                         videoBean.videoWidth = localWidth;
                         videoBean.videoHeight = localHeight;
                         videoBean.videoPath = localFilePath;
@@ -10545,7 +10842,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         coverInfo.uploadShortPath = saveMoreShortLongThumbnailPath;
                         savingEvent.coverInfo = coverInfo;
                         EventBus.getDefault().post(savingEvent);
-                        runOnUiThread(42.lambdaFactory$(this, videoProgressTag, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, width, height));
+                        //runOnUiThread(42.lambdaFactory$(this, videoProgressTag, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, width, height));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                lambda$run$0(videoProgressTag,saveLongThumbnailPath,saveMoreShortLongThumbnailPath,width,height);
+                            }
+                        });
                         FileUtil.notifySystemFileFlesh(getActivity(), localFilePath);
                         return;
                     }
@@ -10567,8 +10870,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             final Playlist playlist2 = playlist;
             Thread t1 = new Thread() {
                 public void run() {
-                    if (!FilterActivity.this.encodeUploadVideo(i2, j, videoPreviewWidth, videoPreviewHeight, playlist2, false)) {
-                        FilterActivity.this.mVideoAudioManager.recyclerTextBitmap();
+                    if (!encodeUploadVideo(i2, j, videoPreviewWidth, videoPreviewHeight, playlist2, false)) {
+                        mVideoAudioManager.recyclerTextBitmap();
                     }
                 }
             };
@@ -10591,15 +10894,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     localWidth += localWidth % 2;
                     localHeight += localHeight % 2;
                     if (PermissionUtil.verifyReadExternalPermission()) {
-                        localFilePath = com.blink.academy.onetake.Config.getVideoSavePath() + "" + System.currentTimeMillis() + ".mp4";
+                        localFilePath = Config.getVideoSavePath() + "" + System.currentTimeMillis() + ".mp4";
                     } else {
-                        localFilePath = com.blink.academy.onetake.Config.getLongVideoRecordPath() + "/" + System.currentTimeMillis() + ".mp4";
+                        localFilePath = Config.getLongVideoRecordPath() + "/" + System.currentTimeMillis() + ".mp4";
                     }
-                    if (FilterActivity.this.encodeLocalVideo(i5, j2, localWidth, localHeight, playlist3, 60, false, localFilePath)) {
-                        FilterActivity.this.mVideoAudioManager.recyclerTextBitmap();
+                    if (encodeLocalVideo(i5, j2, localWidth, localHeight, playlist3, 60, false, localFilePath)) {
+                        mVideoAudioManager.recyclerTextBitmap();
                         VideoSavingEvent videoSavingEvent = new VideoSavingEvent();
                         videoSavingEvent.getClass();
-                        VideoBean videoBean = new VideoBean();
+                        VideoSavingEvent.VideoBean videoBean = new VideoSavingEvent.VideoBean();
                         videoBean.videoWidth = localWidth;
                         videoBean.videoHeight = localHeight;
                         videoBean.videoPath = localFilePath;
@@ -10607,22 +10910,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         VideoCoverInfo coverInfo = new VideoCoverInfo();
                         coverInfo.videoWidth = i6;
                         coverInfo.videoHeight = i7;
-                        coverInfo.uploadVideoPath = FilterActivity.this.mOutPath;
+                        coverInfo.uploadVideoPath = mOutPath;
                         coverInfo.uploadPreivewPath = str;
                         coverInfo.uploadLongPath = str2;
                         coverInfo.uploadShortPath = str3;
                         savingEvent.coverInfo = coverInfo;
                         EventBus.getDefault().post(savingEvent);
-                        FilterActivity.this.runOnUiThread(FilterActivity$61$.Lambda.1.lambdaFactory$(this, j2, str2, str3, i3, i4));
-                        FileUtil.notifySystemFileFlesh(FilterActivity.this.getActivity(), localFilePath);
+                        //runOnUiThread(FilterActivity$61$.Lambda.1.lambdaFactory$(this, j2, str2, str3, i3, i4));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getActivity(),"无法执行1",Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        FileUtil.notifySystemFileFlesh(getActivity(), localFilePath);
                         return;
                     }
-                    FilterActivity.this.mVideoAudioManager.recyclerTextBitmap();
+                    mVideoAudioManager.recyclerTextBitmap();
                 }
 
-                private /* synthetic */ void lambda$run$0(long videoProgressTag, String saveLongThumbnailPath, String saveMoreShortLongThumbnailPath, int width, int height) {
-                    FilterActivity.this.saveFinishAndPostEvent(videoProgressTag, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, width, height);
-                }
+
             };
             t1.setName("encodeUploadVideo");
             t2.setName("encodeLocalVideo");
@@ -10635,12 +10942,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
         }
     }
-
+    public  /* synthetic */ void lambda$run$0(long videoProgressTag, String saveLongThumbnailPath, String saveMoreShortLongThumbnailPath, int width, int height) {
+        saveFinishAndPostEvent(videoProgressTag, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, width, height);
+    }
     private void checkSetEndBgmFadeOut(Playlist playlist, long videoSumDurations) {
         LongVideosModel endMusicModel = null;
         ArrayList<LongVideosModel> musicModelList = this.mVideoAudioManager.getMusicModelList();
         if (musicModelList != null && musicModelList.size() > 0) {
-            endMusicModel = (LongVideosModel) musicModelList.get(musicModelList.size() - 1);
+            endMusicModel = musicModelList.get(musicModelList.size() - 1);
         }
         if (endMusicModel != null && (endMusicModel.getAudioStartTime() + endMusicModel.getAudioDuration()) * 1000 == videoSumDurations) {
             long totalD = endMusicModel.getTotalDuration();
@@ -10649,8 +10958,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (2000000 + shouldStartTime > 1000 * totalD) {
                 shouldDu = (1000 * totalD) - shouldStartTime;
             }
-            AudioVolume audioVolume = getLastAudioVolume(musicModelList);
-            Entry entry = playlist.add(FileMedia.create(new File(endMusicModel.getPlaylistMediaPath())), playlist.getDurationUs() - 3000000, shouldStartTime, shouldDu);
+            LongVideosModel.AudioVolume audioVolume = getLastAudioVolume(musicModelList);
+            Playlist.Entry entry = playlist.add(Playlist.FileMedia.create(new File(endMusicModel.getPlaylistMediaPath())), playlist.getDurationUs() - 3000000, shouldStartTime, shouldDu);
             entry.disableVideo();
             float start = 0.7f;
             float end = StaticLayoutUtil.DefaultSpacingadd;
@@ -10662,23 +10971,29 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void encodeGifOrPicture(long videoProgressTag, int width, int height) {
-        EGL10Helper.withContext("encodeGifOrPicture", 43.lambdaFactory$(this, videoProgressTag, width, height));
+    private void encodeGifOrPicture(final long videoProgressTag, final int width, final int height) {
+        //EGL10Helper.withContext("encodeGifOrPicture", 43.lambdaFactory$(this, videoProgressTag, width, height));
+        EGL10Helper.withContext("encodeGifOrPicture", new EGLRunnableVoid() {
+            @Override
+            public void run(EGL10Helper eGL10Helper) {
+                lambda$encodeGifOrPicture$42(videoProgressTag,width,height,eGL10Helper);
+            }
+        });
     }
 
     private /* synthetic */ void lambda$encodeGifOrPicture$42(long videoProgressTag, int width, int height, EGL10Helper egl) {
         int degree;
         int i;
-        Transform[] transforms;
+        VidStabilizer.Transform[] transforms;
         int bitmapWidth;
         int bitmapHeight;
         Bitmap bitmap;
         int size;
         long t1 = System.nanoTime();
-        if (this.currentEffectType == EffectType.ROTATE) {
+        if (this.currentEffectType == FilterEffectManager.EffectType.ROTATE) {
             degree = this.rotate_but;
         } else {
-            degree = (int) this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+            degree = (int) this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
         }
         GPUImageFilter finalFilterNormal = getFinalFilterEffect(this.mFilterName, this.strengthValue);
         LogUtil.d("savinggg before video");
@@ -10714,9 +11029,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         GPUImageFilter[] filters;
         if (1 == this.mDataType) {
             double ratio;
-            List<FilterEffectBean> mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-            boolean containItem = this.mFilterEffectManager.listAContainItem((List) mList, EffectType.CROP);
-            boolean aContainItem = this.mFilterEffectManager.listAContainItem((List) mList, EffectType.ROTATE);
+            List<FilterEffectBean> mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+            boolean containItem = this.mFilterEffectManager.listAContainItem((List) mList, FilterEffectManager.EffectType.CROP);
+            boolean aContainItem = this.mFilterEffectManager.listAContainItem((List) mList, FilterEffectManager.EffectType.ROTATE);
             if (cropWidth > cropHeight) {
                 ratio = (((double) cropWidth) * 1.0d) / ((double) cropHeight);
             } else {
@@ -10748,7 +11063,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 try {
                     this.localPicture.compress(CompressFormat.JPEG, 75, new FileOutputStream(MovieFileUtil.getJPGFilePathWithIndex(this.mCurrentTimeStamp, 0)));
                     ImagePropertyBean.getInstance().setFilterName(this.mFilterName);
-                    BitmapModel.getInstance().setFilterLocalBitmap(this.localPicture);
+                    //BitmapModel.getInstance().setFilterLocalBitmap(this.localPicture);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -10762,9 +11077,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     bitmapHeight = 400;
                 }
                 bitmap = Bitmap.createScaledBitmap(this.localPicture, bitmapWidth, bitmapHeight, false);
-                FileUtil.writeJPGFileToDisk(saveLongThumbnailPath, bitmap, 92, false);
-                FileUtil.writeJPGFileToDisk(saveMoreShortLongThumbnailPath, bitmap, 92, true);
-                BitmapUtil.recycleBitmap(bitmap);
+//                FileUtil.writeJPGFileToDisk(saveLongThumbnailPath, bitmap, 92, false);
+//                FileUtil.writeJPGFileToDisk(saveMoreShortLongThumbnailPath, bitmap, 92, true);
+                BitmapUtils.recycleBitmap(bitmap);
                 System.gc();
                 saveDraft(this.mFilterModel, this.mDraftLongVideoBean, true);
                 EventBus.getDefault().post(new VideoPreviewEvent(videoProgressTag));
@@ -10784,7 +11099,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             renderer.setWrapFrame(0);
             renderer.setFilters(filters);
             LogUtil.d("huangweijie", String.format("video path saveVideo %s", new Object[]{this.mOutPath}));
-            encoder.putFrames(this.mOutPath, width, height, renderer, false, Quality.HIGH);
+            encoder.putFrames(this.mOutPath, width, height, renderer, false, VideoEncoder.Quality.HIGH);
         } else {
             finalFilter_0 = getFramesFilter(renderer, 0, finalFilterNormal);
             finalFilter_1 = getFramesFilter(renderer, 1, finalFilterNormal);
@@ -10799,7 +11114,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             renderer.setWrapFrame(2);
             renderer.setFilters(filters);
-            encoder.putFrames(this.mOutPath, width, height, renderer, false, Quality.HIGH);
+            encoder.putFrames(this.mOutPath, width, height, renderer, false, VideoEncoder.Quality.HIGH);
         }
         for (GPUImageFilter filter : filters) {
             filter.destroy();
@@ -10826,7 +11141,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             previewWidth &= -2;
             previewHeight &= -2;
             int pictureIndex = 0;
-            if (this.stack_frame_switch_rl != null && this.stack_frame_switch_rl.getVisibility() == 0 && this.openStackFrame) {
+            if (this.stack_frame_switch_rl != null && this.stack_frame_switch_rl.getVisibility() == View.VISIBLE && this.openStackFrame) {
                 pictureIndex = 2;
             }
             int outWidth = previewWidth;
@@ -10880,9 +11195,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             if (size != 1) {
                 LogUtil.d("xiaoluo", "jpgWidth:" + jpgWidth + ", jpgHeight:" + jpgHeight);
-                Bitmap longThumbnailBitmap = Bitmap.createBitmap(400, (int) (400.0f * ((float) size)), Config.RGB_565);
+                Bitmap longThumbnailBitmap = Bitmap.createBitmap(400, (int) (400.0f * ((float) size)), Bitmap.Config.RGB_565);
                 Canvas canvas = new Canvas(longThumbnailBitmap);
-                Bitmap moreShortLongThumbnailBitmap = Bitmap.createBitmap(200, (int) (200.0f * ((float) size)), Config.RGB_565);
+                Bitmap moreShortLongThumbnailBitmap = Bitmap.createBitmap(200, (int) (200.0f * ((float) size)), Bitmap.Config.RGB_565);
                 Canvas moreShortCanvas = new Canvas(moreShortLongThumbnailBitmap);
                 Paint paint = new Paint();
                 paint.setAntiAlias(true);
@@ -10939,9 +11254,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 longPicFilters.destroy();
                 longPicFilters.destroySecondary();
-                FileUtil.writeJPGFileToDisk(saveLongThumbnailPath, longThumbnailBitmap, 92, true);
+                //FileUtil.writeJPGFileToDisk(saveLongThumbnailPath, longThumbnailBitmap, 92, true);
                 longThumbnailBitmap.recycle();
-                FileUtil.writeJPGFileToDisk(saveMoreShortLongThumbnailPath, moreShortLongThumbnailBitmap, 92, true);
+                //FileUtil.writeJPGFileToDisk(saveMoreShortLongThumbnailPath, moreShortLongThumbnailBitmap, 92, true);
                 moreShortLongThumbnailBitmap.recycle();
             }
             renderer.partialReset();
@@ -10957,7 +11272,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 finalFilter_1.destroy();
                 finalFilter_1.destroySecondary();
             }
-            runOnUiThread(47.lambdaFactory$(this, videoProgressTag, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, width, height));
+            //runOnUiThread(47.lambdaFactory$(this, videoProgressTag, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, width, height));
+            Toast.makeText(this,"fake 47.lambdaFactory$",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -10974,16 +11290,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         } else if (!new File(this.mOutPath).exists()) {
             String msg = "";
             if (this.mShareType == 0) {
-                msg = String.format(getActivity().getResources().getString(2131296310), new Object[]{getActivity().getResources().getString(2131296705)});
+                msg = String.format(getActivity().getResources().getString(R.string.ALERT_FILE_SAVED_FAIL), getActivity().getResources().getString(R.string.MEDIA_TYPE_GIF));
             } else if (this.mShareType == 1) {
-                msg = String.format(getActivity().getResources().getString(2131296310), new Object[]{getActivity().getResources().getString(2131296707)});
+                msg = String.format(getActivity().getResources().getString(R.string.ALERT_FILE_SAVED_FAIL), getActivity().getResources().getString(R.string.MEDIA_TYPE_PHOTO));
             } else if (this.mShareType == 2) {
-                msg = String.format(getActivity().getResources().getString(2131296310), new Object[]{getActivity().getResources().getString(2131296711)});
+                msg = String.format(getActivity().getResources().getString(R.string.ALERT_FILE_SAVED_FAIL), getActivity().getResources().getString(R.string.MEDIA_TYPE_VIDEO));
             }
             AppMessage.makeAlertTextHigherNoStatusBarChange(getActivity(), msg);
-        } else if (TextUtils.equals(this.mActivityFrom, VideoActivity2.FromAvatar)) {
+        } else if (TextUtils.equals(this.mActivityFrom, "FromAvatar")) {
             EventBus.getDefault().post(new FinishActivityMessageEvent(FinishActivityMessageEvent.AvatarChangePath, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, this.mFromUserName, this.mFromCurrentTimeStamp));
-        } else if (TextUtils.equals(this.mActivityFrom, VideoActivity2.FromMeAvatar)) {
+        } else if (TextUtils.equals(this.mActivityFrom, "FromAvatar")) {
             EventBus.getDefault().post(new FinishActivityMessageEvent(FinishActivityMessageEvent.AvatarMeChangePath, saveLongThumbnailPath, saveMoreShortLongThumbnailPath, this.mFromUserName, this.mFromCurrentTimeStamp));
         }
     }
@@ -10995,38 +11311,38 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         final int i2 = height;
         App.encoders.addTask("saveVideo", new Runnable() {
             public void run() {
-                if (FilterActivity.this.mDataType == 2) {
-                    FilterActivity.this.encodeVideoAndSavePicture(j, i, i2);
-                } else if (FilterActivity.this.mVideoFrames.size() != 0) {
-                    FilterActivity.this.encodeGifOrPicture(j, i, i2);
+                if (mDataType == 2) {
+                    encodeVideoAndSavePicture(j, i, i2);
+                } else if (mVideoFrames.size() != 0) {
+                    encodeGifOrPicture(j, i, i2);
                 }
             }
         });
     }
 
-    private boolean isCurrentTypeAndShow(EffectType type) {
-        return this.currentEffectType == type && this.filter_rule_ll.getVisibility() == 0;
+    private boolean isCurrentTypeAndShow(FilterEffectManager.EffectType type) {
+        return this.currentEffectType == type && this.filter_rule_ll.getVisibility() == View.VISIBLE;
     }
 
     private void getFinalNonLUTFilters(GPUImageFilterGroup filterGroup, FilterEffectBean bean) {
-        if (bean.effectType != EffectType.HORIZONTAL && bean.effectType != EffectType.VERTICAL && bean.effectType != EffectType.ROTATE) {
-            if (bean.effectType == EffectType.BEAUTIFY) {
+        if (bean.effectType != FilterEffectManager.EffectType.HORIZONTAL && bean.effectType != FilterEffectManager.EffectType.VERTICAL && bean.effectType != FilterEffectManager.EffectType.ROTATE) {
+            if (bean.effectType == FilterEffectManager.EffectType.BEAUTIFY) {
                 GPUImageBilateralFilter0 bilateralFilter = getBilateralFilter();
                 bilateralFilter.setBlurWeightLocation(bean.value[1] / 10.0f);
                 filterGroup.addFilter(bilateralFilter);
                 return;
             }
-            if (bean.effectType == EffectType.SHARPEN) {
+            if (bean.effectType == FilterEffectManager.EffectType.SHARPEN) {
                 GPUImageSharpenFilter sharpenFilter = new GPUImageSharpenFilter();
                 sharpenFilter.setSharpness(bean.value[1] * 0.26f);
                 filterGroup.addFilter(sharpenFilter);
                 return;
             }
             float value;
-            if (bean.effectType == EffectType.SKY) {
+            if (bean.effectType == FilterEffectManager.EffectType.SKY) {
                 AFGPUImageSkyFilter2 skyFilter = getSkyFilter();
                 if (this.mBitmapSky == null) {
-                    this.mBitmapSky = getOriginalFilterBitmap(2130838324, false, false);
+                    this.mBitmapSky = getOriginalFilterBitmap(R.drawable.sky_gradient, false, false);
                 }
                 skyFilter.setBitmap(this.mBitmapSky);
                 value = bean.value[1] / 10.0f;
@@ -11037,10 +11353,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterGroup.addFilter(skyFilter);
                 return;
             }
-            if (bean.effectType == EffectType.GRAIN) {
+            if (bean.effectType == FilterEffectManager.EffectType.GRAIN) {
                 AFGPUImageOverlayBlendFilter grainFilter = getGrainFilter();
                 if (this.mBitmapGrain == null) {
-                    this.mBitmapGrain = getBitmapForFilterEffect(2130837680, true, false);
+                    this.mBitmapGrain = getBitmapForFilterEffect(R.drawable.grains_iso_400_jpg_50, true, false);
                 }
                 grainFilter.setBitmap(this.mBitmapGrain);
                 value = bean.value[1] / 10.0f;
@@ -11051,7 +11367,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterGroup.addFilter(grainFilter);
                 return;
             }
-            if (bean.effectType == EffectType.TILT) {
+            if (bean.effectType == FilterEffectManager.EffectType.TILT) {
                 GPUImageGaussianSelectiveBlurFilter tiltFilter = getGaussianFilter();
                 value = (bean.value[1] * 0.4f) + 1.0f;
                 if (isCurrentTypeAndShow(bean.effectType)) {
@@ -11061,10 +11377,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterGroup.addFilter(tiltFilter);
                 return;
             }
-            if (bean.effectType == EffectType.VIGNETTE) {
+            if (bean.effectType == FilterEffectManager.EffectType.VIGNETTE) {
                 AFGPUImageMultiplyBlendFilter movieFilter = getMoviewFilter2();
                 if (this.mBitmapCamera == null) {
-                    this.mBitmapCamera = getBitmapForFilterEffect(2130838363, false, false);
+                    this.mBitmapCamera = getBitmapForFilterEffect(R.drawable.vignette_020_camera_jpg_70, false, false);
                 }
                 movieFilter.setBitmap(this.mBitmapCamera);
                 value = bean.value[1] / 10.0f;
@@ -11075,13 +11391,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterGroup.addFilter(movieFilter);
                 return;
             }
-            if (bean.effectType == EffectType.PRISM) {
+            if (bean.effectType == FilterEffectManager.EffectType.PRISM) {
                 GPUImagePrismFilter finalPrismFilter = getPrismFilter();
                 finalPrismFilter.setStrength(bean.value[1] / 10.0f);
                 filterGroup.addFilter(finalPrismFilter);
                 return;
             }
-            if (bean.effectType == EffectType.DATE) {
+            if (bean.effectType == FilterEffectManager.EffectType.DATE) {
                 AFGPUImageDateBlendFilter finalDateFilter;
                 if (this.dateFilter != null) {
                     finalDateFilter = this.dateFilter.cloneFilter();
@@ -11095,7 +11411,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             float[] fArr;
             float[] selectPosition;
-            if (bean.effectType == EffectType.DUST) {
+            if (bean.effectType == FilterEffectManager.EffectType.DUST) {
                 AFGPUImageScreenBlendFilter finalDustFilter;
                 if (this.dustFilter != null) {
                     finalDustFilter = this.dustFilter.cloneFilter();
@@ -11130,7 +11446,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterGroup.addFilter(finalDustFilter);
                 return;
             }
-            if (bean.effectType == EffectType.LEAK) {
+            if (bean.effectType == FilterEffectManager.EffectType.LEAK) {
                 AFGPUImageScreenBlendFilter finalLeakFilter;
                 if (this.leakFilter != null) {
                     finalLeakFilter = this.leakFilter.cloneFilter();
@@ -11163,8 +11479,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterGroup.addFilter(finalLeakFilter);
                 return;
             }
-            if (bean.effectType != EffectType.CROP) {
-                if (bean.effectType == EffectType.MIRROR) {
+            if (bean.effectType != FilterEffectManager.EffectType.CROP) {
+                if (bean.effectType == FilterEffectManager.EffectType.MIRROR) {
                     GPUImageMirrorFilter gpuImageMirrorFilter = new GPUImageMirrorFilter(this.mCaptureOrientation, this.mCameraLensType == 1);
                     float result = bean.selectPosition[0] / 100.0f;
                     switch ((int) bean.value[0]) {
@@ -11196,7 +11512,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     float width = selectPosition1[6];
                     float height = selectPosition1[7];
                     if (x >= StaticLayoutUtil.DefaultSpacingadd && y >= StaticLayoutUtil.DefaultSpacingadd && width <= 1.0f && height <= 1.0f && x + width <= 1.0f && y + height <= 1.0f) {
-                        filterGroup.addFilter(new GPUImageCropFilter(new CropRegion(x, y, width, height), 0, this.mCaptureOrientation, this.mCameraLensType == 1));
+                        filterGroup.addFilter(new GPUImageCropFilter(new GPUImageCropFilter.CropRegion(x, y, width, height), 0, this.mCaptureOrientation, this.mCameraLensType == 1));
                     }
                 }
             }
@@ -11309,7 +11625,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     @NonNull
     private GPUImageFilter getSavingSelectedFilter(String mFilterName) {
-        return FilterUtils.getFilterByLocalName(mFilterName);
+        return null;//FilterUtils.getFilterByLocalName(mFilterName);
     }
 
     @NonNull
@@ -11418,7 +11734,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 fromInt = Rotation.fromInt((i + i2) % 360);
             } else {
-                fromInt = Rotation.fromInt((this.orientation + Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) % 360);
+                fromInt = Rotation.fromInt((this.orientation + BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) % 360);
             }
             if (this.mIsBackCamera) {
                 z = false;
@@ -11461,15 +11777,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             EventBus.getDefault().post(new RefreshDisplayAlbumEvent());
         }
         saveCollectedFilters(true);
-        BuglyLogUtil.writeBuglyLog(TAG);
+//        BuglyLogUtil.writeBuglyLog(TAG);
         finish();
         stopProxyVideo();
-        overridePendingTransition(2131034155, 2131034158);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
         new Thread() {
             public void run() {
-                if (FilterActivity.this.va != null && FilterActivity.this.hadStartStablize) {
-                    FilterActivity.this.va.stop();
-                    FilterActivity.this.va = null;
+                if (va != null && hadStartStablize) {
+                    va.stop();
+                    va = null;
                 }
             }
         }.start();
@@ -11486,23 +11802,23 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             int childCount = this.filter_loop_preview_ll.getChildCount();
             if (childCount != 0) {
                 for (int i = 0; i < childCount; i++) {
-                    BitmapUtil.release((ImageView) this.filter_loop_preview_ll.getChildAt(i));
+                    BitmapUtils.release((ImageView) this.filter_loop_preview_ll.getChildAt(i));
                 }
             }
         }
-        BitmapUtil.recycleBitmap(this.mBitmapGrain);
-        BitmapUtil.recycleBitmap(this.mBitmapLeak1);
-        BitmapUtil.recycleBitmap(this.mBitmapLeak2);
-        BitmapUtil.recycleBitmap(this.mBitmapLeak3);
-        BitmapUtil.recycleBitmap(this.mBitmapLeak4);
-        BitmapUtil.recycleBitmap(this.mBitmapDust1);
-        BitmapUtil.recycleBitmap(this.mBitmapDust2);
-        BitmapUtil.recycleBitmap(this.mBitmapDust3);
-        BitmapUtil.recycleBitmap(this.mBitmapDust4);
-        BitmapUtil.recycleBitmap(this.mBitmapDust5);
-        BitmapUtil.recycleBitmap(this.mDateFontBitmap);
-        BitmapUtil.recycleBitmap(this.mBitmapCamera);
-        BitmapUtil.recycleBitmap(this.forFilterBitmap);
+        BitmapUtils.recycleBitmap(this.mBitmapGrain);
+        BitmapUtils.recycleBitmap(this.mBitmapLeak1);
+        BitmapUtils.recycleBitmap(this.mBitmapLeak2);
+        BitmapUtils.recycleBitmap(this.mBitmapLeak3);
+        BitmapUtils.recycleBitmap(this.mBitmapLeak4);
+        BitmapUtils.recycleBitmap(this.mBitmapDust1);
+        BitmapUtils.recycleBitmap(this.mBitmapDust2);
+        BitmapUtils.recycleBitmap(this.mBitmapDust3);
+        BitmapUtils.recycleBitmap(this.mBitmapDust4);
+        BitmapUtils.recycleBitmap(this.mBitmapDust5);
+        BitmapUtils.recycleBitmap(this.mDateFontBitmap);
+        BitmapUtils.recycleBitmap(this.mBitmapCamera);
+        BitmapUtils.recycleBitmap(this.forFilterBitmap);
     }
 
     public void onEventMainThread(RecyclePicModelEvent event) {
@@ -11560,80 +11876,80 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void refreshTransform() {
         runOnUiThread(new Runnable() {
             public void run() {
-                if (!FilterActivity.this.mSurfaceView.isStabilizerEnabled()) {
-                    FilterActivity.this.filter_stablize_rl.setAlpha(0.4f);
-                    FilterActivity.this.filter_stablize_iv.setImageResource(2130838034);
-                } else if (FilterActivity.this.transformsStraight == null || FilterActivity.this.transformsStraight.length < FilterActivity.this.transformNeedCount) {
-                    FilterActivity.this.filter_stablize_rl.setAlpha(0.4f);
-                    FilterActivity.this.filter_stablize_iv.setImageResource(2130838035);
-                    FilterActivity.this.filter_stablize_iv.setVisibility(8);
-                    FilterActivity.this.filter_stablize_cpb.setVisibility(0);
+                if (!mSurfaceView.isStabilizerEnabled()) {
+                    filter_stablize_rl.setAlpha(0.4f);
+                    filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_off);
+                } else if (transformsStraight == null || transformsStraight.length < transformNeedCount) {
+                    filter_stablize_rl.setAlpha(0.4f);
+                    filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_on);
+                    filter_stablize_iv.setVisibility(View.GONE);
+                    filter_stablize_cpb.setVisibility(View.VISIBLE);
                 } else {
-                    FilterActivity.this.filter_stablize_rl.setAlpha(1.0f);
-                    FilterActivity.this.filter_stablize_iv.setImageResource(2130838035);
-                    FilterActivity.this.filter_stablize_iv.setVisibility(0);
-                    FilterActivity.this.filter_stablize_cpb.setVisibility(8);
+                    filter_stablize_rl.setAlpha(1.0f);
+                    filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_on);
+                    filter_stablize_iv.setVisibility(View.VISIBLE);
+                    filter_stablize_cpb.setVisibility(View.GONE);
                 }
             }
         });
         new Thread() {
             public synchronized void run() {
-                if (FilterActivity.this.mVideoFrames == null) {
-                    LogUtil.d(FilterActivity.TAG, "refreshTransform : slidelevel=" + FilterActivity.this.slideLevel);
-                    if (FilterActivity.this.lastSlideLevel == FilterActivity.this.slideLevel) {
+                if (mVideoFrames == null) {
+                    LogUtil.d(FilterActivity.TAG, "refreshTransform : slidelevel=" + slideLevel);
+                    if (lastSlideLevel == slideLevel) {
                         LogUtil.d(FilterActivity.TAG, "refreshTransform : return");
-                    } else if (FilterActivity.this.mVideoFrames != null) {
+                    } else if (mVideoFrames != null) {
                         int i;
-                        synchronized (FilterActivity.this.mVideoFrames) {
+                        synchronized (mVideoFrames) {
                             int[] frames = new int[10];
                             int flag = 0;
-                            for (int i2 = FilterActivity.this.slideLevel; i2 < FilterActivity.this.slideLevel + 10; i2++) {
+                            for (int i2 = slideLevel; i2 < slideLevel + 10; i2++) {
                                 if (flag <= 5) {
-                                    frames[Math.max(i2 - FilterActivity.this.slideLevel, 0)] = i2;
+                                    frames[Math.max(i2 - slideLevel, 0)] = i2;
                                 } else {
-                                    frames[Math.max(i2 - FilterActivity.this.slideLevel, 0)] = (FilterActivity.this.slideLevel + 10) - flag;
+                                    frames[Math.max(i2 - slideLevel, 0)] = (slideLevel + 10) - flag;
                                 }
                                 flag++;
                             }
-                            FilterActivity.this.transformsLooped = null;
-                            FilterActivity.this.transformsLooped = FilterActivity.this.getTransforms(frames);
+                            transformsLooped = null;
+                            transformsLooped = getTransforms(frames);
                         }
-                        LogUtil.d(FilterActivity.TAG, "refreshTransform : refreshed transformsLooped=" + FilterActivity.this.transformsLooped);
-                        if (FilterActivity.this.transformsLooped != null) {
-                            Transform[] access$20200;
-                            FilterView filterView = FilterActivity.this.mSurfaceView;
-                            if (FilterActivity.this.mVideoFrames.mIsLooped) {
-                                access$20200 = FilterActivity.this.transformsLooped;
+                        LogUtil.d(FilterActivity.TAG, "refreshTransform : refreshed transformsLooped=" + transformsLooped);
+                        if (transformsLooped != null) {
+                            VidStabilizer.Transform[] access$20200;
+                            FilterView filterView = mSurfaceView;
+                            if (mVideoFrames.mIsLooped) {
+                                access$20200 = transformsLooped;
                             } else {
-                                access$20200 = FilterActivity.this.transformsStraight;
+                                access$20200 = transformsStraight;
                             }
                             filterView.setTransforms(access$20200);
                         }
                         FilterActivity filterActivity = FilterActivity.this;
-                        if (FilterActivity.this.transformsLooped == null) {
+                        if (transformsLooped == null) {
                             i = -2;
                         } else {
-                            i = FilterActivity.this.slideLevel;
+                            i = slideLevel;
                         }
                         filterActivity.lastSlideLevel = i;
-                        if (FilterActivity.this.transformsLooped != null && FilterActivity.this.mSurfaceView.isStabilizerEnabled()) {
-                            FilterActivity.this.mHandler.post(new Runnable() {
+                        if (transformsLooped != null && mSurfaceView.isStabilizerEnabled()) {
+                            mHandler.post(new Runnable() {
                                 public void run() {
-                                    FilterActivity.this.filter_stablize_iv.setVisibility(0);
-                                    FilterActivity.this.filter_stablize_iv.setImageResource(2130838035);
-                                    FilterActivity.this.filter_stablize_cpb.setVisibility(8);
-                                    FilterActivity.this.filter_stablize_rl.setAlpha(1.0f);
+                                    filter_stablize_iv.setVisibility(View.VISIBLE);
+                                    filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_on);
+                                    filter_stablize_cpb.setVisibility(View.GONE);
+                                    filter_stablize_rl.setAlpha(1.0f);
                                 }
                             });
                         }
                     }
                 } else {
-                    if (FilterActivity.this.transformsStraight == null || FilterActivity.this.transformsStraight.length < FilterActivity.this.mFrameCount) {
-                        FilterActivity.this.mSurfaceView.setTransforms(null);
+                    if (transformsStraight == null || transformsStraight.length < mFrameCount) {
+                        mSurfaceView.setTransforms(null);
                     } else {
-                        FilterActivity.this.mSurfaceView.setTransforms(FilterActivity.this.transformsStraight);
+                        mSurfaceView.setTransforms(transformsStraight);
                     }
-                    FilterActivity.this.setNormalFilter();
+                    setNormalFilter();
                 }
             }
         }.start();
@@ -11647,23 +11963,23 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 LogUtil.d(TAG, "refreshTransform  2" + progress);
                 if (this.mSurfaceView.isStabilizerEnabled()) {
                     LogUtil.d(TAG, "refreshTransform  3" + progress);
-                    this.filter_stablize_iv.setVisibility(8);
-                    this.filter_stablize_iv.setImageResource(2130838035);
-                    this.filter_stablize_cpb.setVisibility(0);
+                    this.filter_stablize_iv.setVisibility(View.GONE);
+                    this.filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_on);
+                    this.filter_stablize_cpb.setVisibility(View.VISIBLE);
                     this.filter_stablize_rl.setAlpha(0.4f);
                     return;
                 }
                 LogUtil.d(TAG, "refreshTransform  4" + progress);
-                this.filter_stablize_iv.setVisibility(0);
-                this.filter_stablize_iv.setImageResource(2130838034);
-                this.filter_stablize_cpb.setVisibility(8);
+                this.filter_stablize_iv.setVisibility(View.VISIBLE);
+                this.filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_off);
+                this.filter_stablize_cpb.setVisibility(View.GONE);
                 this.filter_stablize_rl.setAlpha(0.4f);
                 return;
             }
             LogUtil.d(TAG, "refreshTransform  1");
-            this.filter_stablize_iv.setVisibility(0);
-            this.filter_stablize_iv.setImageResource(2130838035);
-            this.filter_stablize_cpb.setVisibility(8);
+            this.filter_stablize_iv.setVisibility(View.VISIBLE);
+            this.filter_stablize_iv.setImageResource(R.drawable.icon_25_stable_on);
+            this.filter_stablize_cpb.setVisibility(View.GONE);
             this.filter_stablize_rl.setAlpha(1.0f);
             refreshTransform();
         }
@@ -11674,14 +11990,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void onEventMainThread(EnterCollectedModeEvent event) {
-        if (this.filter_tab_like_filter_ll.getVisibility() != 0) {
+        if (this.filter_tab_like_filter_ll.getVisibility() != View.VISIBLE) {
             alphaEnterAndExit(this.filter_tab_like_filter_ll, this.filter_tab_ll);
         }
     }
 
     public void onEventMainThread(CollectFilterEvent event) {
         if (event.position == 0) {
-            IntentUtil.toOrderFilterActivity(this, this.collectFilter);
+            //IntentUtil.toOrderFilterActivity(this, this.collectFilter);
+            Toast.makeText(getActivity(),"go to OrderFilterActivity",Toast.LENGTH_LONG).show();
         } else {
             addOrRemoveCollectFilterInfo(event.filterInfo, event.position);
         }
@@ -11700,7 +12017,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         int lastPosVisible = this.mFilterListLayoutManager.findLastVisibleItemPosition();
         if (currentFilterInfo != null && currentFilterInfo.isCollected) {
             for (i = firstPosVisible; i <= lastPosVisible; i++) {
-                filterInfo = (FilterInfo) this.filterAdapter.getInfos().get(i);
+                filterInfo = this.filterAdapter.getInfos().get(i);
                 boolean abc = (filterInfo == null || filterInfo.name_en == null) ? false : true;
                 if (abc && filterInfo.isCollected && FilterAdapter.GROUP_COLLECT.equals(filterInfo.group) && filterInfo.name_en.equals(currentFilterInfo.name_en)) {
                     isNeedAnimator = true;
@@ -11709,7 +12026,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
         } else {
             for (i = firstPosVisible; i <= lastPosVisible; i++) {
-                filterInfo = (FilterInfo) this.filterAdapter.getInfos().get(i);
+                filterInfo = this.filterAdapter.getInfos().get(i);
                 if (filterInfo.isCollected && FilterAdapter.GROUP_COLLECT.equals(filterInfo.group)) {
                     isNeedAnimator = true;
                     break;
@@ -11717,13 +12034,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
         }
         int firstPos = firstPosVisible + 3;
-        int left = this.mFilterListLayoutManager.findViewByPosition(firstPos).getLeft();
+        final int left = this.mFilterListLayoutManager.findViewByPosition(firstPos).getLeft();
         FilterInfo filterInfo1;
         if (currentFilterInfo == null || currentFilterInfo.isCollected) {
             i = 0;
             while (i < this.collectFilter.size()) {
-                boolean nameChsNotNull = ((FilterInfo) this.collectFilter.get(i)).name_chs != null;
-                if (currentFilterInfo != null && nameChsNotNull && ((FilterInfo) this.collectFilter.get(i)).name_chs.equalsIgnoreCase(currentFilterInfo.name_chs)) {
+                boolean nameChsNotNull = this.collectFilter.get(i).name_chs != null;
+                if (currentFilterInfo != null && nameChsNotNull && this.collectFilter.get(i).name_chs.equalsIgnoreCase(currentFilterInfo.name_chs)) {
                     hasCollect = true;
                     break;
                 }
@@ -11738,9 +12055,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     firstPos--;
                     notifyCount = 2;
                     this.filterAdapter.getInfos().remove(this.filterAdapter.getNoneFilterIndex() + 1);
-                    filterInfo = (FilterInfo) this.filterAdapter.getInfos().remove(this.filterAdapter.getNoneFilterIndex() + 1);
+                    filterInfo = this.filterAdapter.getInfos().remove(this.filterAdapter.getNoneFilterIndex() + 1);
                     for (i = 0; i < this.filterAdapter.getInfos().size(); i++) {
-                        filterInfo1 = (FilterInfo) this.filterAdapter.getInfos().get(i);
+                        filterInfo1 = this.filterAdapter.getInfos().get(i);
                         if (filterInfo1.name_en != null && filterInfo1.name_en.equals(filterInfo.name_en)) {
                             filterInfo1.isCollected = false;
                             FilterAdapter.GROUP_COLLECT_POSITION = -1;
@@ -11752,7 +12069,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     notifyCount = 1;
                     position--;
                     for (i = this.filterAdapter.getNoneFilterIndex() + 2; i < this.filterAdapter.getInfos().size(); i++) {
-                        filterInfo1 = (FilterInfo) this.filterAdapter.getInfos().get(i);
+                        filterInfo1 = this.filterAdapter.getInfos().get(i);
                         if (filterInfo1.name_en != null && filterInfo1.name_en.equals(currentFilterInfo.name_en)) {
                             insertOrRemovePos = i;
                             break;
@@ -11760,14 +12077,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     }
                     upDateFilters();
                     for (i = 0; i < this.collectFilter.size(); i++) {
-                        filterInfo = (FilterInfo) this.collectFilter.get(i);
+                        filterInfo = this.collectFilter.get(i);
                         if ((filterInfo.name_en != null) && filterInfo.name_en.equals(currentFilterInfo.name_en)) {
                             this.collectFilter.remove(filterInfo);
                             break;
                         }
                     }
                     for (i = 0; i < this.filterAdapter.getInfos().size(); i++) {
-                        filterInfo1 = (FilterInfo) this.filterAdapter.getInfos().get(i);
+                        filterInfo1 = this.filterAdapter.getInfos().get(i);
                         if ((filterInfo1.name_en != null) && filterInfo1.name_en.equals(currentFilterInfo.name_en)) {
                             filterInfo1.isCollected = false;
                             break;
@@ -11782,7 +12099,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         i = 0;
         while (i < this.collectFilter.size()) {
-            if ((((FilterInfo) this.collectFilter.get(i)).name_en != null) && ((FilterInfo) this.collectFilter.get(i)).name_en.equalsIgnoreCase(currentFilterInfo.name_en)) {
+            if ((this.collectFilter.get(i).name_en != null) && this.collectFilter.get(i).name_en.equalsIgnoreCase(currentFilterInfo.name_en)) {
                 hasCollect = true;
                 break;
             }
@@ -11790,16 +12107,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         if (!hasCollect && this.mFilterInfos != null) {
             isRemove = false;
-            if (!getResources().getString(2131296406).equals(((FilterInfo) this.filterAdapter.getInfos().get(this.filterAdapter.getNoneFilterIndex() + 1)).name_en)) {
+            if (!getResources().getString(R.string.BUTTON_FAV_PRESETS).equals(((FilterInfo) this.filterAdapter.getInfos().get(this.filterAdapter.getNoneFilterIndex() + 1)).name_en)) {
                 filterInfo = new FilterInfo(FilterAdapter.GROUP_COLLECT);
                 if (firstPosVisible <= 1) {
                     isNeedAnimator = true;
                 }
                 isFirstCollect = true;
-                filterInfo.name_chs = getResources().getString(2131296406);
-                filterInfo.name_cht = getResources().getString(2131296406);
+                filterInfo.name_chs = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+                filterInfo.name_cht = getResources().getString(R.string.BUTTON_FAV_PRESETS);
                 notifyCount = 0 + 1;
-                filterInfo.name_en = getResources().getString(2131296406);
+                filterInfo.name_en = getResources().getString(R.string.BUTTON_FAV_PRESETS);
                 this.filterAdapter.getInfos().add(this.filterAdapter.getNoneFilterIndex() + 1, filterInfo);
                 firstPos++;
                 this.filterAdapter.addOrReducePosition(1);
@@ -11815,18 +12132,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             filterInfo.isGroup = false;
             filterInfo.selected = false;
             filterInfo.isCollected = true;
-            filterInfo.groupNameChs = getResources().getString(2131296406);
-            filterInfo.groupNameCht = getResources().getString(2131296406);
-            filterInfo.groupNameEn = getResources().getString(2131296406);
+            filterInfo.groupNameChs = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+            filterInfo.groupNameCht = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+            filterInfo.groupNameEn = getResources().getString(R.string.BUTTON_FAV_PRESETS);
             for (i = 0; i < this.filterAdapter.getInfos().size(); i++) {
-                filterInfo1 = (FilterInfo) this.filterAdapter.getInfos().get(i);
+                filterInfo1 = this.filterAdapter.getInfos().get(i);
                 if (filterInfo1.name_en != null && filterInfo1.name_en.equals(filterInfo.name_en)) {
                     filterInfo1.isCollected = true;
                     break;
                 }
             }
             for (i = this.filterAdapter.getNoneFilterIndex() + 2; i < this.filterAdapter.getInfos().size(); i++) {
-                if (!((FilterInfo) this.filterAdapter.getInfos().get(i)).isCollected) {
+                if (!this.filterAdapter.getInfos().get(i).isCollected) {
                     insertOrRemovePos = i;
                     break;
                 }
@@ -11851,10 +12168,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
         } else if (!hasConstains) {
             filterInfo = new FilterInfo(FilterAdapter.GROUP_COLLECT);
-            filterInfo.name_chs = getResources().getString(2131296406);
-            filterInfo.name_cht = getResources().getString(2131296406);
+            filterInfo.name_chs = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+            filterInfo.name_cht = getResources().getString(R.string.BUTTON_FAV_PRESETS);
             filterInfo.filter_id = -10001;
-            filterInfo.name_en = getResources().getString(2131296406);
+            filterInfo.name_en = getResources().getString(R.string.BUTTON_FAV_PRESETS);
             filterInfo.filename = FilterAdapter.GROUP_COLLECT;
             this.mFilterGroupNames.add(1, filterInfo);
             selectPosition = this.filterGroupNameAdapter.getSelectPosition();
@@ -11866,13 +12183,20 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (!isNeedAnimator) {
             this.filter_filter_root_rl.destroyDrawingCache();
             this.filter_filter_root_rl.setDrawingCacheEnabled(true);
-            this.filter_filter_root_rl.setDrawingCacheQuality(1048576);
+            this.filter_filter_root_rl.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
             this.iv_recyclerview_cache.setImageBitmap(this.filter_filter_root_rl.getDrawingCache(false));
-            this.iv_recyclerview_cache.setVisibility(0);
-            this.filter_filter_root_rl.setVisibility(4);
+            this.iv_recyclerview_cache.setVisibility(View.VISIBLE);
+            this.filter_filter_root_rl.setVisibility(View.INVISIBLE);
             this.filterAdapter.notifyDataSetChanged();
             int left2 = this.mFilterListLayoutManager.findViewByPosition(firstPos).getLeft();
-            this.iv_recyclerview_cache.post(44.lambdaFactory$(this, firstPos, left));
+            //this.iv_recyclerview_cache.post(44.lambdaFactory$(this, firstPos, left));
+            final int finalFirstPos = firstPos;
+            iv_recyclerview_cache.post(new Runnable() {
+                @Override
+                public void run() {
+                    lambda$addOrRemoveCollectFilterInfo$43(finalFirstPos,left);
+                }
+            });
         } else if (isRemove) {
             this.filterAdapter.notifyItemRangeRemoved(insertOrRemovePos, notifyCount);
             this.filterAdapter.notifyItemRangeChanged(insertOrRemovePos, this.filterAdapter.getInfos().size());
@@ -11887,18 +12211,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private /* synthetic */ void lambda$addOrRemoveCollectFilterInfo$43(int pos, int left) {
         this.filter_list_recyclerview.scrollBy(this.mFilterListLayoutManager.findViewByPosition(pos).getLeft() - left, 0);
-        this.filter_filter_root_rl.setVisibility(0);
-        this.iv_recyclerview_cache.setVisibility(4);
+        this.filter_filter_root_rl.setVisibility(View.VISIBLE);
+        this.iv_recyclerview_cache.setVisibility(View.INVISIBLE);
         this.iv_recyclerview_cache.setImageBitmap(null);
     }
 
     private boolean filterGroupConstainsFavorite() {
-        String pavoriteString = getString(2131296406);
+        String pavoriteString = getString(R.string.BUTTON_FAV_PRESETS);
         int size = this.mFilterGroupNames.size();
         for (int i = 0; i < size; i++) {
             boolean nameEnNotNull;
             boolean nameChsNotNull;
-            FilterInfo info = (FilterInfo) this.mFilterGroupNames.get(i);
+            FilterInfo info = this.mFilterGroupNames.get(i);
             if (info.name_en != null) {
                 nameEnNotNull = true;
             } else {
@@ -11922,7 +12246,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void upDateFilters() {
         int i = 0;
         while (i < this.filterAdapter.getInfos().size()) {
-            FilterInfo filterInfo1 = (FilterInfo) this.filterAdapter.getInfos().get(i);
+            FilterInfo filterInfo1 = this.filterAdapter.getInfos().get(i);
             if (!filterInfo1.isGroup && FilterAdapter.GROUP_COLLECT.equals(filterInfo1.group)) {
                 this.mFilterInfos.remove(i);
                 i--;
@@ -11931,8 +12255,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void saveCollectedFilters(boolean isExit) {
-        new Thread(45.lambdaFactory$(this, isExit)).start();
+    private void saveCollectedFilters(final boolean isExit) {
+        //new Thread(45.lambdaFactory$(this, isExit)).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                lambda$saveCollectedFilters$44(isExit);
+            }
+        });
     }
 
     private /* synthetic */ void lambda$saveCollectedFilters$44(boolean isExit) {
@@ -11963,9 +12293,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 filterInfo1.originalGroupEn = filterInfo.originalGroupEn;
                 filterInfo1.originalGroupCht = filterInfo.originalGroupCht;
                 filterInfo1.originalGroupChs = filterInfo.originalGroupChs;
-                filterInfo1.groupNameChs = getResources().getString(2131296406);
-                filterInfo1.groupNameCht = getResources().getString(2131296406);
-                filterInfo1.groupNameEn = getResources().getString(2131296406);
+                filterInfo1.groupNameChs = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+                filterInfo1.groupNameCht = getResources().getString(R.string.BUTTON_FAV_PRESETS);
+                filterInfo1.groupNameEn = getResources().getString(R.string.BUTTON_FAV_PRESETS);
                 filterInfos.add(filterInfo1);
             }
             s = JsonParserUtil.fromList(filterInfos, null);
@@ -12013,8 +12343,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
         } else if (!localHasThisFilterGroup(filters_id)) {
             boolean isDownloading = false;
-            boolean lastItemDownloading = ((FilterInfo) this.mFilterInfos.get(this.mFilterInfos.size() - 1)).isDownloading;
-            boolean preLastDownloading = ((FilterInfo) this.mFilterInfos.get(this.mFilterInfos.size() - 2)).isDownloading;
+            boolean lastItemDownloading = this.mFilterInfos.get(this.mFilterInfos.size() - 1).isDownloading;
+            boolean preLastDownloading = this.mFilterInfos.get(this.mFilterInfos.size() - 2).isDownloading;
             if (lastItemDownloading || preLastDownloading) {
                 isDownloading = true;
             }
@@ -12025,7 +12355,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private int getInsertPos() {
-        if (((FilterInfo) this.mFilterInfos.get(this.mFilterInfos.size() - 1)).isDownloading) {
+        if (this.mFilterInfos.get(this.mFilterInfos.size() - 1).isDownloading) {
             return 1;
         }
         return 0;
@@ -12034,18 +12364,24 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void refreshFiltersBitmap(final int startPos, final int end) {
         new Thread() {
             public void run() {
-                EGL10Helper.withContext("wc", FilterActivity$66$.Lambda.1.lambdaFactory$(this, startPos, end));
+                //EGL10Helper.withContext("wc", FilterActivity$66$.Lambda.1.lambdaFactory$(this, startPos, end));
+                EGL10Helper.withContext("wc", new EGLRunnableVoid() {
+                    @Override
+                    public void run(EGL10Helper eGL10Helper) {
+                        lambda$run$0(startPos,end,eGL10Helper);
+                    }
+                });
             }
 
             private /* synthetic */ void lambda$run$0(int startPos, int end, EGL10Helper egl) {
-                FilterActivity.this.forFilterBitmap = FileUtil.getFilterPreview();
+                forFilterBitmap = FileUtil.getFilterPreview();
                 EGLSurface surface = null;
-                if (!(FilterActivity.this.forFilterBitmap == null || FilterActivity.this.forFilterBitmap.isRecycled())) {
-                    surface = egl.createPBuffer(FilterActivity.this.forFilterBitmap.getWidth(), FilterActivity.this.forFilterBitmap.getHeight());
+                if (!(forFilterBitmap == null || forFilterBitmap.isRecycled())) {
+                    surface = egl.createPBuffer(forFilterBitmap.getWidth(), forFilterBitmap.getHeight());
                     egl.makeCurrent(surface);
                 }
-                FilterActivity.this.generatePreviewBitmaps(FilterActivity.this.forFilterBitmap, startPos, end, 0);
-                BitmapUtil.recycleBitmap(FilterActivity.this.forFilterBitmap);
+                generatePreviewBitmaps(forFilterBitmap, startPos, end, 0);
+                BitmapUtils.recycleBitmap(forFilterBitmap);
                 if (surface != null) {
                     egl.destroySurface(surface);
                 }
@@ -12054,7 +12390,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void removeLoadingFilterItem() {
-        FilterInfo filterInfo = (FilterInfo) this.mFilterInfos.get(this.mFilterInfos.size() - 1);
+        FilterInfo filterInfo = this.mFilterInfos.get(this.mFilterInfos.size() - 1);
         if (filterInfo.isDownloading) {
             this.mFilterInfos.remove(filterInfo);
         }
@@ -12062,7 +12398,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void addLoadingFilterItem() {
-        if (!((FilterInfo) this.mFilterInfos.get(this.mFilterInfos.size() - 1)).isDownloading) {
+        if (!this.mFilterInfos.get(this.mFilterInfos.size() - 1).isDownloading) {
             FilterInfo filterInfo = new FilterInfo("");
             filterInfo.isDownloading = true;
             this.mFilterInfos.add(filterInfo);
@@ -12080,7 +12416,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         return false;
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(RefreshFilterSortEvent event) {
         if (event.isNeedRefresh) {
             List<FilterInfo> orderedCollectedList = event.orderedCollectedList;
@@ -12119,9 +12455,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.filter_group_name_rv.scrollToPosition(newSelect);
                 this.filter_group_name_rv.post(new Runnable() {
                     public void run() {
-                        android.view.View viewByPosition = FilterActivity.this.mFilterGroupNameManager.findViewByPosition(newSelect);
+                        android.view.View viewByPosition = mFilterGroupNameManager.findViewByPosition(newSelect);
                         if (viewByPosition != null) {
-                            FilterActivity.this.filter_group_name_rv.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (FilterActivity.this.metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
+                            filter_group_name_rv.smoothScrollBy(viewByPosition.getLeft() - ((int) (((float) (metricsWidth - viewByPosition.getWidth())) / 2.0f)), 0);
                         }
                     }
                 });
@@ -12140,7 +12476,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.filterAdapter.notifyDataSetChanged();
         }
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DeleteDownloadFilterEvent event) {
         FilterInfo removGroup = event.removGroup;
         if (App.mFilterInfos != null) {
@@ -12191,7 +12527,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void addOrRemoveSortItem() {
-        if (App.isLogin()) {
+//        if (App.isLogin()) {
             if (App.mFilterInfos.size() == 0) {
                 if (this.mFilterInfos.size() > 1 && ((FilterInfo) this.mFilterInfos.get(1)).type == 5) {
                     this.mFilterInfos.remove(1);
@@ -12202,9 +12538,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.mFilterInfos.add(1, filterInfo);
             }
             this.filterAdapter.notifyDataSetChanged();
-        } else if (this.mFilterInfos.size() > 1 && ((FilterInfo) this.mFilterInfos.get(1)).type == 5) {
-            this.mFilterInfos.remove(1);
-        }
+//        } else if (this.mFilterInfos.size() > 1 && ((FilterInfo) this.mFilterInfos.get(1)).type == 5) {
+//            this.mFilterInfos.remove(1);
+//        }
     }
 
     private void changeTextModelsSize(boolean change) {
@@ -12218,12 +12554,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void setFilterViewAnim(EffectType effectType, List<FilterEffectBean> list) {
+    private void setFilterViewAnim(FilterEffectManager.EffectType effectType, List<FilterEffectBean> list) {
         this.lastProgressValue = -1.0f;
         FilterEffectBean bean = this.mFilterEffectManager.getFilterEffectBeanByEffectType(list, effectType);
         if (this.currentEffectType == effectType) {
             LogUtil.d("setProAndInvalidate", "currentEffectType : " + this.currentEffectType);
-            if (this.filter_custom_sk != null && this.filter_custom_sk.getVisibility() == 0) {
+            if (this.filter_custom_sk != null && this.filter_custom_sk.getVisibility() == View.VISIBLE) {
                 this.filter_custom_sk.setProAndInvalidate((int) bean.value[1]);
             }
         }
@@ -12281,8 +12617,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setFilterIconProgress(this.filter_effect_vignette, bean);
                 return;
             case LEAK:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 setViewColor(this.filter_effect_leak, this.mFilterEffectManager.setSelectEffect(bean));
                 setFilterIconProgress(this.filter_effect_leak, bean);
@@ -12297,13 +12633,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     setViewColor(this.filter_effect_date, true);
                     return;
                 }
-                this.currentEffectType = EffectType.NONE;
+                this.currentEffectType = FilterEffectManager.EffectType.NONE;
                 this.filter_effect_date.setProgressValue(StaticLayoutUtil.DefaultSpacingadd);
                 setViewColor(this.filter_effect_date, false);
                 return;
             case DUST:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 setViewColor(this.filter_effect_dust, this.mFilterEffectManager.setSelectEffect(bean));
                 setFilterIconProgress(this.filter_effect_dust, bean);
@@ -12322,12 +12658,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void setFilterViewAnim(EffectType effectType, boolean fromUndo) {
+    private void setFilterViewAnim(FilterEffectManager.EffectType effectType, boolean fromUndo) {
         this.lastProgressValue = -1.0f;
         FilterEffectBean bean = this.mFilterEffectManager.getCurrentListItem(effectType);
         if (this.currentEffectType == effectType) {
             LogUtil.d("setProAndInvalidate", "currentEffectType : " + this.currentEffectType);
-            if (!(this.filter_custom_sk == null || this.filter_custom_sk.getVisibility() != 0 || bean == null)) {
+            if (!(this.filter_custom_sk == null || this.filter_custom_sk.getVisibility() != View.VISIBLE || bean == null)) {
                 this.filter_custom_sk.setProAndInvalidate((int) bean.value[1]);
             }
         }
@@ -12385,8 +12721,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setFilterIconProgress(this.filter_effect_vignette, bean);
                 return;
             case LEAK:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 setViewColor(this.filter_effect_leak, this.mFilterEffectManager.setSelectEffect(bean));
                 setFilterIconProgress(this.filter_effect_leak, bean);
@@ -12401,13 +12737,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     setViewColor(this.filter_effect_date, true);
                     return;
                 }
-                this.currentEffectType = EffectType.NONE;
+                this.currentEffectType = FilterEffectManager.EffectType.NONE;
                 this.filter_effect_date.setProgressValue(StaticLayoutUtil.DefaultSpacingadd);
                 setViewColor(this.filter_effect_date, false);
                 return;
             case DUST:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 setViewColor(this.filter_effect_dust, this.mFilterEffectManager.setSelectEffect(bean));
                 setFilterIconProgress(this.filter_effect_dust, bean);
@@ -12428,11 +12764,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void onConfirmPress(EffectType effectType) {
+    private void onConfirmPress(FilterEffectManager.EffectType effectType) {
         FilterEffectBean bean;
         restoreSaveAndBack();
         this.lastProgressValue = -1.0f;
-        if (this.filter_effect_date != null && this.filter_effect_date.getVisibility() == 0 && effectType == EffectType.DATE) {
+        if (this.filter_effect_date != null && this.filter_effect_date.getVisibility() == View.VISIBLE && effectType == FilterEffectManager.EffectType.DATE) {
             FilterEffectManager filterEffectManager = this.mFilterEffectManager;
             float[] fArr = new float[2];
             fArr[0] = StaticLayoutUtil.DefaultSpacingadd;
@@ -12443,11 +12779,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             bean = this.mFilterEffectManager.createBean(effectType, new float[]{this.filter_custom_sk.getMin(), this.filter_custom_sk.getProgressFloat(), this.filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
             this.mFilterEffectManager.setSelectEffect(bean);
         }
-        if (!(effectType == EffectType.STRENGTH || effectType == EffectType.DATE)) {
+        if (!(effectType == FilterEffectManager.EffectType.STRENGTH || effectType == FilterEffectManager.EffectType.DATE)) {
             alphaEnterAndExit(this.filter_tab_ll, this.filter_tab_choose_ll, new AnimatorEndListener() {
                 public void onAnimationEnd(Animator animation) {
-                    FilterActivity.this.filter_tab_ll.setVisibility(0);
-                    FilterActivity.this.filter_tab_choose_confirm.setEnabled(true);
+                    filter_tab_ll.setVisibility(View.VISIBLE);
+                    filter_tab_choose_confirm.setEnabled(true);
                 }
             });
             setFilterEffectGone();
@@ -12495,15 +12831,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setFilterIconProgress(this.filter_effect_saturation, bean);
                 return;
             case ROTATE:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_rotation_rotate90.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_rotation_rotate90.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
-                this.filter_crop_ccav.setVisibility(8);
+                this.filter_crop_ccav.setVisibility(View.GONE);
                 bean.selectPosition = new float[]{(float) this.rotate_but};
-                this.filter_crop_ccav.setVisibility(8);
+                this.filter_crop_ccav.setVisibility(View.GONE);
                 selectPosition = bean.selectPosition[0];
-                hBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL);
-                vBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL);
+                hBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL);
+                vBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL);
                 float hValue = hBean.value[1];
                 float vValue = vBean.value[1];
                 if (selectPosition == 90.0f || selectPosition == 270.0f) {
@@ -12524,7 +12860,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setFilterIconProgress(this.filter_effect_contrast, bean);
                 return;
             case MIRROR:
-                this.mirror_seek_bar.setVisibility(8);
+                this.mirror_seek_bar.setVisibility(View.GONE);
                 bean.selectPosition = new float[]{(float) this.mirror_seek_bar.getProgress()};
                 for (i = 0; i < this.mFilterEffectDetailSets.size(); i++) {
                     if (((FilterEffectSetRelativeLayout) this.mFilterEffectDetailSets.get(i)).getIsSelect()) {
@@ -12540,14 +12876,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     return;
                 }
             case HORIZONTAL:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_crop_ccav.setVisibility(8);
-                this.filter_crop_ccav.setVisibility(8);
-                selectPosition = this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                selectPosition = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                 if (selectPosition == 90.0f || selectPosition == 270.0f) {
-                    vBean = this.mFilterEffectManager.createBean(EffectType.VERTICAL, new float[]{this.filter_custom_sk.getMin(), this.filter_custom_sk.getProgressFloat(), this.filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
+                    vBean = this.mFilterEffectManager.createBean(FilterEffectManager.EffectType.VERTICAL, new float[]{this.filter_custom_sk.getMin(), this.filter_custom_sk.getProgressFloat(), this.filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
                     this.mFilterEffectManager.setSelectEffect(vBean);
-                    hBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL);
+                    hBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL);
                     setViewColor(this.filter_effect_vertical, hBean.value[1] != StaticLayoutUtil.DefaultSpacingadd);
                     setViewColor(this.filter_effect_horizontal, vBean.value[1] != StaticLayoutUtil.DefaultSpacingadd);
                     setFilterIconProgress(this.filter_effect_vertical, hBean);
@@ -12558,14 +12894,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setFilterIconProgress(this.filter_effect_horizontal, bean);
                 return;
             case VERTICAL:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_crop_ccav.setVisibility(8);
-                this.filter_crop_ccav.setVisibility(8);
-                selectPosition = this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                selectPosition = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                 if (selectPosition == 90.0f || selectPosition == 270.0f) {
-                    hBean = this.mFilterEffectManager.createBean(EffectType.HORIZONTAL, new float[]{this.filter_custom_sk.getMin(), this.filter_custom_sk.getProgressFloat(), this.filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
+                    hBean = this.mFilterEffectManager.createBean(FilterEffectManager.EffectType.HORIZONTAL, new float[]{this.filter_custom_sk.getMin(), this.filter_custom_sk.getProgressFloat(), this.filter_custom_sk.getMax()}, new float[]{StaticLayoutUtil.DefaultSpacingadd});
                     this.mFilterEffectManager.setSelectEffect(hBean);
-                    vBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL);
+                    vBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL);
                     setViewColor(this.filter_effect_vertical, hBean.value[1] != StaticLayoutUtil.DefaultSpacingadd);
                     setViewColor(this.filter_effect_horizontal, vBean.value[1] != StaticLayoutUtil.DefaultSpacingadd);
                     setFilterIconProgress(this.filter_effect_vertical, hBean);
@@ -12588,8 +12924,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 setFilterIconProgress(this.filter_effect_vignette, bean);
                 return;
             case LEAK:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 for (i = 0; i < 4; i++) {
                     if (((ImageView) this.filterEffectLeakList.get(i)).getAlpha() == 1.0f) {
@@ -12614,13 +12950,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     setViewColor(this.filter_effect_date, true);
                     return;
                 }
-                this.currentEffectType = EffectType.NONE;
+                this.currentEffectType = FilterEffectManager.EffectType.NONE;
                 this.filter_effect_date.setProgressValue(StaticLayoutUtil.DefaultSpacingadd);
                 setViewColor(this.filter_effect_date, false);
                 return;
             case DUST:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 for (i = 0; i < this.filterEffectLeakList.size(); i++) {
                     if (((ImageView) this.filterEffectLeakList.get(i)).getAlpha() == 1.0f) {
@@ -12643,8 +12979,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 alphaStrengthEnterAndExit(this.filter_tab_ll, this.filter_tab_choose_ll, false);
                 alphaEnterAndExit(this.filter_filter_root_rl, this.filter_rule_ll, new AnimatorEndListener() {
                     public void onAnimationEnd(Animator animation) {
-                        FilterActivity.this.filter_filter_root_rl.setVisibility(0);
-                        FilterActivity.this.filter_tab_choose_confirm.setEnabled(true);
+                        filter_filter_root_rl.setVisibility(View.VISIBLE);
+                        filter_tab_choose_confirm.setEnabled(true);
                     }
                 });
                 this.mFilterEffectManager.setSelectEffect(bean);
@@ -12671,7 +13007,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             float currentValue = view.getProgressValue() * ((float) view.getDefaultMultiplier());
             final float targetValue = bean.value[1];
             LogUtil.d("setFilterIconProgress", String.format("effectType :  %s ,  currentValue : %s , targetValue : %s ", new Object[]{bean.effectType, Float.valueOf(currentValue), Float.valueOf(targetValue)}));
-            if (EffectType.ROTATE == bean.effectType) {
+            if (FilterEffectManager.EffectType.ROTATE == bean.effectType) {
                 float select = bean.selectPosition[0];
                 float value = bean.value[1];
                 if (select == StaticLayoutUtil.DefaultSpacingadd && value == StaticLayoutUtil.DefaultSpacingadd) {
@@ -12721,10 +13057,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private boolean checkHasCropAndFixFilter(AFGPUImageScreenBlendFilter leakFilter) {
-        if (!this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.CROP)) {
+        if (!this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.CROP)) {
             return false;
         }
-        FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP);
+        FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP);
         if (cropItem == null) {
             return false;
         }
@@ -12740,7 +13076,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         int i;
         if (isVideoType()) {
             this.custom_crop_View.refreshPercentValue();
-            this.custom_crop_View.setVisibility(8);
+            this.custom_crop_View.setVisibility(View.GONE);
             for (i = 0; i < this.mFilterEffectDetailSets.size(); i++) {
                 if (((FilterEffectSetRelativeLayout) this.mFilterEffectDetailSets.get(i)).getIsSelect()) {
                     bean.value = new float[]{(float) i};
@@ -12765,7 +13101,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         float changeWidth = cropDetail[2];
         float changeHeight = cropDetail[3];
         float scale = changeWidth / changeHeight;
-        this.custom_crop_View.setVisibility(8);
+        this.custom_crop_View.setVisibility(View.GONE);
         LogUtil.d("OnProgressChanged", String.format("cropPercent , 0 : %s , 1 : %s , 2 : %s , 3 : %s ,scale : %s ", new Object[]{Float.valueOf(x), Float.valueOf(y), Float.valueOf(width), Float.valueOf(height), Float.valueOf(scale)}));
         float finalX = x;
         float finalY = y;
@@ -12784,7 +13120,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 finalW = width;
                 finalH = height;
                 break;
-            case Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
+            case BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
                 finalX = y;
                 finalY = (1.0f - x) - width;
                 finalW = height;
@@ -12796,7 +13132,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         cropDetail[5] = finalY;
         cropDetail[6] = finalW;
         cropDetail[7] = finalH;
-        this.gpuImageCropFilter.setCropRegion(new CropRegion(finalX, finalY, finalW, finalH));
+        this.gpuImageCropFilter.setCropRegion(new GPUImageCropFilter.CropRegion(finalX, finalY, finalW, finalH));
         bean.selectPosition = cropDetail;
         for (i = 0; i < this.mFilterEffectDetailSets.size(); i++) {
             if (((FilterEffectSetRelativeLayout) this.mFilterEffectDetailSets.get(i)).getIsSelect()) {
@@ -12812,7 +13148,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         fixSurfaceViewSize(scale, width, height, true);
         fixDateFilter();
         fixLeakFilter(this.leakFilter, changeWidth, changeHeight);
-        setTransformFilterValue(this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).value[1]);
+        setTransformFilterValue(this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).value[1]);
         setNormalFilter();
         setUndoData(0);
         initCropAllViewStub();
@@ -12827,7 +13163,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void fixDateFilter(boolean rotate) {
         boolean z = true;
-        if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.DATE) && this.mFilterEffectManager.getAssignedBeanByType(EffectType.DATE).getItemSelect()) {
+        if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.DATE) && this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.DATE).getItemSelect()) {
             if (this.dateFilter == null) {
                 this.dateFilter = getDateFilter();
                 AFGPUImageDateBlendFilter aFGPUImageDateBlendFilter = this.dateFilter;
@@ -12842,9 +13178,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void fixLeakFilter(AFGPUImageScreenBlendFilter leakFilter, float changeWidth, float changeHeight) {
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.LEAK)) {
-            FilterEffectBean leakItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.LEAK);
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.LEAK)) {
+            FilterEffectBean leakItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.LEAK);
             if (leakFilter != null) {
                 float result = changeWidth / changeHeight;
                 if (this.currentDegree == 90.0f || this.currentDegree == 270.0f) {
@@ -12852,8 +13188,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 int change = (int) result;
                 int origin = (int) ((((float) this.mVideoWidth) * 1.0f) / ((float) this.mVideoHeight));
-                if (this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP)) {
-                    float value = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).value[0];
+                if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP)) {
+                    float value = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).value[0];
                     if (result < 1.0f) {
                         result = 1.0f / result;
                     }
@@ -12870,9 +13206,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void fixMirrorViewSizeAfterCrop() {
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP)) {
-            FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP);
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP)) {
+            FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP);
             if (cropItem != null) {
                 float[] selectPosition = cropItem.selectPosition;
                 if (selectPosition != null && selectPosition.length >= 7) {
@@ -12930,9 +13266,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void fixGridViewSizeAfterCrop() {
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP)) {
-            float[] selectPosition = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).selectPosition;
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP)) {
+            float[] selectPosition = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).selectPosition;
             if (selectPosition != null && selectPosition.length > 7) {
                 int realWidth;
                 int realHeight;
@@ -12976,8 +13312,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void fixCropViewWhenHasRotate() {
         if (this.gpuImageCropFilter != null && this.custom_crop_View != null) {
-            if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.CROP)) {
-                float[] selectPosition1 = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).selectPosition;
+            if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.CROP)) {
+                float[] selectPosition1 = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).selectPosition;
                 float x = StaticLayoutUtil.DefaultSpacingadd;
                 float y = StaticLayoutUtil.DefaultSpacingadd;
                 float width = 1.0f;
@@ -13012,33 +13348,33 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         finalW = width;
                         finalH = height;
                         break;
-                    case Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
+                    case BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
                         finalX = (1.0f - y) - height;
                         finalY = x;
                         finalW = height;
                         finalH = width;
                         break;
                 }
-                LogUtil.d("fixCropViewWhenHasRotate", String.format(" 2: finalX : %s , finalY : %s , finalW : %s , finalH : %s ", new Object[]{Float.valueOf(finalX), Float.valueOf(finalY), Float.valueOf(finalW), Float.valueOf(finalH)}));
+                LogUtil.d("fixCropViewWhenHasRotate", String.format(" 2: finalX : %s , finalY : %s , finalW : %s , finalH : %s ", Float.valueOf(finalX), Float.valueOf(finalY), Float.valueOf(finalW), Float.valueOf(finalH)));
                 this.custom_crop_View.setLeftWidthHeightPercent(finalX, finalY, finalW, finalH);
             }
         }
     }
 
-    private void onCancelPress(EffectType effectType) {
+    private void onCancelPress(FilterEffectManager.EffectType effectType) {
         restoreSaveAndBack();
         FilterEffectBean filterEffectBean = this.mFilterEffectManager.getAssignedBeanByType(effectType);
         this.lastProgressValue = -1.0f;
         alphaEnterAndExit(this.filter_tab_ll, this.filter_tab_choose_ll, new AnimatorEndListener() {
             public void onAnimationEnd(Animator animation) {
-                FilterActivity.this.filter_tab_ll.setVisibility(0);
-                FilterActivity.this.filter_tab_choose_cancle.setEnabled(true);
+                filter_tab_ll.setVisibility(View.VISIBLE);
+                filter_tab_choose_cancle.setEnabled(true);
             }
         });
-        if (effectType != EffectType.STRENGTH) {
+        if (effectType != FilterEffectManager.EffectType.STRENGTH) {
             setFilterEffectGone();
         }
-        float value;
+        float value = 0;
         float selectPosition;
         switch (effectType) {
             case HIGHLIGHT:
@@ -13106,11 +13442,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 break;
             case ROTATE:
                 this.currentDegree = filterEffectBean.selectPosition[0];
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_rotation_rotate90.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_rotation_rotate90.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
-                this.filter_crop_ccav.setVisibility(8);
-                setCancelRotate(EffectType.ROTATE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                setCancelRotate(FilterEffectManager.EffectType.ROTATE);
                 fixDateFilter(true);
                 break;
             case CROP:
@@ -13124,10 +13460,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 break;
             case MIRROR:
-                this.mirror_seek_bar.setVisibility(8);
+                this.mirror_seek_bar.setVisibility(View.GONE);
                 float[] floats = filterEffectBean.value;
+                float percent = filterEffectBean.selectPosition[0];
                 float result = percent / 100.0f;
-                LogUtil.d("Drafts", String.format("percent : %s , aFloat : %s , result : %s ", new Object[]{Float.valueOf(filterEffectBean.selectPosition[0]), Float.valueOf(floats[0]), Float.valueOf(result)}));
+                LogUtil.d("Drafts", String.format("percent : %s , aFloat : %s , result : %s ", filterEffectBean.selectPosition[0], floats[0], result));
                 switch ((int) floats[0]) {
                     case 0:
                         this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(1.0f, 1.0f, this.orientation);
@@ -13147,14 +13484,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 break;
             case HORIZONTAL:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_crop_ccav.setVisibility(8);
-                setCancleFilterState(EffectType.HORIZONTAL);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                setCancleFilterState(FilterEffectManager.EffectType.HORIZONTAL);
                 break;
             case VERTICAL:
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_crop_ccav.setVisibility(8);
-                setCancleFilterState(EffectType.VERTICAL);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_crop_ccav.setVisibility(View.GONE);
+                setCancleFilterState(FilterEffectManager.EffectType.VERTICAL);
                 break;
             case EXPOSURE:
                 if (this.exposureFilter != null) {
@@ -13170,10 +13507,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 break;
             case VIGNETTE:
-                this.filter_stablize_ra.setVisibility(0);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
                 if (this.movieFilter != null) {
                     if (this.mBitmapCamera == null) {
-                        this.mBitmapCamera = getBitmapForFilterEffect(2130838363, false, false);
+                        this.mBitmapCamera = getBitmapForFilterEffect(R.drawable.vignette_020_camera_jpg_70, false, false);
                     }
                     this.movieFilter.setBitmap(this.mBitmapCamera);
                     this.movieFilter.setOverPercent(filterEffectBean.value[1] / 10.0f);
@@ -13186,22 +13523,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.leakFilter.setDepth((int) filterEffectBean.selectPosition[1]);
                     if (selectPosition == StaticLayoutUtil.DefaultSpacingadd) {
                         if (this.mBitmapLeak1 == null) {
-                            this.mBitmapLeak1 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838135, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapLeak1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_020_g05_jpg_50_left, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.leakFilter.setBitmap(this.mBitmapLeak1, 1);
                     } else if (selectPosition == 1.0f) {
                         if (this.mBitmapLeak2 == null) {
-                            this.mBitmapLeak2 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838136, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapLeak2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_035_g69_jpg_50_left, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.leakFilter.setBitmap(this.mBitmapLeak2, 1);
                     } else if (selectPosition == 2.0f) {
                         if (this.mBitmapLeak3 == null) {
-                            this.mBitmapLeak3 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838137, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapLeak3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_040_g55_jpg_50_right, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.leakFilter.setBitmap(this.mBitmapLeak3, 2);
                     } else if (selectPosition == 3.0f) {
                         if (this.mBitmapLeak4 == null) {
-                            this.mBitmapLeak4 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838138, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapLeak4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_060_g09_jpg_50_bottom, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.leakFilter.setBitmap(this.mBitmapLeak4, 3);
                     }
@@ -13210,8 +13547,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         this.leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(this.leakFilter.getCurBuffer(), (int) this.currentDegree));
                     }
                 }
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 break;
             case TINGE:
@@ -13233,27 +13570,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.dustFilter.setDepth((int) filterEffectBean.selectPosition[1]);
                     if (selectPosition == StaticLayoutUtil.DefaultSpacingadd) {
                         if (this.mBitmapDust1 == null) {
-                            this.mBitmapDust1 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837669, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapDust1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust01, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.dustFilter.setBitmap(this.mBitmapDust1, 0);
                     } else if (selectPosition == 1.0f) {
                         if (this.mBitmapDust2 == null) {
-                            this.mBitmapDust2 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837670, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapDust2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust02, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.dustFilter.setBitmap(this.mBitmapDust2, 0);
                     } else if (selectPosition == 2.0f) {
                         if (this.mBitmapDust3 == null) {
-                            this.mBitmapDust3 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837671, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapDust3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust03, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.dustFilter.setBitmap(this.mBitmapDust3, 0);
                     } else if (selectPosition == 3.0f) {
                         if (this.mBitmapDust4 == null) {
-                            this.mBitmapDust4 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837672, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapDust4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust04, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.dustFilter.setBitmap(this.mBitmapDust4, 0);
                     } else if (selectPosition == 4.0f) {
                         if (this.mBitmapDust5 == null) {
-                            this.mBitmapDust5 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837673, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                            this.mBitmapDust5 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust05, this.leakFilterReqWidth, this.leakFilterReqHeight);
                         }
                         this.dustFilter.setBitmap(this.mBitmapDust5, 0);
                     }
@@ -13262,8 +13599,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         this.dustFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(this.dustFilter.getCurBuffer(), (int) this.currentDegree));
                     }
                 }
-                this.filter_stablize_ra.setVisibility(0);
-                this.filter_effect_leak_detail.setVisibility(8);
+                this.filter_stablize_ra.setVisibility(View.VISIBLE);
+                this.filter_effect_leak_detail.setVisibility(View.GONE);
                 onEffectTabShowHideOthers();
                 break;
             case PRISM:
@@ -13280,16 +13617,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.currentFilter.setIntensity(this.strengthValue);
                 break;
         }
-        this.currentEffectType = EffectType.NONE;
+        this.currentEffectType = FilterEffectManager.EffectType.NONE;
         setNormalFilter();
     }
 
     private void onCropCancelPress() {
-        this.custom_crop_View.setVisibility(8);
+        this.custom_crop_View.setVisibility(View.GONE);
         if (!isVideoType()) {
-            List<FilterEffectBean> mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-            if (this.mFilterEffectManager.listAContainItem((List) mList, EffectType.CROP)) {
-                float[] selectPosition = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).selectPosition;
+            List<FilterEffectBean> mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+            if (this.mFilterEffectManager.listAContainItem((List) mList, FilterEffectManager.EffectType.CROP)) {
+                float[] selectPosition = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).selectPosition;
                 float x = selectPosition[4];
                 float y = selectPosition[5];
                 float width = selectPosition[6];
@@ -13298,14 +13635,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 float changeHeight = selectPosition[3];
                 float scale = changeWidth / changeHeight;
                 fixLeakFilterOnCropCancel(changeWidth, changeHeight);
-                LogUtil.d("OnProgressChanged", String.format("cropPercent , 0 : %s , 1 : %s , 2 : %s , 3 : %s ,scale : %s ", new Object[]{Float.valueOf(x), Float.valueOf(y), Float.valueOf(width), Float.valueOf(height), Float.valueOf(scale)}));
-                this.gpuImageCropFilter.setCropRegion(new CropRegion(x, y, width, height));
+                LogUtil.d("OnProgressChanged", String.format("cropPercent , 0 : %s , 1 : %s , 2 : %s , 3 : %s ,scale : %s ", x, y, width, height, scale));
+                this.gpuImageCropFilter.setCropRegion(new GPUImageCropFilter.CropRegion(x, y, width, height));
                 float finalW = 1.0f;
                 float finalH = 1.0f;
-                boolean containRotateItem = this.mFilterEffectManager.listAContainItem((List) mList, EffectType.ROTATE);
+                boolean containRotateItem = this.mFilterEffectManager.listAContainItem((List) mList, FilterEffectManager.EffectType.ROTATE);
                 float degree = StaticLayoutUtil.DefaultSpacingadd;
                 if (containRotateItem) {
-                    degree = this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                    degree = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                 }
                 float finalX;
                 float finalY;
@@ -13328,7 +13665,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         finalW = width;
                         finalH = height;
                         break;
-                    case Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
+                    case BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
                         finalX = (1.0f - y) - height;
                         finalY = x;
                         finalW = height;
@@ -13346,9 +13683,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void fixLeakFilterOnCropCancel(float changeWidth, float changeHeight) {
         LogUtil.d("fixLeakFilterOnCropCancel", String.format("changeWidth : %s , changeHeight : %s ", new Object[]{Float.valueOf(changeWidth), Float.valueOf(changeHeight)}));
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.LEAK)) {
-            FilterEffectBean leakItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.LEAK);
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.LEAK)) {
+            FilterEffectBean leakItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.LEAK);
             if (this.leakFilter != null) {
                 float changeF = changeWidth / changeHeight;
                 if (this.currentDegree == 90.0f || this.currentDegree == 270.0f) {
@@ -13356,8 +13693,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 int change = (int) changeF;
                 int origin = this.mVideoWidth / this.mVideoHeight;
-                if (this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP)) {
-                    FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP);
+                if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP)) {
+                    FilterEffectBean cropItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP);
                     if (changeF < 1.0f) {
                         changeF = 1.0f / changeF;
                     }
@@ -13377,15 +13714,15 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         float[] value;
         this.beforeRotate_value_cropWidth = this.mVideoFrames.mCropWidth;
         this.beforeRotate_value_cropHeight = this.mVideoFrames.mCropHeight;
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP)) {
-            value = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).value;
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP)) {
+            value = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).value;
             if (value != null && value.length > 1) {
                 this.beforeRotate_value_cropPosition = value[0];
             }
         }
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.MIRROR)) {
-            FilterEffectBean mirrorItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.MIRROR);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.MIRROR)) {
+            FilterEffectBean mirrorItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.MIRROR);
             value = mirrorItem.value;
             float[] percent = mirrorItem.selectPosition;
             this.beforeRotate_value_mirrorValue = value[0];
@@ -13402,20 +13739,20 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
     }
 
-    private void setCancelRotate(EffectType effectType) {
+    private void setCancelRotate(FilterEffectManager.EffectType effectType) {
         float[] value;
         this.mVideoFrames.mCropWidth = this.beforeRotate_value_cropWidth;
         this.mVideoFrames.mCropHeight = this.beforeRotate_value_cropHeight;
         this.currentEffectType = effectType;
-        List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.CROP)) {
-            value = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).value;
+        List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.CROP)) {
+            value = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).value;
             if (value != null && value.length > 1) {
                 value[0] = this.beforeRotate_value_cropPosition;
             }
         }
-        if (this.mFilterEffectManager.listAContainItem(mList, EffectType.MIRROR)) {
-            FilterEffectBean mirrorItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.MIRROR);
+        if (this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.MIRROR)) {
+            FilterEffectBean mirrorItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.MIRROR);
             value = mirrorItem.value;
             float[] percent = mirrorItem.selectPosition;
             value[0] = this.beforeRotate_value_mirrorValue;
@@ -13465,8 +13802,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         getAnnalisticTransformArray();
     }
 
-    private void setCancleFilterState(EffectType effectType) {
-        if (effectType == EffectType.ROTATE) {
+    private void setCancleFilterState(FilterEffectManager.EffectType effectType) {
+        if (effectType == FilterEffectManager.EffectType.ROTATE) {
             if (this.currentDegree == 90.0f || this.currentDegree == 270.0f) {
                 this.mVideoFrames.mCropWidth = this.mVideoFrames.mCaptureHeight;
                 this.mVideoFrames.mCropHeight = this.mVideoFrames.mCaptureWidth;
@@ -13480,9 +13817,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void getAnnalisticTransformArray() {
-        FilterEffectBean rBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE);
-        FilterEffectBean hBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL);
-        FilterEffectBean vBean = this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL);
+        FilterEffectBean rBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE);
+        FilterEffectBean hBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL);
+        FilterEffectBean vBean = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL);
         float degree = rBean.selectPosition[0];
         this.currentDegree = degree;
         this.transformFilter.setOrientation(this.currentDegree);
@@ -13506,7 +13843,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             matrix.postRotate(rValue);
             matrix.postScale(scale, scale);
         }
-        a = new float[9];
+        float[] a = new float[9];
         matrix.getValues(a);
         float[] b = new float[]{a[0], a[1], a[2], StaticLayoutUtil.DefaultSpacingadd, a[3], a[4], a[5], StaticLayoutUtil.DefaultSpacingadd, a[6], a[7], a[8], StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f};
         Size size = null;
@@ -13563,7 +13900,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void loadFilterEffectJustInit(FilterEffectBean filterEffectBean) {
-        float value;
+        float value = 0;
         float selectPosition;
         switch (filterEffectBean.effectType) {
             case HIGHLIGHT:
@@ -13606,7 +13943,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.grainFilter = getGrainFilter();
                 }
                 if (this.mBitmapGrain == null) {
-                    this.mBitmapGrain = getBitmapForFilterEffect(2130837680, true, false);
+                    this.mBitmapGrain = getBitmapForFilterEffect(R.drawable.grains_iso_400_jpg_50, true, false);
                 }
                 this.grainFilter.setBitmap(this.mBitmapGrain);
                 this.grainFilter.setOverPercent(filterEffectBean.value[1] / 10.0f);
@@ -13637,7 +13974,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 this.currentDegree = filterEffectBean.selectPosition[0];
                 this.transformFilter.setOrientation(this.currentDegree);
-                this.currentEffectType = EffectType.ROTATE;
+                this.currentEffectType = FilterEffectManager.EffectType.ROTATE;
                 editFilterIntensity(filterEffectBean.value[1]);
                 return;
             case CROP:
@@ -13659,7 +13996,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.mGPUImageMirrorFilter = new GPUImageMirrorFilter(this.mCaptureOrientation, this.mCameraLensType == 1);
                 }
                 float result = filterEffectBean.selectPosition[0] / 100.0f;
-                LogUtil.d("Drafts", String.format("percent : %s , aFloat : %s , result : %s ", new Object[]{Float.valueOf(filterEffectBean.selectPosition[0]), Float.valueOf(filterEffectBean.value[0]), Float.valueOf(result)}));
+                LogUtil.d("Drafts", String.format("percent : %s , aFloat : %s , result : %s ", filterEffectBean.selectPosition[0], filterEffectBean.value[0], result));
                 switch ((int) filterEffectBean.value[0]) {
                     case 0:
                         this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(1.0f, 1.0f, this.orientation);
@@ -13685,11 +14022,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.transformFilter.setVideoRatio(this.mVideoWidth, this.mVideoHeight);
                     this.transformFilter.setIgnoreAspectRatio(false);
                 }
-                this.currentEffectType = EffectType.HORIZONTAL;
-                float degree = this.mFilterEffectManager.getCurrentListItem(EffectType.ROTATE).selectPosition[0];
+                this.currentEffectType = FilterEffectManager.EffectType.HORIZONTAL;
+                float degree = this.mFilterEffectManager.getCurrentListItem(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                 float value1 = filterEffectBean.value[1];
                 if (degree == 90.0f || degree == 270.0f) {
-                    value1 = this.mFilterEffectManager.getCurrentListItem(EffectType.VERTICAL).value[1];
+                    value1 = this.mFilterEffectManager.getCurrentListItem(FilterEffectManager.EffectType.VERTICAL).value[1];
                 }
                 editFilterIntensity(value1);
                 return;
@@ -13699,7 +14036,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.transformFilter.setVideoRatio(this.mVideoWidth, this.mVideoHeight);
                     this.transformFilter.setIgnoreAspectRatio(false);
                 }
-                this.currentEffectType = EffectType.VERTICAL;
+                this.currentEffectType = FilterEffectManager.EffectType.VERTICAL;
                 editFilterIntensity(filterEffectBean.value[1]);
                 return;
             case EXPOSURE:
@@ -13735,22 +14072,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.leakFilter.setDepth((int) filterEffectBean.selectPosition[1]);
                 if (selectPosition == StaticLayoutUtil.DefaultSpacingadd) {
                     if (this.mBitmapLeak1 == null) {
-                        this.mBitmapLeak1 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838135, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_020_g05_jpg_50_left, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak1, 1);
                 } else if (selectPosition == 1.0f) {
                     if (this.mBitmapLeak2 == null) {
-                        this.mBitmapLeak2 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838136, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_035_g69_jpg_50_left, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak2, 1);
                 } else if (selectPosition == 2.0f) {
                     if (this.mBitmapLeak3 == null) {
-                        this.mBitmapLeak3 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838137, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_040_g55_jpg_50_right, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak3, 2);
                 } else if (selectPosition == 3.0f) {
                     if (this.mBitmapLeak4 == null) {
-                        this.mBitmapLeak4 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838138, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_060_g09_jpg_50_bottom, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak4, 3);
                 }
@@ -13783,27 +14120,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.dustFilter.setDepth((int) filterEffectBean.selectPosition[1]);
                 if (selectPosition == StaticLayoutUtil.DefaultSpacingadd) {
                     if (this.mBitmapDust1 == null) {
-                        this.mBitmapDust1 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837669, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust01, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust1, 0);
                 } else if (selectPosition == 1.0f) {
                     if (this.mBitmapDust2 == null) {
-                        this.mBitmapDust2 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837670, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust02, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust2, 0);
                 } else if (selectPosition == 2.0f) {
                     if (this.mBitmapDust3 == null) {
-                        this.mBitmapDust3 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837671, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust03, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust3, 0);
                 } else if (selectPosition == 3.0f) {
                     if (this.mBitmapDust4 == null) {
-                        this.mBitmapDust4 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837672, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust04, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust4, 0);
                 } else if (selectPosition == 4.0f) {
                     if (this.mBitmapDust5 == null) {
-                        this.mBitmapDust5 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837673, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust5 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust05, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust5, 0);
                 }
@@ -13826,7 +14163,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.skyFilter = getSkyFilter();
         }
         if (this.mBitmapSky == null) {
-            this.mBitmapSky = getOriginalFilterBitmap(2130838324, false, false);
+            this.mBitmapSky = getOriginalFilterBitmap(R.drawable.sky_gradient, false, false);
         }
         this.skyFilter.setBitmap(this.mBitmapSky);
         this.skyFilter.setOverPercent(filterEffectBean.value[1] / 10.0f);
@@ -13837,12 +14174,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void loadFilterEffect(FilterEffectBean filterEffectBean, boolean needRefreshEffectType, boolean needSetNormal) {
-        EffectType type = filterEffectBean.effectType;
+        FilterEffectManager.EffectType type = filterEffectBean.effectType;
         boolean isSelect = filterEffectBean.getItemSelect();
         if (needRefreshEffectType) {
             this.currentEffectType = filterEffectBean.effectType;
         }
-        float value;
+        float value = 0;
         float[] fArr;
         float selectPosition;
         switch (type) {
@@ -13894,7 +14231,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.grainFilter = getGrainFilter();
                 }
                 if (this.mBitmapGrain == null) {
-                    this.mBitmapGrain = getBitmapForFilterEffect(2130837680, true, false);
+                    this.mBitmapGrain = getBitmapForFilterEffect(R.drawable.grains_iso_400_jpg_50, true, false);
                 }
                 this.grainFilter.setBitmap(this.mBitmapGrain);
                 this.grainFilter.setOverPercent(filterEffectBean.value[1] / 10.0f);
@@ -13925,7 +14262,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
                 this.currentDegree = filterEffectBean.selectPosition[0];
                 this.transformFilter.setOrientation(this.currentDegree);
-                this.currentEffectType = EffectType.ROTATE;
+                this.currentEffectType = FilterEffectManager.EffectType.ROTATE;
                 editFilterIntensity(filterEffectBean.value[1]);
                 break;
             case CROP:
@@ -13947,7 +14284,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.mGPUImageMirrorFilter = new GPUImageMirrorFilter(this.mCaptureOrientation, this.mCameraLensType == 1);
                 }
                 float result = filterEffectBean.selectPosition[0] / 100.0f;
-                LogUtil.d("Drafts", String.format("percent : %s , aFloat : %s , result : %s ", new Object[]{Float.valueOf(filterEffectBean.selectPosition[0]), Float.valueOf(filterEffectBean.value[0]), Float.valueOf(result)}));
+                LogUtil.d("Drafts", String.format("percent : %s , aFloat : %s , result : %s ",filterEffectBean.selectPosition[0], filterEffectBean.value[0], result));
                 switch ((int) filterEffectBean.value[0]) {
                     case 0:
                         this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(1.0f, 1.0f, this.orientation);
@@ -13972,11 +14309,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.transformFilter.setVideoRatio(this.mVideoWidth, this.mVideoHeight);
                     this.transformFilter.setIgnoreAspectRatio(false);
                 }
-                this.currentEffectType = EffectType.HORIZONTAL;
-                float degree = this.mFilterEffectManager.getCurrentListItem(EffectType.ROTATE).selectPosition[0];
+                this.currentEffectType = FilterEffectManager.EffectType.HORIZONTAL;
+                float degree = this.mFilterEffectManager.getCurrentListItem(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                 float value1 = filterEffectBean.value[1];
                 if (degree == 90.0f || degree == 270.0f) {
-                    value1 = this.mFilterEffectManager.getCurrentListItem(EffectType.VERTICAL).value[1];
+                    value1 = this.mFilterEffectManager.getCurrentListItem(FilterEffectManager.EffectType.VERTICAL).value[1];
                 }
                 editFilterIntensity(value1);
                 break;
@@ -13986,7 +14323,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.transformFilter.setVideoRatio(this.mVideoWidth, this.mVideoHeight);
                     this.transformFilter.setIgnoreAspectRatio(false);
                 }
-                this.currentEffectType = EffectType.VERTICAL;
+                this.currentEffectType = FilterEffectManager.EffectType.VERTICAL;
                 editFilterIntensity(filterEffectBean.value[1]);
                 break;
             case EXPOSURE:
@@ -14007,7 +14344,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     this.movieFilter = getMoviewFilter2();
                 }
                 if (this.mBitmapCamera == null) {
-                    this.mBitmapCamera = getBitmapForFilterEffect(2130838363, false, false);
+                    this.mBitmapCamera = getBitmapForFilterEffect(R.drawable.vignette_020_camera_jpg_70, false, false);
                 }
                 this.movieFilter.setOverPercent(filterEffectBean.value[1] / 10.0f);
                 this.movieFilter.setBitmap(this.mBitmapCamera);
@@ -14023,22 +14360,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.leakFilter.setDepth((int) filterEffectBean.selectPosition[1]);
                 if (selectPosition == StaticLayoutUtil.DefaultSpacingadd) {
                     if (this.mBitmapLeak1 == null) {
-                        this.mBitmapLeak1 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838135, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_020_g05_jpg_50_left, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak1, 1);
                 } else if (selectPosition == 1.0f) {
                     if (this.mBitmapLeak2 == null) {
-                        this.mBitmapLeak2 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838136, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_035_g69_jpg_50_left, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak2, 1);
                 } else if (selectPosition == 2.0f) {
                     if (this.mBitmapLeak3 == null) {
-                        this.mBitmapLeak3 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838137, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_040_g55_jpg_50_right, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak3, 2);
                 } else if (selectPosition == 3.0f) {
                     if (this.mBitmapLeak4 == null) {
-                        this.mBitmapLeak4 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130838138, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapLeak4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_060_g09_jpg_50_bottom, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.leakFilter.setBitmap(this.mBitmapLeak4, 3);
                 }
@@ -14072,27 +14409,27 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.dustFilter.setDepth((int) filterEffectBean.selectPosition[1]);
                 if (selectPosition == StaticLayoutUtil.DefaultSpacingadd) {
                     if (this.mBitmapDust1 == null) {
-                        this.mBitmapDust1 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837669, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust01, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust1, 0);
                 } else if (selectPosition == 1.0f) {
                     if (this.mBitmapDust2 == null) {
-                        this.mBitmapDust2 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837670, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust02, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust2, 0);
                 } else if (selectPosition == 2.0f) {
                     if (this.mBitmapDust3 == null) {
-                        this.mBitmapDust3 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837671, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust03, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust3, 0);
                 } else if (selectPosition == 3.0f) {
                     if (this.mBitmapDust4 == null) {
-                        this.mBitmapDust4 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837672, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust04, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust4, 0);
                 } else if (selectPosition == 4.0f) {
                     if (this.mBitmapDust5 == null) {
-                        this.mBitmapDust5 = BitmapUtil.getBitmapForLeakFilter(getResources(), 2130837673, this.leakFilterReqWidth, this.leakFilterReqHeight);
+                        this.mBitmapDust5 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust05, this.leakFilterReqWidth, this.leakFilterReqHeight);
                     }
                     this.dustFilter.setBitmap(this.mBitmapDust5, 0);
                 }
@@ -14122,14 +14459,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             float width = selectPosition1[6];
             float height = selectPosition1[7];
             if (x >= StaticLayoutUtil.DefaultSpacingadd && y >= StaticLayoutUtil.DefaultSpacingadd && width <= 1.0f && height <= 1.0f && x + width <= 1.0f && y + height <= 1.0f) {
-                this.gpuImageCropFilter.setCropRegion(new CropRegion(x, y, width, height));
+                this.gpuImageCropFilter.setCropRegion(new GPUImageCropFilter.CropRegion(x, y, width, height));
                 float finalW = 1.0f;
                 float finalH = 1.0f;
-                List mList = this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE);
-                boolean containItem = this.mFilterEffectManager.listAContainItem(mList, EffectType.ROTATE);
+                List mList = this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE);
+                boolean containItem = this.mFilterEffectManager.listAContainItem(mList, FilterEffectManager.EffectType.ROTATE);
                 float degree = StaticLayoutUtil.DefaultSpacingadd;
                 if (containItem) {
-                    degree = this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                    degree = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                 }
                 float finalX;
                 float finalY;
@@ -14152,7 +14489,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                         finalW = width;
                         finalH = height;
                         break;
-                    case Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
+                    case BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE /*270*/:
                         finalX = (1.0f - y) - height;
                         finalY = x;
                         finalW = height;
@@ -14164,11 +14501,11 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 final float f = selectPosition1[2] / selectPosition1[3];
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        FilterActivity.this.fixSurfaceViewSize(f, fixW, fixH, true);
-                        FilterActivity.this.initCropAllViewStub();
-                        FilterActivity.this.fixGridViewSizeAfterCrop();
-                        FilterActivity.this.initMirrorSeekViewStub();
-                        FilterActivity.this.fixMirrorViewSizeAfterCrop();
+                        fixSurfaceViewSize(f, fixW, fixH, true);
+                        initCropAllViewStub();
+                        fixGridViewSizeAfterCrop();
+                        initMirrorSeekViewStub();
+                        fixMirrorViewSizeAfterCrop();
                     }
                 });
             }
@@ -14206,8 +14543,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void restoreLeakFilter() {
-        if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.LEAK)) {
-            FilterEffectBean leakItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.LEAK);
+        if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.LEAK)) {
+            FilterEffectBean leakItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.LEAK);
             if (this.leakFilter != null) {
                 this.leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(this.leakFilter.getFirstBuffer(), (int) this.currentDegree));
             }
@@ -14219,8 +14556,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (this.mBitmapDust1 == null) {
                 PriorityThreadPoolManager.execute(new PriorityRunnable(5) {
                     public void run() {
-                        FilterActivity.this.mBitmapDust1 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130837669, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        FilterActivity.this.setDustFilterData(FilterActivity.this.mBitmapDust1, 0);
+                        mBitmapDust1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust01, leakFilterReqWidth, leakFilterReqHeight);
+                        setDustFilterData(mBitmapDust1, 0);
                     }
                 });
             } else {
@@ -14230,8 +14567,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (this.mBitmapDust2 == null) {
                 PriorityThreadPoolManager.execute(new PriorityRunnable(5) {
                     public void run() {
-                        FilterActivity.this.mBitmapDust2 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130837670, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        FilterActivity.this.setDustFilterData(FilterActivity.this.mBitmapDust2, 0);
+                        mBitmapDust2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust02, leakFilterReqWidth, leakFilterReqHeight);
+                        setDustFilterData(mBitmapDust2, 0);
                     }
                 });
             } else {
@@ -14241,8 +14578,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (this.mBitmapDust3 == null) {
                 PriorityThreadPoolManager.execute(new PriorityRunnable(5) {
                     public void run() {
-                        FilterActivity.this.mBitmapDust3 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130837671, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        FilterActivity.this.setDustFilterData(FilterActivity.this.mBitmapDust3, 0);
+                        mBitmapDust3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust03, leakFilterReqWidth, leakFilterReqHeight);
+                        setDustFilterData(mBitmapDust3, 0);
                     }
                 });
             } else {
@@ -14252,8 +14589,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (this.mBitmapDust4 == null) {
                 PriorityThreadPoolManager.execute(new PriorityRunnable(5) {
                     public void run() {
-                        FilterActivity.this.mBitmapDust4 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130837672, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        FilterActivity.this.setDustFilterData(FilterActivity.this.mBitmapDust4, 0);
+                        mBitmapDust4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust04, leakFilterReqWidth, leakFilterReqHeight);
+                        setDustFilterData(mBitmapDust4, 0);
                     }
                 });
             } else {
@@ -14264,8 +14601,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (this.mBitmapDust5 == null) {
                 PriorityThreadPoolManager.execute(new PriorityRunnable(5) {
                     public void run() {
-                        FilterActivity.this.mBitmapDust5 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130837673, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        FilterActivity.this.setDustFilterData(FilterActivity.this.mBitmapDust5, 0);
+                        mBitmapDust5 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.dust05, leakFilterReqWidth, leakFilterReqHeight);
+                        setDustFilterData(mBitmapDust5, 0);
                     }
                 });
             } else {
@@ -14290,13 +14627,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 new Thread() {
                     public void run() {
                         super.run();
-                        FilterActivity.this.mBitmapLeak1 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130838135, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        if (FilterActivity.this.leakFilter != null) {
-                            FilterActivity.this.leakFilter.setBitmap(FilterActivity.this.mBitmapLeak1, 1, (int) FilterActivity.this.currentDegree);
-                            if (!FilterActivity.this.checkHasCropAndFixLeak()) {
-                                FilterActivity.this.leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(FilterActivity.this.leakFilter.getCurBuffer(), (int) FilterActivity.this.currentDegree));
+                        mBitmapLeak1 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_020_g05_jpg_50_left, leakFilterReqWidth, leakFilterReqHeight);
+                        if (leakFilter != null) {
+                            leakFilter.setBitmap(mBitmapLeak1, 1, (int) currentDegree);
+                            if (!checkHasCropAndFixLeak()) {
+                                leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(leakFilter.getCurBuffer(), (int) currentDegree));
                             }
-                            FilterActivity.this.setNormalFilter();
+                            setNormalFilter();
                         }
                     }
                 }.start();
@@ -14312,13 +14649,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 new Thread() {
                     public void run() {
                         super.run();
-                        FilterActivity.this.mBitmapLeak2 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130838136, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        if (FilterActivity.this.leakFilter != null) {
-                            FilterActivity.this.leakFilter.setBitmap(FilterActivity.this.mBitmapLeak2, 1, (int) FilterActivity.this.currentDegree);
-                            if (!FilterActivity.this.checkHasCropAndFixLeak()) {
-                                FilterActivity.this.leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(FilterActivity.this.leakFilter.getCurBuffer(), (int) FilterActivity.this.currentDegree));
+                        mBitmapLeak2 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_035_g69_jpg_50_left, leakFilterReqWidth, leakFilterReqHeight);
+                        if (leakFilter != null) {
+                            leakFilter.setBitmap(mBitmapLeak2, 1, (int) currentDegree);
+                            if (!checkHasCropAndFixLeak()) {
+                                leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(leakFilter.getCurBuffer(), (int) currentDegree));
                             }
-                            FilterActivity.this.setNormalFilter();
+                            setNormalFilter();
                         }
                     }
                 }.start();
@@ -14334,13 +14671,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 new Thread() {
                     public void run() {
                         super.run();
-                        FilterActivity.this.mBitmapLeak3 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130838137, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        if (FilterActivity.this.leakFilter != null) {
-                            FilterActivity.this.leakFilter.setBitmap(FilterActivity.this.mBitmapLeak3, 2, (int) FilterActivity.this.currentDegree);
-                            if (!FilterActivity.this.checkHasCropAndFixLeak()) {
-                                FilterActivity.this.leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(FilterActivity.this.leakFilter.getCurBuffer(), (int) FilterActivity.this.currentDegree));
+                        mBitmapLeak3 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_040_g55_jpg_50_right, leakFilterReqWidth, leakFilterReqHeight);
+                        if (leakFilter != null) {
+                            leakFilter.setBitmap(mBitmapLeak3, 2, (int) currentDegree);
+                            if (!checkHasCropAndFixLeak()) {
+                                leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(leakFilter.getCurBuffer(), (int) currentDegree));
                             }
-                            FilterActivity.this.setNormalFilter();
+                            setNormalFilter();
                         }
                     }
                 }.start();
@@ -14357,13 +14694,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 new Thread() {
                     public void run() {
                         super.run();
-                        FilterActivity.this.mBitmapLeak4 = BitmapUtil.getBitmapForLeakFilter(FilterActivity.this.getResources(), 2130838138, FilterActivity.this.leakFilterReqWidth, FilterActivity.this.leakFilterReqHeight);
-                        if (FilterActivity.this.leakFilter != null) {
-                            FilterActivity.this.leakFilter.setBitmap(FilterActivity.this.mBitmapLeak4, 3, (int) FilterActivity.this.currentDegree);
-                            if (!FilterActivity.this.checkHasCropAndFixLeak()) {
-                                FilterActivity.this.leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(FilterActivity.this.leakFilter.getCurBuffer(), (int) FilterActivity.this.currentDegree));
+                        mBitmapLeak4 = BitmapUtils.getBitmapForLeakFilter(getResources(), R.drawable.leak_060_g09_jpg_50_bottom, leakFilterReqWidth, leakFilterReqHeight);
+                        if (leakFilter != null) {
+                            leakFilter.setBitmap(mBitmapLeak4, 3, (int) currentDegree);
+                            if (!checkHasCropAndFixLeak()) {
+                                leakFilter.setByteBuffer(ByteBufferUtils.changeBufferValueByRotateValue(leakFilter.getCurBuffer(), (int) currentDegree));
                             }
-                            FilterActivity.this.setNormalFilter();
+                            setNormalFilter();
                         }
                     }
                 }.start();
@@ -14386,39 +14723,39 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
 
             public void onAnimationEnd(Animation animation) {
-                FilterActivity.this.filterEffectDetailIsShow = true;
+                filterEffectDetailIsShow = true;
                 v.setEnabled(true);
                 if (filterEffectBean.getShowType() == 0) {
                     float value = filterEffectBean.value[1];
                     float selectPosition;
-                    if (filterEffectBean.effectType == EffectType.HORIZONTAL) {
-                        selectPosition = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                    if (filterEffectBean.effectType == FilterEffectManager.EffectType.HORIZONTAL) {
+                        selectPosition = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                         if (selectPosition == 90.0f || selectPosition == 270.0f) {
-                            value = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL).value[1];
+                            value = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL).value[1];
                         }
-                    } else if (filterEffectBean.effectType == EffectType.VERTICAL) {
-                        selectPosition = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.ROTATE).selectPosition[0];
+                    } else if (filterEffectBean.effectType == FilterEffectManager.EffectType.VERTICAL) {
+                        selectPosition = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.ROTATE).selectPosition[0];
                         if (selectPosition == 90.0f || selectPosition == 270.0f) {
-                            value = FilterActivity.this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL).value[1];
+                            value = mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL).value[1];
                         }
                     }
-                    FilterActivity.this.filter_custom_sk.isCenter(filterEffectBean.isCenterAdsorb()).min(filterEffectBean.value[0]).max(filterEffectBean.value[2]).pro(value).build();
+                    filter_custom_sk.isCenter(filterEffectBean.isCenterAdsorb()).min(filterEffectBean.value[0]).max(filterEffectBean.value[2]).pro(value).build();
                 }
             }
 
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        this.filter_rule_ll.setVisibility(0);
-        this.filter_effect_root_ll.setVisibility(8);
+        this.filter_rule_ll.setVisibility(View.VISIBLE);
+        this.filter_effect_root_ll.setVisibility(View.GONE);
     }
 
     public void setSelectEffectDetail(int position) {
         for (int i = 0; i < this.mFilterEffectDetailSets.size(); i++) {
             if (i == position) {
-                ((FilterEffectSetRelativeLayout) this.mFilterEffectDetailSets.get(i)).setWhiteColor(getApplicationContext());
+                this.mFilterEffectDetailSets.get(i).setWhiteColor(getApplicationContext());
             } else {
-                ((FilterEffectSetRelativeLayout) this.mFilterEffectDetailSets.get(i)).setDateColor(getApplicationContext());
+                this.mFilterEffectDetailSets.get(i).setDateColor(getApplicationContext());
             }
         }
         if (isVideoType()) {
@@ -14461,14 +14798,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 }
             }
             callVideoChange(this.currentPlayTimeUs);
-            refreshPlayBtn(w, h, (LongVideosModel) videosModelList.get(0));
+            refreshPlayBtn(w, h, videosModelList.get(0));
             if (TextUtil.isValidate(this.mCurrentTextLongVideoModel)) {
                 invalidateVtContainView(this.mCurrentTextLongVideoModel);
                 return;
             }
             ArrayList<LongVideosModel> textModelList = this.mVideoAudioManager.getTextModelList();
             if (TextUtil.isValidate(textModelList)) {
-                invalidateVtContainView((LongVideosModel) textModelList.get(0));
+                invalidateVtContainView(textModelList.get(0));
             }
         }
     }
@@ -14517,7 +14854,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             realWidth += realWidth % 2;
             realHeight += realHeight % 2;
-            marginT = (int) (((float) marginT) + getResources().getDimension(2131427423));
+            marginT = (int) (((float) marginT) + getResources().getDimension(R.dimen._63dp));
             LayoutParams layoutParams = (LayoutParams) this.text_draw_rl.getLayoutParams();
             layoutParams.width = this.metricsWidth;
             layoutParams.height = realHeight;
@@ -14581,7 +14918,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             int rotate = this.mFirstVideoBean.getRotation();
             int height = this.mFirstVideoBean.getVideoHeight();
             int width = this.mFirstVideoBean.getVideoWidth();
-            if (rotate == 90 || rotate == Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
+            if (rotate == 90 || rotate == BaseAdapter.Item.VIDEO_MUSIC_DETAIL_HEAD_TYPE) {
                 int temp = width;
                 width = height;
                 height = temp;
@@ -14650,22 +14987,22 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void showFilterEffectButton() {
-        this.filter_detail_set_text.setVisibility(8);
-        this.filter_custom_sk.setVisibility(8);
-        this.filter_effect_set_bts_hs.setVisibility(0);
+        this.filter_detail_set_text.setVisibility(View.GONE);
+        this.filter_custom_sk.setVisibility(View.GONE);
+        this.filter_effect_set_bts_hs.setVisibility(View.VISIBLE);
     }
 
     public void showFilterEffectSeekBar() {
-        this.filter_detail_set_text.setVisibility(0);
-        this.filter_custom_sk.setVisibility(0);
-        this.filter_effect_set_bts_hs.setVisibility(8);
+        this.filter_detail_set_text.setVisibility(View.VISIBLE);
+        this.filter_custom_sk.setVisibility(View.VISIBLE);
+        this.filter_effect_set_bts_hs.setVisibility(View.GONE);
     }
 
     private void editFilterIntensity(float progressFloat) {
-        if (this.currentEffectType != EffectType.STRENGTH) {
+        if (this.currentEffectType != FilterEffectManager.EffectType.STRENGTH) {
             this.otherValue = progressFloat;
         }
-        float value;
+        float value = 0;
         float currentVaule;
         switch (this.currentEffectType) {
             case HIGHLIGHT:
@@ -14765,7 +15102,6 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                     break;
                 }
                 return;
-                break;
             case EXPOSURE:
                 LogUtil.d("progressFloat", "progressFloat : " + progressFloat);
                 if (this.exposureFilter != null) {
@@ -14838,10 +15174,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void setTransformFilterValue(float progressFloat) {
         if (this.transformFilter != null) {
             float value;
-            boolean hadCrop = this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(this.currentEffectType), EffectType.CROP);
+            boolean hadCrop = this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(this.currentEffectType), FilterEffectManager.EffectType.CROP);
             float scale1 = (((float) this.mVideoFrames.mCropHeight) * 1.0f) / ((float) this.mVideoFrames.mCropWidth);
             Matrix matrix = new Matrix();
-            if (this.currentEffectType == EffectType.ROTATE) {
+            if (this.currentEffectType == FilterEffectManager.EffectType.ROTATE) {
                 this.currentRotateValue = progressFloat;
             }
             if (this.currentRotateValue != StaticLayoutUtil.DefaultSpacingadd) {
@@ -14857,26 +15193,26 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 matrix.postRotate(value);
                 matrix.postScale(scale, scale);
             }
-            a = new float[9];
+            float[] a = new float[9];
             matrix.getValues(a);
             float[] b = new float[]{a[0], a[1], a[2], StaticLayoutUtil.DefaultSpacingadd, a[3], a[4], a[5], StaticLayoutUtil.DefaultSpacingadd, a[6], a[7], a[8], StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, StaticLayoutUtil.DefaultSpacingadd, 1.0f};
             Size size = null;
             value = progressFloat / 5.0f;
             float hValue = StaticLayoutUtil.DefaultSpacingadd;
             float vValue = StaticLayoutUtil.DefaultSpacingadd;
-            if (this.currentEffectType == EffectType.VERTICAL) {
+            if (this.currentEffectType == FilterEffectManager.EffectType.VERTICAL) {
                 this.currentVvalue = value;
-                this.currentHvalue = this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL).value[1] / 5.0f;
+                this.currentHvalue = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL).value[1] / 5.0f;
                 if (this.currentDegree == 90.0f || this.currentDegree == 270.0f) {
-                    this.currentVvalue = this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL).value[1] / 5.0f;
+                    this.currentVvalue = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL).value[1] / 5.0f;
                     this.currentHvalue = value;
                 }
             } else {
-                if (this.currentEffectType == EffectType.HORIZONTAL) {
+                if (this.currentEffectType == FilterEffectManager.EffectType.HORIZONTAL) {
                     this.currentHvalue = value;
-                    this.currentVvalue = this.mFilterEffectManager.getAssignedBeanByType(EffectType.VERTICAL).value[1] / 5.0f;
+                    this.currentVvalue = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.VERTICAL).value[1] / 5.0f;
                     if (this.currentDegree == 90.0f || this.currentDegree == 270.0f) {
-                        this.currentHvalue = this.mFilterEffectManager.getAssignedBeanByType(EffectType.HORIZONTAL).value[1] / 5.0f;
+                        this.currentHvalue = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.HORIZONTAL).value[1] / 5.0f;
                         this.currentVvalue = value;
                     }
                 }
@@ -14947,8 +15283,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void fixCropBottomView() {
         if (this.gpuImageCropFilter != null && this.custom_crop_View != null) {
-            if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.CROP)) {
-                float[] value = this.mFilterEffectManager.getAssignedBeanByType(EffectType.CROP).value;
+            if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.CROP)) {
+                float[] value = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.CROP).value;
                 if (value != null) {
                     value[0] = 8.0f - value[0];
                 }
@@ -14957,16 +15293,16 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void fixMirrorOrientationByRotateValue(float value) {
-        LogUtil.d("fixMirrorOrientationByRotateValue", String.format("value : %s ", new Object[]{Float.valueOf(value)}));
-        if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(EffectType.NONE), EffectType.MIRROR)) {
-            FilterEffectBean mirrorItem = this.mFilterEffectManager.getAssignedBeanByType(EffectType.MIRROR);
+        LogUtil.d("fixMirrorOrientationByRotateValue", String.format("value : %s ", value));
+        if (this.mFilterEffectManager.listAContainItem(this.mFilterEffectManager.getShowFilterEffectList(FilterEffectManager.EffectType.NONE), FilterEffectManager.EffectType.MIRROR)) {
+            FilterEffectBean mirrorItem = this.mFilterEffectManager.getAssignedBeanByType(FilterEffectManager.EffectType.MIRROR);
             LogUtil.d("fixMirrorOrientationByRotateValue", "mirror : " + mirrorItem);
             float[] floats = mirrorItem.value;
             float percent = mirrorItem.selectPosition[0];
             float aFloat = floats[0];
             float result = percent / 100.0f;
             float orientation = StaticLayoutUtil.DefaultSpacingadd;
-            LogUtil.d("fixMirrorOrientationByRotateValue", String.format("percent : %s , aFloat : %s , result : %s ", new Object[]{Float.valueOf(percent), Float.valueOf(aFloat), Float.valueOf(result)}));
+            LogUtil.d("fixMirrorOrientationByRotateValue", String.format("percent : %s , aFloat : %s , result : %s ", percent, aFloat, result));
             switch ((int) aFloat) {
                 case 0:
                     orientation = 1.0f;
@@ -14993,7 +15329,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             if (orientation < 1.0f) {
                 orientation += 4.0f;
             }
-            LogUtil.d("fixMirrorOrientationByRotateValue", String.format("after percent : %s , orientation : %s , result : %s ", new Object[]{Float.valueOf(percent), Float.valueOf(orientation), Float.valueOf(result)}));
+            LogUtil.d("fixMirrorOrientationByRotateValue", String.format("after percent : %s , orientation : %s , result : %s ", percent, orientation, result));
             this.mGPUImageMirrorFilter.setMirrorStartAndOrientation(result, orientation, this.mCaptureOrientation);
             float resultValue = StaticLayoutUtil.DefaultSpacingadd;
             switch ((int) orientation) {
@@ -15012,33 +15348,33 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             mirrorItem.value[0] = resultValue;
             mirrorItem.selectPosition[0] = 100.0f * result;
-            LogUtil.d("fixMirrorOrientationByRotateValue", String.format("after mirrorItem.value[0] : %s , mirrorItem.selectPosition[0] : %s  ", new Object[]{Float.valueOf(mirrorItem.value[0]), Float.valueOf(mirrorItem.selectPosition[0])}));
+            LogUtil.d("fixMirrorOrientationByRotateValue", String.format("after mirrorItem.value[0] : %s , mirrorItem.selectPosition[0] : %s  ", mirrorItem.value[0], mirrorItem.selectPosition[0]));
         }
     }
 
     private void showCropView() {
-        this.filter_effect_set_five.setVisibility(0);
-        this.filter_effect_set_six.setVisibility(0);
-        this.filter_effect_set_seven.setVisibility(0);
-        this.filter_effect_set_zero.setVisibility(0);
-        this.filter_effect_set_zero.setFilterEffectImage(2130837859);
-        this.filter_effect_set_zero.setFilterEffectText(getString(2131296388));
-        this.filter_effect_set_one.setFilterEffectImage(2130837839);
+        this.filter_effect_set_five.setVisibility(View.VISIBLE);
+        this.filter_effect_set_six.setVisibility(View.VISIBLE);
+        this.filter_effect_set_seven.setVisibility(View.VISIBLE);
+        this.filter_effect_set_zero.setVisibility(View.VISIBLE);
+        this.filter_effect_set_zero.setFilterEffectImage(R.drawable.icon_20_effect_new_off);
+        this.filter_effect_set_zero.setFilterEffectText(getString(R.string.BUTTON_EFFECT_NONE));
+        this.filter_effect_set_one.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_169);
         this.filter_effect_set_one.setFilterEffectText("16:9");
-        this.filter_effect_set_two.setFilterEffectImage(2130837841);
+        this.filter_effect_set_two.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_32);
         this.filter_effect_set_two.setFilterEffectText("3:2");
-        this.filter_effect_set_three.setFilterEffectImage(2130837843);
+        this.filter_effect_set_three.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_43);
         this.filter_effect_set_three.setFilterEffectText("4:3");
-        this.filter_effect_set_four.setFilterEffectImage(2130837838);
+        this.filter_effect_set_four.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_11);
         this.filter_effect_set_four.setFilterEffectText("1:1");
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.filter_effect_set_four.getLayoutParams();
         layoutParams.rightMargin = 0;
         this.filter_effect_set_four.setLayoutParams(layoutParams);
-        this.filter_effect_set_five.setFilterEffectImage(2130837842);
+        this.filter_effect_set_five.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_34);
         this.filter_effect_set_five.setFilterEffectText("3:4");
-        this.filter_effect_set_six.setFilterEffectImage(2130837840);
+        this.filter_effect_set_six.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_23);
         this.filter_effect_set_six.setFilterEffectText("2:3");
-        this.filter_effect_set_seven.setFilterEffectImage(2130837844);
+        this.filter_effect_set_seven.setFilterEffectImage(R.drawable.icon_20_effect_new_crop_916);
         this.filter_effect_set_seven.setFilterEffectText("9:16");
     }
 
@@ -15060,17 +15396,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void setFilterEffectGone() {
-        this.filter_effect_root_ll.setVisibility(0);
+        this.filter_effect_root_ll.setVisibility(View.VISIBLE);
         this.filter_rule_ll.setAnimation(this.translateAnimationHide);
         this.translateAnimationHide.setAnimationListener(new AnimationListener() {
             public void onAnimationStart(Animation animation) {
             }
 
             public void onAnimationEnd(Animation animation) {
-                FilterActivity.this.filterEffectDetailIsShow = false;
-                FilterActivity.this.filter_rule_ll.setVisibility(8);
-                FilterActivity.this.filter_tab_choose_ll.setVisibility(4);
-                FilterActivity.this.filter_tab_ll.setVisibility(0);
+                filterEffectDetailIsShow = false;
+                filter_rule_ll.setVisibility(View.GONE);
+                filter_tab_choose_ll.setVisibility(4);
+                filter_tab_ll.setVisibility(View.VISIBLE);
             }
 
             public void onAnimationRepeat(Animation animation) {
@@ -15088,33 +15424,33 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void initCropAllViewStub() {
         if (this.filter_crop_ccav_vs != null) {
-            this.filter_crop_ccav = (CustomCropAllView) this.filter_crop_ccav_vs.inflate().findViewById(2131691099);
+            this.filter_crop_ccav = this.filter_crop_ccav_vs.inflate().findViewById(R.id.filter_crop_ccav);
             this.filter_crop_ccav_vs = null;
         }
     }
 
     private void initMirrorSeekViewStub() {
         if (this.mirror_seek_bar_vs != null) {
-            this.mirror_seek_bar = (MirrorSeekBar) this.mirror_seek_bar_vs.inflate().findViewById(2131691389);
+            this.mirror_seek_bar = this.mirror_seek_bar_vs.inflate().findViewById(R.id.mirror_seek_bar);
             this.mirror_seek_bar_vs = null;
         }
     }
 
     private void initRulerView(android.view.View ruler_inflate) {
-        this.filter_effect_set_bts_hs = ruler_inflate.findViewById(2131691129);
-        this.filter_tab_choose_ll = ruler_inflate.findViewById(2131691124);
-        this.filter_tab_choose_cancle = ruler_inflate.findViewById(2131691125);
-        this.filter_tab_choose_confirm = ruler_inflate.findViewById(2131691126);
-        this.filter_custom_sk = (MyCustomSeekBar) ruler_inflate.findViewById(2131691128);
-        this.filter_detail_set_text = (AvenirNextCondensedRegularTextView) ruler_inflate.findViewById(2131691127);
-        this.filter_effect_set_zero = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691130);
-        this.filter_effect_set_one = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691131);
-        this.filter_effect_set_two = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691132);
-        this.filter_effect_set_three = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691133);
-        this.filter_effect_set_four = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691134);
-        this.filter_effect_set_five = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691135);
-        this.filter_effect_set_six = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691136);
-        this.filter_effect_set_seven = (FilterEffectSetRelativeLayout) ruler_inflate.findViewById(2131691137);
+        this.filter_effect_set_bts_hs = ruler_inflate.findViewById(R.id.filter_effect_set_bts_hs);
+        this.filter_tab_choose_ll = ruler_inflate.findViewById(R.id.filter_tab_choose_ll);
+        this.filter_tab_choose_cancle = ruler_inflate.findViewById(R.id.filter_tab_choose_cancle);
+        this.filter_tab_choose_confirm = ruler_inflate.findViewById(R.id.filter_tab_choose_confirm);
+        this.filter_custom_sk = ruler_inflate.findViewById(R.id.filter_custom_sk);
+        this.filter_detail_set_text = ruler_inflate.findViewById(R.id.filter_detail_set_text);
+        this.filter_effect_set_zero = ruler_inflate.findViewById(R.id.filter_effect_set_zero);
+        this.filter_effect_set_one = ruler_inflate.findViewById(R.id.filter_effect_set_one);
+        this.filter_effect_set_two = ruler_inflate.findViewById(R.id.filter_effect_set_two);
+        this.filter_effect_set_three = ruler_inflate.findViewById(R.id.filter_effect_set_three);
+        this.filter_effect_set_four = ruler_inflate.findViewById(R.id.filter_effect_set_four);
+        this.filter_effect_set_five = ruler_inflate.findViewById(R.id.filter_effect_set_five);
+        this.filter_effect_set_six = ruler_inflate.findViewById(R.id.filter_effect_set_six);
+        this.filter_effect_set_seven = ruler_inflate.findViewById(R.id.filter_effect_set_seven);
         if (this.mFilterEffectDetailSets.size() == 0) {
             this.mFilterEffectDetailSets.add(this.filter_effect_set_zero);
             this.mFilterEffectDetailSets.add(this.filter_effect_set_one);
@@ -15153,18 +15489,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(DensityUtil.dip2px(20.0f), DensityUtil.dip2px(20.0f));
         params.gravity = 16;
         iv.setLayoutParams(params);
-        iv.setImageResource(2130837980);
+        iv.setImageResource(R.drawable.icon_20_warning);
         TintColorUtil.tintDrawable(iv, Color.parseColor("#ffffff"));
-        iv.setVisibility(8);
+        iv.setVisibility(View.GONE);
         return iv;
     }
 
     public void showVideoEditView() {
         initVideoEditLayout();
-        if (this.video_edit_parent_ll == null || this.video_edit_parent_ll.getVisibility() != 0 || this.mVideoEditHelper == null || this.mVideoEditHelper.isMusicEdit()) {
+        if (this.video_edit_parent_ll == null || this.video_edit_parent_ll.getVisibility() != View.VISIBLE || this.mVideoEditHelper == null || this.mVideoEditHelper.isMusicEdit()) {
             showVideoTimeSlideBar();
             if (this.filter_tab_choose_ll != null) {
-                this.filter_tab_choose_ll.setVisibility(8);
+                this.filter_tab_choose_ll.setVisibility(View.GONE);
             }
             if (this.mVideoEditSwitchTabsHolder != null) {
                 this.mVideoEditSwitchTabsHolder.onSwitchTabClick(false);
@@ -15188,8 +15524,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void setVideoSlideBarWidthMargin(int width, int marginLeft) {
-        if (this.video_time_slide_bar != null && this.video_time_slide_bar.getVisibility() == 0) {
-            LogUtil.d(TAG, String.format("setVideoSlideBarWidthMargin width : %s , marginLeft : %s ", new Object[]{Integer.valueOf(width), Integer.valueOf(marginLeft)}));
+        if (this.video_time_slide_bar != null && this.video_time_slide_bar.getVisibility() == View.VISIBLE) {
+            LogUtil.d(TAG, String.format("setVideoSlideBarWidthMargin width : %s , marginLeft : %s ", width, marginLeft));
             LayoutParams layoutParams = (LayoutParams) this.video_time_slide_bar.getLayoutParams();
             if (width != layoutParams.width || layoutParams.leftMargin != marginLeft) {
                 layoutParams.width = width;
@@ -15224,7 +15560,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void callVideoPause() {
         this.player_rl.changePlayState(true);
-        if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == 0) {
+        if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == View.VISIBLE) {
             this.mAudioTrimLayout.changePlayState(true);
         }
         if (!this.mSurfaceView.getLongVideoPlayState()) {
@@ -15234,7 +15570,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void callVideoPlay() {
         this.player_rl.changePlayState(false);
-        if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == 0) {
+        if (this.mAudioTrimLayout != null && this.mAudioTrimLayout.getVisibility() == View.VISIBLE) {
             this.mAudioTrimLayout.changePlayState(false);
         }
         if (this.mSurfaceView.getLongVideoPlayState()) {
@@ -15257,12 +15593,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     private void checkMuteIndicatorVisibility() {
         if (this.mVideoAudioManager != null && this.video_edit_mute_indicator != null) {
             if (this.canVideoMuteIndicatorShow) {
-                this.video_edit_mute_indicator.setVisibility(0);
-                this.video_edit_mute_indicator_cover.setVisibility(0);
+                this.video_edit_mute_indicator.setVisibility(View.VISIBLE);
+                this.video_edit_mute_indicator_cover.setVisibility(View.VISIBLE);
                 return;
             }
-            this.video_edit_mute_indicator.setVisibility(8);
-            this.video_edit_mute_indicator_cover.setVisibility(8);
+            this.video_edit_mute_indicator.setVisibility(View.GONE);
+            this.video_edit_mute_indicator_cover.setVisibility(View.GONE);
         }
     }
 
@@ -15364,14 +15700,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void onShowSlideText() {
-        LogUtil.d(TAG, String.format("SlideTextSwitch   onShowSlideText", new Object[0]));
+        LogUtil.d(TAG, String.format("SlideTextSwitch   onShowSlideText"));
         this.video_edit_remove_parent.clearAnimation();
         this.text_move_left_right.clearAnimation();
         startAnimationForRemoveParent(this.video_edit_remove_parent.getAlpha(), StaticLayoutUtil.DefaultSpacingadd);
     }
 
     public void onHideSlideText() {
-        LogUtil.d(TAG, String.format("SlideTextSwitch   onHideSlideText", new Object[0]));
+        LogUtil.d(TAG, String.format("SlideTextSwitch   onHideSlideText"));
         this.video_edit_remove_parent.clearAnimation();
         this.text_move_left_right.clearAnimation();
         startAnimationForRemoveParent(this.video_edit_remove_parent.getAlpha(), 1.0f);
@@ -15388,14 +15724,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void showVideoAddMusicTv() {
-        if (this.video_edit_add_music_tv.getVisibility() != 0) {
-            this.video_edit_add_music_tv.setVisibility(0);
+        if (this.video_edit_add_music_tv.getVisibility() != View.VISIBLE) {
+            this.video_edit_add_music_tv.setVisibility(View.VISIBLE);
         }
     }
 
     public void hideVideoAddMusicTv() {
-        if (this.video_edit_add_music_tv.getVisibility() == 0) {
-            this.video_edit_add_music_tv.setVisibility(8);
+        if (this.video_edit_add_music_tv.getVisibility() == View.VISIBLE) {
+            this.video_edit_add_music_tv.setVisibility(View.GONE);
         }
     }
 
@@ -15415,7 +15751,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     public int getVideoAddMusicTvWidth() {
         int width = this.video_edit_add_music_tv.getWidth();
         if (width <= 0) {
-            return (int) this.video_edit_add_music_tv.getPaint().measureText(getString(2131296348));
+            return (int) this.video_edit_add_music_tv.getPaint().measureText(getString(R.string.BUTTON_AUDIO_TAP_TO_ADD_MUSIC));
         }
         return width;
     }
@@ -15424,44 +15760,44 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (isEditMusic) {
             if (TextUtil.isValidate(this.mVideoAudioManager.getMusicModelList())) {
                 if (mute) {
-                    this.video_edit_audio_mute_tv.setVisibility(0);
+                    this.video_edit_audio_mute_tv.setVisibility(View.VISIBLE);
                 } else {
-                    this.video_edit_audio_mute_tv.setVisibility(8);
+                    this.video_edit_audio_mute_tv.setVisibility(View.GONE);
                 }
             }
             callVideoChange(this.currentPlayTimeUs);
             return;
         }
-        this.video_edit_audio_mute_tv.setVisibility(8);
+        this.video_edit_audio_mute_tv.setVisibility(View.GONE);
     }
 
     public void onVideoMuteClick(boolean mute, boolean isEditMusic) {
         if (isEditMusic) {
             if (mute) {
                 if (this.canVideoMuteIndicatorShow) {
-                    this.video_edit_mute_indicator.setVisibility(0);
-                    this.video_edit_mute_indicator_cover.setVisibility(0);
+                    this.video_edit_mute_indicator.setVisibility(View.VISIBLE);
+                    this.video_edit_mute_indicator_cover.setVisibility(View.VISIBLE);
                 } else {
-                    this.video_edit_mute_indicator.setVisibility(8);
-                    this.video_edit_mute_indicator_cover.setVisibility(8);
+                    this.video_edit_mute_indicator.setVisibility(View.GONE);
+                    this.video_edit_mute_indicator_cover.setVisibility(View.GONE);
                 }
-                this.video_edit_image_mute_tv.setVisibility(0);
+                this.video_edit_image_mute_tv.setVisibility(View.VISIBLE);
             } else {
-                this.video_edit_image_mute_tv.setVisibility(8);
+                this.video_edit_image_mute_tv.setVisibility(View.GONE);
                 if (this.canVideoMuteIndicatorShow) {
-                    this.video_edit_mute_indicator.setVisibility(0);
-                    this.video_edit_mute_indicator_cover.setVisibility(0);
+                    this.video_edit_mute_indicator.setVisibility(View.VISIBLE);
+                    this.video_edit_mute_indicator_cover.setVisibility(View.VISIBLE);
                 } else {
-                    this.video_edit_mute_indicator.setVisibility(8);
-                    this.video_edit_mute_indicator_cover.setVisibility(8);
+                    this.video_edit_mute_indicator.setVisibility(View.GONE);
+                    this.video_edit_mute_indicator_cover.setVisibility(View.GONE);
                 }
             }
             callVideoChange(this.currentPlayTimeUs);
             return;
         }
-        this.video_edit_mute_indicator.setVisibility(8);
-        this.video_edit_mute_indicator_cover.setVisibility(8);
-        this.video_edit_image_mute_tv.setVisibility(8);
+        this.video_edit_mute_indicator.setVisibility(View.GONE);
+        this.video_edit_mute_indicator_cover.setVisibility(View.GONE);
+        this.video_edit_image_mute_tv.setVisibility(View.GONE);
     }
 
     public void refreshAudioEditButton() {
@@ -15484,18 +15820,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     public void animationJumpToMusicEdit() {
         selectMusicFromEditPointAnim(new AnimatorEndListener() {
             public void onAnimationEnd(Animator animation) {
-                FilterActivity.this.onMusicTabClick(true);
+                onMusicTabClick(true);
             }
         });
     }
 
     public boolean checkAddTextVisible(float width) {
         int addMusicTvWidth = getVideoAddMusicTvWidth();
-        if (this.video_edit_add_music_tv.getVisibility() != 0) {
+        if (this.video_edit_add_music_tv.getVisibility() != View.VISIBLE) {
             if (width <= ((float) (DensityUtil.dip2px(25.0f) + addMusicTvWidth))) {
                 return false;
             }
-            this.video_edit_add_music_tv.setVisibility(0);
+            this.video_edit_add_music_tv.setVisibility(View.VISIBLE);
             if (this.mVideoEditHelper == null) {
                 return true;
             }
@@ -15504,7 +15840,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         } else if (width >= ((float) (DensityUtil.dip2px(25.0f) + addMusicTvWidth))) {
             return true;
         } else {
-            this.video_edit_add_music_tv.setVisibility(4);
+            this.video_edit_add_music_tv.setVisibility(View.INVISIBLE);
             return false;
         }
     }
@@ -15561,7 +15897,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             int i = 0;
             while (i < this.mFilterInfos.size()) {
-                if (((FilterInfo) this.mFilterInfos.get(i)).name_en != null && ((FilterInfo) this.mFilterInfos.get(i)).name_en.equals(filterName)) {
+                if (this.mFilterInfos.get(i).name_en != null && this.mFilterInfos.get(i).name_en.equals(filterName)) {
                     this.filterChoosePosition = i;
                 }
                 i++;
@@ -15571,12 +15907,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void startAnimationForRemoveParent(float startValue, float endValue) {
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(startValue, endValue);
-        valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = ((Float) animation.getAnimatedValue()).floatValue();
-                FilterActivity.this.video_edit_remove_parent.setAlpha(value);
-                FilterActivity.this.text_move_left_right.setAlpha(1.0f - value);
-            }
+        valueAnimator.addUpdateListener(animation -> {
+            float value = (Float) animation.getAnimatedValue();
+            video_edit_remove_parent.setAlpha(value);
+            text_move_left_right.setAlpha(1.0f - value);
         });
         valueAnimator.setDuration(100);
         valueAnimator.start();
@@ -15584,25 +15918,25 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     public void hideVideoEditView() {
         if (this.video_edit_parent_ll != null) {
-            this.video_edit_parent_ll.setVisibility(8);
+            this.video_edit_parent_ll.setVisibility(View.GONE);
         }
         hideEditCenterLine();
         if (this.video_edit_remove_parent != null) {
-            this.video_edit_remove_parent.setVisibility(8);
+            this.video_edit_remove_parent.setVisibility(View.GONE);
         }
         hideVideoTimeSlideBar();
         if (this.video_edit_text_rv != null) {
-            this.video_edit_text_rv.setVisibility(8);
+            this.video_edit_text_rv.setVisibility(View.GONE);
         }
     }
 
     private void hideEditCenterLine() {
-        this.filter_tab_center_line_parent.setVisibility(8);
+        this.filter_tab_center_line_parent.setVisibility(View.GONE);
     }
 
     private void hideVideoTimeSlideBar() {
-        this.video_time_slide_bar.setVisibility(8);
-        this.video_time_slide_bar_backgroud_view.setVisibility(8);
+        this.video_time_slide_bar.setVisibility(View.GONE);
+        this.video_time_slide_bar_backgroud_view.setVisibility(View.GONE);
     }
 
     public void initVideoOrderView() {
@@ -15621,7 +15955,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             itemDragAndSwipeCallback.setDragMoveFlags(12);
             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemDragAndSwipeCallback);
             itemTouchHelper.attachToRecyclerView(this.video_order_rv);
-            this.mVideoEditOrderAdapter.enableDragItem(itemTouchHelper, 2131691756, true);
+            this.mVideoEditOrderAdapter.enableDragItem(itemTouchHelper, R.id.video_order_item_iv, true);
             this.mVideoEditOrderAdapter.setOnItemDragListener(this);
         }
     }
@@ -15636,24 +15970,24 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.mVideoEditOrderAdapter.notifyDataSetChanged();
             final int dip2px = DensityUtil.dip2px(140.0f);
             ViewCompat.setTranslationY(this.video_order_parent_rl, (float) dip2px);
-            this.video_order_parent_rl.setVisibility(0);
+            this.video_order_parent_rl.setVisibility(View.VISIBLE);
             ValueAnimator valueAnimator = ValueAnimator.ofFloat(1.0f);
             valueAnimator.setInterpolator(new LinearInterpolator());
             valueAnimator.setDuration(100);
             valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    float value = ((Float) animation.getAnimatedValue()).floatValue();
-                    ViewCompat.setTranslationY(FilterActivity.this.video_order_parent_rl, ((float) dip2px) * (1.0f - value));
-                    if (FilterActivity.this.mVideoEditSwitchTabsHolder != null) {
-                        FilterActivity.this.mVideoEditSwitchTabsHolder.setAlpha(1.0f - value);
+                    float value = (Float) animation.getAnimatedValue();
+                    ViewCompat.setTranslationY(video_order_parent_rl, ((float) dip2px) * (1.0f - value));
+                    if (mVideoEditSwitchTabsHolder != null) {
+                        mVideoEditSwitchTabsHolder.setAlpha(1.0f - value);
                     }
                 }
             });
             valueAnimator.addListener(new AnimatorEndListener() {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    if (FilterActivity.this.mVideoEditSwitchTabsHolder != null) {
-                        FilterActivity.this.mVideoEditSwitchTabsHolder.setVisibility(8);
+                    if (mVideoEditSwitchTabsHolder != null) {
+                        mVideoEditSwitchTabsHolder.setVisibility(View.GONE);
                     }
                 }
             });
@@ -15680,17 +16014,17 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             this.mVideoEditEffectsLayout.setThisVideoModel((LongVideosModel) this.mVideoAudioManager.getVideosModelList().get(position), null);
             this.mVideoEditEffectsLayout.setCancelOrConfirmClickListener(this);
             this.mVideoEditEffectsLayout.setChildrenClickListener(this);
-            this.mVideoEditEffectsLayout.setOnSelectItemChange(new OnSelectItemChange() {
+            this.mVideoEditEffectsLayout.setOnSelectItemChange(new HorizontalLoopView.OnSelectItemChange() {
                 public void onSelect(int pos) {
                 }
             });
-            this.mVideoEditEffectsLayout.setBrightnessSeekBarListener(new OnCustomProgressChangeListener() {
+            this.mVideoEditEffectsLayout.setBrightnessSeekBarListener(new CustomSeekBar.OnCustomProgressChangeListener() {
                 public void onProgressChanged(float progressFloat) {
                     float realFloat = (10.0f * progressFloat) - 5.0f;
-                    LongVideosModel model = (LongVideosModel) FilterActivity.this.mVideoAudioManager.getVideosModelList().get(FilterActivity.this.getCurVideoEditModuleViewModelPosition());
+                    LongVideosModel model = (LongVideosModel) mVideoAudioManager.getVideosModelList().get(getCurVideoEditModuleViewModelPosition());
                     if (realFloat != model.getRealVideoExposure()) {
                         model.setVideoExposure(realFloat);
-                        FilterActivity.this.setVideoFilter(false);
+                        setVideoFilter(false);
                     }
                 }
 
@@ -15707,13 +16041,13 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void showVideoEditEffectsView() {
-        this.mVideoEditEffectsLayout.setVisibility(0);
+        this.mVideoEditEffectsLayout.setVisibility(View.VISIBLE);
         callVideoPause();
         doSurfaceAndTitleBarAnim(false);
     }
 
     public void hideVideoEditEffectsView() {
-        this.mVideoEditEffectsLayout.setVisibility(8);
+        this.mVideoEditEffectsLayout.setVisibility(View.GONE);
         doSurfaceAndTitleBarAnim(true);
     }
 
@@ -15726,23 +16060,23 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 public void onClick(android.view.View v) {
                 }
             });
-            this.mAudioTrimLayout.setOnTrimButtonClick(new OnTrimButtonClick() {
+            this.mAudioTrimLayout.setOnTrimButtonClick(new AudioTrimLayout.OnTrimButtonClick() {
                 public void onTrimCancel() {
-                    FilterActivity.this.trimCancelClick();
+                    trimCancelClick();
                 }
 
                 public void onTrimConfirm() {
-                    FilterActivity.this.trimConfirmClick();
+                    trimConfirmClick();
                 }
 
                 public void onTrimPlayClick(boolean play, LongVideosModel audioModel) {
                     if (play) {
-                        FilterActivity.this.changeVideoAudio(audioModel.getAudioStartTime());
-                        FilterActivity.this.mSurfaceView.setLongVideoSeekTo(audioModel.getAudioStartTime() * 1000);
-                        FilterActivity.this.callVideoPlay();
+                        changeVideoAudio(audioModel.getAudioStartTime());
+                        mSurfaceView.setLongVideoSeekTo(audioModel.getAudioStartTime() * 1000);
+                        callVideoPlay();
                         return;
                     }
-                    FilterActivity.this.callVideoPause();
+                    callVideoPause();
                 }
             });
             AnimationUtil.translateAnimate(this.mAudioTrimLayout, StaticLayoutUtil.DefaultSpacingadd, (float) DensityUtil.dip2px(160.0f), 0, null);
@@ -15765,9 +16099,9 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void showAudioTrimView() {
-        if (this.mAudioTrimLayout.getVisibility() != 0 && this.mAudioTrimLayout.resetUI()) {
+        if (this.mAudioTrimLayout.getVisibility() != View.VISIBLE && this.mAudioTrimLayout.resetUI()) {
             this.mVideoAudioManager.getWaveformCacheUtils().setCanRunnableRun(true);
-            this.mAudioTrimLayout.setVisibility(0);
+            this.mAudioTrimLayout.setVisibility(View.VISIBLE);
             callVideoPause();
             doAudioTrimAnim(true);
             hideVideoEditView();
@@ -15775,7 +16109,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     public void hideAudioTrimView() {
-        if (this.mAudioTrimLayout.getVisibility() == 0) {
+        if (this.mAudioTrimLayout.getVisibility() == View.VISIBLE) {
             this.mVideoAudioManager.getWaveformCacheUtils().setCanRunnableRun(false);
             doAudioTrimAnim(false);
             changeVideoEditVisibleForMusicTab();
@@ -15786,7 +16120,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (show) {
             this.mIvBack.setEnabled(false);
             this.mTvSave.setEnabled(false);
-            this.surface_click_view.setVisibility(0);
+            this.surface_click_view.setVisibility(View.VISIBLE);
             AnimationUtil.alphaAnimate(this.mIvBack, StaticLayoutUtil.DefaultSpacingadd, 100, null);
             AnimationUtil.alphaAnimate(this.mTvSave, StaticLayoutUtil.DefaultSpacingadd, 100, null);
             AnimationUtil.alphaAnimate(this.player_rl, StaticLayoutUtil.DefaultSpacingadd, 100, null);
@@ -15796,14 +16130,14 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         }
         this.mIvBack.setEnabled(true);
         this.mTvSave.setEnabled(true);
-        this.surface_click_view.setVisibility(8);
+        this.surface_click_view.setVisibility(View.GONE);
         AnimationUtil.alphaAnimate(this.mIvBack, 1.0f, 100, null);
         AnimationUtil.alphaAnimate(this.mTvSave, 1.0f, 100, null);
         AnimationUtil.alphaAnimate(this.player_rl, 1.0f, 100, null);
         AnimationUtil.alphaAnimate(this.video_edit_remove_parent, 1.0f, 100, null);
         AnimationUtil.translateAnimate(this.mAudioTrimLayout, StaticLayoutUtil.DefaultSpacingadd, (float) DensityUtil.dip2px(160.0f), 100, new AnimatorEndListener() {
             public void onAnimationEnd(Animator animation) {
-                FilterActivity.this.mAudioTrimLayout.setVisibility(8);
+                mAudioTrimLayout.setVisibility(View.GONE);
             }
         });
     }
@@ -15820,7 +16154,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             AnimationUtil.translateAnimate(this.filter_current_clip_iv, StaticLayoutUtil.DefaultSpacingadd, (float) DensityUtil.dip2px(StaticLayoutUtil.DefaultSpacingadd), 100, null);
             AnimationUtil.alphaAnimate(this.mIvBack, 1.0f, 100, null);
             AnimationUtil.alphaAnimate(this.mTvSave, 1.0f, 100, null);
-            this.surface_click_view.setVisibility(8);
+            this.surface_click_view.setVisibility(View.GONE);
             return;
         }
         this.mIvBack.setEnabled(false);
@@ -15833,10 +16167,10 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         AnimationUtil.translateAnimate(this.filter_current_clip_iv, StaticLayoutUtil.DefaultSpacingadd, (float) (-DensityUtil.dip2px(30.0f)), 100, null);
         AnimationUtil.alphaAnimate(this.mIvBack, StaticLayoutUtil.DefaultSpacingadd, 100, null);
         AnimationUtil.alphaAnimate(this.mTvSave, StaticLayoutUtil.DefaultSpacingadd, 100, null);
-        this.surface_click_view.setVisibility(0);
+        this.surface_click_view.setVisibility(View.VISIBLE);
     }
 
-    public void setPresenter(Presenter presenter) {
+    public void setPresenter(FilterActivityContract.Presenter presenter) {
         this.mPresenter = presenter;
     }
 
@@ -15862,18 +16196,18 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
 
     private void dealProxyProgressEvent(ProxyProgressEvent event) {
         setVideoOptProgress(event.getProxyProgressInt(), event.isProxySuccess());
-        if (this.mVideoOptDialog != null) {
-            this.mVideoOptDialog.setModel(event.getModel());
-        }
+//        if (this.mVideoOptDialog != null) {
+//            this.mVideoOptDialog.setModel(event.getModel());
+//        }
     }
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DestroyActivityEvent event) {
         _DestroyActivityEvent(event);
     }
 
     private void _DestroyActivityEvent(DestroyActivityEvent event) {
         long videosSumTime;
-        if (ActivityState.LONGVIDEOLOCAL == event.state || ActivityState.LONGVIDEOBITMAP == event.state) {
+        if (DestroyActivityEvent.ActivityState.LONGVIDEOLOCAL == event.state || DestroyActivityEvent.ActivityState.LONGVIDEOBITMAP == event.state) {
             List<LongVideosModel> listVideoModels = event.listVideoModels;
             this.fromEventShouldNotResume = true;
             videosSumTime = VideoModelHelper.getVideosSumTime(listVideoModels);
@@ -15893,7 +16227,7 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
                 this.mVideoEditHelper.setViewScrollTo((double) this.needSeekTo);
             }
             setUndoData(1);
-        } else if (ActivityState.LONGVIDEOCAMERA == event.state) {
+        } else if (DestroyActivityEvent.ActivityState.LONGVIDEOCAMERA == event.state) {
             List<LongVideosModel> videosModels = event.listVideoModels;
             this.mVideoAudioManager.addAllVideoModelsByPaths2(videosModels, this.mCurInsertPosition);
             videosSumTime = VideoModelHelper.getVideosSumTime(this.mVideoAudioManager.getVideosModelList().subList(this.mCurInsertPosition, this.mCurInsertPosition + videosModels.size()));
@@ -15920,8 +16254,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         float differenceTime = this.mVideoAudioManager.compareTotalTime((float) this.userLongVideoDuration);
         if (differenceTime > StaticLayoutUtil.DefaultSpacingadd) {
             String format = new DecimalFormat("0.0").format((double) differenceTime);
-            this.title_alert_out_time.setTextColor(getResources().getColor(2131755083));
-            this.title_alert_out_time.setText(String.format(getResources().getString(2131297031), new Object[]{format}));
+            this.title_alert_out_time.setTextColor(getResources().getColor(R.color.colorRed));
+            this.title_alert_out_time.setText(String.format(getResources().getString(R.string.TEXT_VIDEO_EDIT_MAX_LENGTH_EXCEEDED), format));
             if (this.mTvSave.isEnabled()) {
                 this.mTvSave.setEnabled(false);
                 this.mTvSave.setAlpha(0.4f);
@@ -15929,8 +16263,8 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
             }
             return;
         }
-        this.title_alert_out_time.setTextColor(getResources().getColor(2131755096));
-        this.title_alert_out_time.setText(String.format(getResources().getString(2131297032), new Object[]{"" + this.userLongVideoDuration}));
+        this.title_alert_out_time.setTextColor(getResources().getColor(R.color.colorWhite));
+        this.title_alert_out_time.setText(String.format(getResources().getString(R.string.TEXT_VIDEO_EDIT_MAX_LENGTH_NOT_EXCEEDED), "" + this.userLongVideoDuration));
         if (!this.mTvSave.isEnabled()) {
             this.mTvSave.setEnabled(true);
             this.mTvSave.setAlpha(1.0f);
@@ -16012,37 +16346,48 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
     }
 
     private void showAlertSaveDraftDialog() {
-        new IOSAlertDialog(getActivity()).builder().setCancelable(false).setTitle(getString(2131296781)).setMsg(getString(2131296747)).setPositiveButton(46.lambdaFactory$()).show();
+        //new IOSAlertDialog(getActivity()).builder().setCancelable(false).setTitle(getString(2131296781)).setMsg(getString(2131296747)).setPositiveButton(46.lambdaFactory$()).show();
+        new AlertDialog.Builder(getActivity()).setCancelable(false)
+                .setTitle(getString(R.string.POPUP_TITLE_REALTIME_DRAFT))
+                .setMessage(getString(R.string.POPUP_LABEL_REALTIME_DRAFT))
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
     }
 
     private static /* synthetic */ void lambda$showAlertSaveDraftDialog$45(android.view.View v) {
     }
 
     private void showVideoOptDialog() {
-        if (this.mVideoOptDialog == null) {
-            this.mVideoOptDialog = new VideoOptDialog(getActivity()).builder();
-            this.mVideoOptDialog.setOnCancelClick(new OnCancelClick() {
-                public void cancel() {
-                    if (FilterActivity.this.mVideoOptDialog != null) {
-                        FilterActivity.this.canVideoOptDialogShow = false;
-                        LongVideosModel model = FilterActivity.this.mVideoOptDialog.getModel();
-                        if (model != null) {
-                            model.stopCurrentClient();
-                        }
-                        FilterActivity.this.dismissVideoOptDialog();
-                    }
-                }
-            });
-        }
-        if (!this.mVideoOptDialog.isShowing() && this.canVideoOptDialogShow) {
-            this.mVideoOptDialog.show();
-        }
+//        if (this.mVideoOptDialog == null) {
+//            this.mVideoOptDialog = new VideoOptDialog(getActivity()).builder();
+//            this.mVideoOptDialog.setOnCancelClick(new OnCancelClick() {
+//                public void cancel() {
+//                    if (mVideoOptDialog != null) {
+//                        canVideoOptDialogShow = false;
+//                        LongVideosModel model = mVideoOptDialog.getModel();
+//                        if (model != null) {
+//                            model.stopCurrentClient();
+//                        }
+//                        dismissVideoOptDialog();
+//                    }
+//                }
+//            });
+//        }
+//        if (!this.mVideoOptDialog.isShowing() && this.canVideoOptDialogShow) {
+//            this.mVideoOptDialog.show();
+//        }
+        Toast.makeText(getActivity(),"showVideoOptDialog",Toast.LENGTH_LONG).show();
     }
 
     private void dismissVideoOptDialog() {
-        if (this.mVideoOptDialog != null) {
-            this.mVideoOptDialog.dismiss();
-        }
+//        if (this.mVideoOptDialog != null) {
+//            this.mVideoOptDialog.dismiss();
+//        }
+        Toast.makeText(getActivity(),"dismissVideoOptDialog",Toast.LENGTH_LONG).show();
+
         changeVideoAudio(this.currentPlayTimeUs);
     }
 
@@ -16050,11 +16395,12 @@ public class FilterActivity extends Activity implements OnClickListener, View, O
         if (progress >= 0) {
             showVideoOptDialog();
         }
-        if (this.mVideoOptDialog != null) {
-            this.mVideoOptDialog.setProgress(progress);
+//        if (this.mVideoOptDialog != null) {
+//            this.mVideoOptDialog.setProgress(progress);
+            Log.e("debug","setVideoOptProgress:"+progress);
             if (suc) {
                 dismissVideoOptDialog();
             }
-        }
+//        }
     }
 }

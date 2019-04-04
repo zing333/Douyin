@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundAngleImageView">
+        <attr name="roundWidth" format="dimension"/>
+        <attr name="roundHeight" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="RingBackgroundView">
+        <attr name="bgRingColor" format="color"/>
+        <attr name="proRingColor" format="color"/>
+        <attr name="bgLineWidth" format="dimension"/>
+        <attr name="proLineWidth" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="cpb_progressbar_width" format="dimension"/>
+        <attr name="cpb_background_progressbar_width" format="dimension"/>
+        <attr name="cpb_progressbar_color" format="color"/>
+        <attr name="cpb_background_progressbar_color" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="ShadowLayout">
+        <attr name="sl_cornerRadius" format="dimension"/>
+        <attr name="sl_shadowRadius" format="dimension"/>
+        <attr name="sl_dx" format="dimension"/>
+        <attr name="sl_dy" format="dimension"/>
+        <attr name="sl_shadowColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="LeftImageRightTextLayout">
+        <attr name="leftImageWidth" format="dimension"/>
+        <attr name="leftImageHeight" format="dimension"/>
+        <attr name="leftImageTint" format="color"/>
+        <attr name="leftImagePadding" format="dimension"/>
+        <attr name="leftImageRes" format="reference"/>
+        <attr name="rightTextSize" format="dimension"/>
+        <attr name="rightTextColor" format="color"/>
+        <attr name="rightTextStr" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="ColorChooseView">
+        <attr name="ccv_circleRadius" format="dimension"/>
+        <attr name="ccv_circleInPadding" format="dimension"/>
+        <attr name="ccv_circleOutTouchWidth" format="dimension"/>
+        <attr name="ccv_circleStrokeWidth" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="TextSizeView">
+        <attr name="lineColor" format="color"/>
+        <attr name="lineheight" format="dimension"/>
+        <attr name="circleColor" format="color"/>
+        <attr name="circleRadius" format="dimension"/>
+        <attr name="circleOutTouchWidth" format="dimension"/>
+        <attr name="circlePaddingTop" format="dimension"/>
+        <attr name="textSize" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="FilterEffectSetRelativeLayout">
+        <attr name="is_show_circle_line" format="boolean"/>
+        <attr name="drawable" format="reference"/>
+        <attr name="text" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="IMCameraProgressBar">
+        <attr name="backColor" format="color|reference"/>
+        <attr name="borderWidth" format="dimension"/>
+        <attr name="frontColor" format="color|reference"/>
+        <attr name="maxValue" format="integer"/>
+        <attr name="textColor" format="color|reference"/>
+        <attr name="textSizeIM" format="dimension"/>
+        <attr name="defaultMultiplier" format="integer"/>
+        <attr name="mode">
+            <enum name="FILLE" value="2"/>
+            <enum name="STROKE" value="0"/>
+            <enum name="STROKE_TEXT" value="1"/>
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="CircleCoverView">
+        <attr name="circleOutColor" format="color|reference"/>
+        <attr name="outLineColor" format="color|reference"/>
+        <attr name="radius" format="dimension"/>
+        <attr name="lineSize" format="dimension"/>
+        <attr name="leftRightSpace" format="dimension"/>
+        <attr name="leftSpace" format="dimension"/>
+        <attr name="rightSpace" format="dimension"/>
+    </declare-styleable>
+    <!--加载动画-->
+    <declare-styleable name="ProgressWheel">
+        <attr name="matProg_progressIndeterminate" format="boolean" />
+        <attr name="matProg_barColor" format="color" />
+        <attr name="matProg_rimColor" format="color" />
+        <attr name="matProg_rimWidth" format="dimension" />
+        <attr name="matProg_spinSpeed" format="float" />
+        <attr name="matProg_barSpinCycleTime" format="integer" />
+        <attr name="matProg_circleRadius" format="dimension" />
+        <attr name="matProg_fillRadius" format="boolean" />
+        <attr name="matProg_barWidth" format="dimension" />
+        <attr name="matProg_linearProgress" format="boolean" />
+    </declare-styleable>
+</resources>

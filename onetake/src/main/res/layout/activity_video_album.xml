@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xiaoluo="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:alpha="0.3"
+        android:background="@color/colorBlack" />
+
+    <!--<com.blink.academy.onetake.widgets.XLPullToRefresh.PtrAlbumViewLayout-->
+    <LinearLayout
+        android:id="@id/pull_refresh_pcfl"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorTransparent"
+        android:orientation="vertical"
+        xiaoluo:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <!--xiaoluo:ptr_duration_to_close="@integer/CLOSE_DURATION"-->
+        <!--xiaoluo:ptr_duration_to_close_header="@integer/CLOSE_HEADER_DURATION"-->
+        <!--xiaoluo:ptr_keep_header_when_refresh="true"-->
+        <!--xiaoluo:ptr_pull_to_fresh="false"-->
+        <!--xiaoluo:ptr_ratio_of_header_height_to_refresh="1.0"-->
+        <!--xiaoluo:ptr_resistance="1.7">-->
+
+        <RelativeLayout
+            android:id="@id/drag_vertical_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <RelativeLayout
+                android:id="@id/nav_title_rl"
+                android:layout_width="fill_parent"
+                android:layout_height="60.0dip"
+                android:background="@color/colorTheme">
+
+                <RelativeLayout
+                    android:id="@id/category_layout_rl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="@dimen/_20dp"
+                    android:paddingRight="@dimen/_20dp">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                        android:id="@id/category_anrtv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@null"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:paddingRight="5.0dip"
+                        android:singleLine="true"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular13" />
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                        android:id="@id/drafts_anrtv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@null"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:paddingRight="5.0dip"
+                        android:singleLine="true"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular13"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@id/icon_iv"
+                        android:layout_width="13.0dip"
+                        android:layout_height="13.0dip"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/category_anrtv"
+                        android:src="@drawable/icon_20_camera_shrink"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                    android:id="@id/select_anrtv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="10.0dip"
+                    android:paddingLeft="10.0dip"
+                    android:paddingRight="@dimen/_15dp"
+                    android:paddingTop="10.0dip"
+                    android:singleLine="true"
+                    android:textColor="@color/colorGold"
+                    android:textSize="@dimen/fontRegular14" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@id/choose_ll"
+                android:layout_width="fill_parent"
+                android:layout_height="57.0dip"
+                android:layout_below="@id/nav_title_rl"
+                android:layout_marginTop="-22.0dip"
+                android:background="@color/colorTheme"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:id="@id/video_swap_icon_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:paddingLeft="15.0dip"
+                        android:paddingRight="15.0dip">
+
+                        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                        <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                            android:id="@id/video_swap_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:text="@string/BUTTON_SAVE_VIDEO"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/fontRegular14" />
+
+                        <ImageView
+                            android:id="@id/video_swap_icon_bottom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/video_swap_icon"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="2.0dip"
+                            android:src="@drawable/shape_drafts_bottom" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@id/photo_swap_icon_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:paddingLeft="15.0dip"
+                        android:paddingRight="15.0dip">
+
+                        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                        <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                            android:id="@id/photo_swap_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:text="@string/BUTTON_MODE_PHOTO"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/fontRegular14" />
+
+                        <ImageView
+                            android:id="@id/photo_swap_icon_bottom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/photo_swap_icon"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="2.0dip"
+                            android:src="@drawable/shape_drafts_bottom" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@id/gif_swap_icon_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:paddingLeft="15.0dip"
+                        android:paddingRight="15.0dip">
+
+                        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                        <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                            android:id="@id/gif_swap_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
+                            android:text="@string/BUTTON_MODE_GIF"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="@dimen/fontRegular14" />
+
+                        <ImageView
+                            android:id="@id/gif_swap_icon_bottom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/gif_swap_icon"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="2.0dip"
+                            android:src="@drawable/shape_drafts_bottom" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <View
+                    android:id="@id/indicator_draft"
+                    android:layout_width="1.0dip"
+                    android:layout_height="14.0dip"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="15.0dip"
+                    android:layout_marginRight="15.0dip"
+                    android:alpha="0.3"
+                    android:background="@color/colorWhite" />
+
+                <RelativeLayout
+                    android:id="@id/draft_swap_icon_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:paddingLeft="15.0dip"
+                    android:paddingRight="15.0dip">
+
+                    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+                    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                        android:id="@id/draft_swap_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/TITLE_EDIT_DRAFTS"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/fontRegular14" />
+
+                    <ImageView
+                        android:id="@id/draft_swap_icon_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/draft_swap_icon"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="2.0dip"
+                        android:src="@drawable/shape_drafts_bottom" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@id/drafts_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/choose_ll"
+                android:background="@color/colorTrueBlack" />
+
+            <FrameLayout
+                android:id="@id/video_grid_container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/choose_ll"
+                android:background="@color/colorTrueBlack">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@id/video_grid_recyclerview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:scrollbars="vertical" />
+            </FrameLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@id/folder_grid_recyclerview"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@id/nav_title_rl"
+                android:layout_marginTop="-3.0dip"
+                android:background="@color/colorBlack"
+                android:scrollbars="vertical"
+                android:visibility="invisible" />
+
+            <!--<include-->
+            <!--android:id="@id/loading_cpb"-->
+            <!--layout="@layout/component_circular_progress_bar" />-->
+            <ProgressBar
+                android:id="@id/loading_cpb"
+                style="@style/ForkProgressBar"
+                android:layout_width="50.0dip"
+                android:layout_height="50.0dip"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:indeterminateOnly="false"
+                android:visibility="gone" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/mesage_no_data_tv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:alpha="0.3"
+                android:gravity="center"
+                android:text="@string/TEXT_NO_AVAILABLE_FILE"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14"
+                android:visibility="gone" />
+        </RelativeLayout>
+        <!--</com.blink.academy.onetake.widgets.XLPullToRefresh.PtrAlbumViewLayout>-->
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@id/fl_multiple_select"
+        android:layout_width="60.0dip"
+        android:layout_height="60.0dip"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="@dimen/_30dp"
+        android:background="@drawable/shape_white_ring_gray_solid"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@id/multiple_select_confirm"
+            android:layout_width="25.0dip"
+            android:layout_height="25.0dip"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_25_confirm"
+            android:tint="@color/colorWhite" />
+
+        <!--<com.blink.academy.onetake.widgets.CircularProgressBar.OneTakeProgressBar-->
+        <!-- style="@style/Widget.MaterialProgressBar.ProgressBar.Small"-->
+        <ProgressBar
+            android:id="@id/multiple_loading"
+            android:layout_width="25.0dip"
+            android:layout_height="25.0dip"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:tint="@color/colorWhite"
+            android:visibility="gone" />
+    </FrameLayout>
+</FrameLayout>

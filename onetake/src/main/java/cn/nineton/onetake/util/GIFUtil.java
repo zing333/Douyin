@@ -16,6 +16,7 @@ import android.text.TextPaint;
 import android.util.TypedValue;
 import java.io.FileOutputStream;
 
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.widget.ShareActionSheetDialog;
 import cn.nineton.onetake.widget.StaticLayoutUtil;
 

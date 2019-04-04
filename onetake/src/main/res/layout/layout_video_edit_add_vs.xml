@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/video_edit_add_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/colorGray"
+    android:gravity="center_horizontal"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_44dp"
+        android:layout_marginTop="@dimen/_25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@id/video_edit_add_album_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_44dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3.0dip"
+            android:layout_marginRight="3.0dip"
+            android:background="@drawable/shape_corner_3_5_color_gray"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@id/video_edit_add_album_iv"
+                    android:layout_width="@dimen/_15dp"
+                    android:layout_height="@dimen/_15dp"
+                    android:layout_marginRight="@dimen/_5dp"
+                    android:src="@drawable/icon_15_video_add_album"
+                    android:tint="@color/colorWhite" />
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView-->
+                <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+                    android:id="@id/video_edit_add_album_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/_5dp"
+                    android:maxLines="1"
+                    android:text="@string/BUTTON_VIDEO_EDIT_ADD_VIDEO"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/fontRegular12" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@id/video_edit_add_textgap_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_44dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3.0dip"
+            android:layout_marginRight="3.0dip"
+            android:background="@drawable/shape_corner_3_5_color_gray"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@id/video_edit_add_textgap_iv"
+                    android:layout_width="@dimen/_15dp"
+                    android:layout_height="@dimen/_15dp"
+                    android:layout_marginRight="@dimen/_5dp"
+                    android:src="@drawable/icon_15_video_add_textgap"
+                    android:tint="@color/colorWhite" />
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView-->
+                <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+                    android:id="@id/video_edit_add_textgap_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_5dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:text="@string/BUTTON_VIDEO_EDIT_ADD_BLACK"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/fontRegular12" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@id/video_edit_add_onemin_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_44dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3.0dip"
+            android:layout_marginRight="3.0dip"
+            android:background="@drawable/shape_corner_3_5_color_gray"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@id/video_edit_add_onemin_iv"
+                    android:layout_width="@dimen/_15dp"
+                    android:layout_height="@dimen/_15dp"
+                    android:layout_marginRight="@dimen/_5dp"
+                    android:src="@drawable/icon_15_video_add_textgap"
+                    android:tint="@color/colorWhite" />
+
+                <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedMediumTextView-->
+                <cn.nineton.onetake.widget.AvenirNextCondensedMediumTextView
+                    android:id="@id/video_edit_add_onemin_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_5dp"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/fontRegular12" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@id/video_edit_add_cancel_iv"
+        android:layout_width="@dimen/_50dp"
+        android:layout_height="@dimen/_50dp"
+        android:layout_gravity="bottom|center"
+        android:scaleType="centerInside"
+        android:src="@drawable/icon_25_cancel"
+        android:tint="@color/colorWhite" />
+</FrameLayout>

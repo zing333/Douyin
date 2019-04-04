@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/filter_music_ll"
+    android:layout_width="fill_parent"
+    android:layout_height="88.0dip"
+    android:layout_above="@id/filter_tab_ll"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/_10dp">
+
+    <!--<cn.nineton.onetake.widget.FilterEffectSetRelativeLayout-->
+    <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+        android:id="@id/filter_music_volume"
+        android:layout_width="44.0dip"
+        android:layout_height="78.0dip"
+        android:layout_marginRight="@dimen/_10dp"
+        android:src="@drawable/icon_20_audio_volume"
+        android:text="@string/BUTTON_AUDIO_EDIT_VOLUME"
+        android:visibility="gone" />
+
+    <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+        android:id="@id/filter_music_add"
+        android:layout_width="44.0dip"
+        android:layout_height="78.0dip"
+        android:layout_marginLeft="@dimen/_10dp"
+        android:layout_marginRight="@dimen/_10dp"
+        android:src="@drawable/icon_20_audio_add"
+        android:text="@string/BUTTON_AUDIO_EDIT_ADD" />
+
+    <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+        android:id="@id/filter_music_split"
+        android:layout_width="44.0dip"
+        android:layout_height="78.0dip"
+        android:layout_marginRight="@dimen/_10dp"
+        android:src="@drawable/icon_20_audio_add"
+        android:text="@string/BUTTON_AUDIO_EDIT_TRIM"
+        android:visibility="gone" />
+
+    <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+        android:id="@id/filter_music_delete"
+        android:layout_width="44.0dip"
+        android:layout_height="78.0dip"
+        android:src="@drawable/icon_20_audio_remove"
+        android:text="@string/BUTTON_AUDIO_EDIT_REMOVE"
+        android:visibility="gone" />
+</LinearLayout>

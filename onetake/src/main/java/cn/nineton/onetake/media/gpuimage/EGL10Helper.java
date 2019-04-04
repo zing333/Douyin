@@ -92,7 +92,7 @@ public class EGL10Helper {
         withContext(ident, new EGLRunnable() {
             @Override
             public Object run(EGL10Helper eGL10Helper) {
-                //return r.run(eGL10Helper);
+                r.run(eGL10Helper);
                 return null;
             }
         });

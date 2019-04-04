@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@id/empty_view_fl"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:alpha="0.1"
+        android:background="@color/colorBlack" />
+
+    <RelativeLayout
+        android:id="@id/dialog_filter_font_root_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_20dp"
+        android:background="@drawable/round_10_color_gray_button">
+
+        <FrameLayout
+            android:id="@id/close_layout_fl"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/shareSheetItemHeight"
+            android:background="@drawable/round_10_top_color_gray_button"
+            android:paddingLeft="15.0dip">
+
+            <ImageView
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_20_close"
+                android:tint="@android:color/white" />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@id/dialog_filter_font_rl"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/close_layout_fl"
+            android:background="@drawable/round_10_bottom_color_gray_button">
+
+            <!--<com.blink.academy.onetake.widgets.loading.RecyclerLoadingView-->
+            <cn.nineton.onetake.widget.RecyclerLoadingView
+                android:id="@id/dialog_filter_font_list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/round_10_bottom_color_gray_button"
+                android:overScrollMode="never" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

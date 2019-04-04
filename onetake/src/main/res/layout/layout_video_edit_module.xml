@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_44dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/_10dp"
+        android:paddingRight="@dimen/_10dp">
+
+        <!--<com.blink.academy.onetake.widgets.CornerLinearLayout-->
+        <cn.nineton.onetake.widget.CornerLinearLayout
+            android:id="@id/filter_loop_preview_parent_cll"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:background="@color/colorBlack"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@id/filter_loop_preview_ll"
+                android:layout_width="wrap_content"
+                android:layout_height="44.0dip"
+                android:layout_gravity="center"
+                android:background="@color/colorBlack"
+                android:orientation="horizontal" />
+        </cn.nineton.onetake.widget.CornerLinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@id/filter_loop_slider_root_rl"
+        android:layout_width="fill_parent"
+        android:layout_height="44.0dip"
+        android:layout_centerVertical="true"
+        android:visibility="gone">
+
+        <View
+            android:id="@id/filter_loop_gesture"
+            android:layout_width="wrap_content"
+            android:layout_height="44.0dip"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:id="@id/filter_loop_slider_root_rll"
+            android:layout_width="fill_parent"
+            android:layout_height="44.0dip"
+            android:background="@drawable/shape_loop_slider_bg">
+
+            <ImageView
+                android:id="@id/filter_loop_slider_left_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="44.0dip"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:scaleX="-1.0"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <View
+                android:id="@id/left_iv_slide_view"
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_44dp"
+                android:layout_alignParentLeft="true" />
+
+            <ImageView
+                android:id="@id/filter_loop_slider_right_iv"
+                android:layout_width="10.0dip"
+                android:layout_height="44.0dip"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_color_white_right_button"
+                android:padding="1.0dip"
+                android:src="@drawable/icon_10_trim_video_right"
+                android:tint="@color/colorBlack" />
+
+            <View
+                android:id="@id/right_iv_slide_view"
+                android:layout_width="@dimen/_20dp"
+                android:layout_height="@dimen/_44dp"
+                android:layout_alignParentRight="true" />
+
+            <View
+                android:id="@id/player_loop_corner_ccv"
+                android:layout_width="fill_parent"
+                android:layout_height="44.0dip"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="7.0dip"
+                android:layout_marginRight="7.0dip"
+                android:background="@drawable/shape_loop_slider_bg1" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!--<com.blink.academy.onetake.widgets.AudioWave.AudioWaveView-->
+    <cn.nineton.onetake.widget.AudioWaveView
+        android:id="@id/video_edit_audiowaveview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+</RelativeLayout>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/video_info_layout_rl"
+    android:layout_width="100.0dip"
+    android:layout_height="100.0dip">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@id/video_thumbnail_sdv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_25dp"
+        android:layout_alignParentBottom="true">
+
+        <View
+            android:id="@id/gradient_view"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/_25dp" />
+
+        <ImageView
+            android:id="@id/video_icon_iv"
+            android:layout_width="15.0dip"
+            android:layout_height="15.0dip"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/_5dp"
+            android:layout_marginLeft="@dimen/_5dp"
+            android:contentDescription="@null"
+            android:src="@drawable/icon_15_type_video" />
+
+        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+        <cn.nineton.onetake.widget.AvenirNextRegularTextView
+            android:id="@id/video_duration_anrtv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="@dimen/_5dp"
+            android:layout_marginLeft="@dimen/_5dp"
+            android:layout_toRightOf="@id/video_icon_iv"
+            android:paddingLeft="@dimen/_5dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular12" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/rl_already_import"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/colorHalfBlack"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5.0dip"
+            android:layout_marginTop="5.0dip"
+            android:background="@drawable/round_5_color_white_button"
+            android:gravity="center"
+            android:padding="@dimen/_5dp"
+            android:text="@string/TEXT_VIDEO_IMPORTED"
+            android:textColor="@color/colorTrueBlack"
+            android:textSize="@dimen/fontRegular10" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/rl_multiple_select"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@id/alpha_view_mul"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:alpha="0.5"
+            android:background="@color/colorTrueBlack"
+            android:contentDescription="@null"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:layout_width="25.0dip"
+            android:layout_height="25.0dip"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5.0dip"
+            android:layout_marginTop="5.0dip">
+
+            <View
+                android:id="@id/ring_bg"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/shape_white_ring_30black_solid" />
+
+            <View
+                android:id="@id/ring_gold"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/shape_white_ring_gold_solid"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@id/tv_multiple_num"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular12"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <View
+            android:id="@id/multiple_select_view"
+            android:layout_width="@dimen/_44dp"
+            android:layout_height="@dimen/_44dp"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@id/alpha_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:alpha="0.5"
+        android:background="@color/colorTrueBlack"
+        android:contentDescription="@null"
+        android:visibility="gone" />
+
+    <!--<com.blink.academy.onetake.widgets.CircularProgressBar.OneTakeProgressBar-->
+        android:id="@id/tag_image_circle_otpb"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_20dp"
+        android:layout_centerInParent="true"
+        android:tint="@color/colorWhite"
+        android:visibility="gone" />
+</RelativeLayout>

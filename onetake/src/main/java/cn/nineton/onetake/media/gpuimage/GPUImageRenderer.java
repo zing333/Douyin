@@ -22,8 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImageNativeLibrary;
-import jp.co.cyberagent.android.gpuimage.util.Rotation;
-import jp.co.cyberagent.android.gpuimage.util.TextureRotationUtil;
+
 
 @TargetApi(11)
 public class GPUImageRenderer implements Renderer, PreviewCallback {

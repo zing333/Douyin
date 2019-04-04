@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:greason="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:id="@id/filter_tab_choose_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorGray"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@id/filter_tab_choose_cancle"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="45.0dip"
+                android:layout_height="45.0dip"
+                android:padding="10.0dip"
+                android:src="@drawable/icon_25_cancel"
+                android:tint="@color/colorWhite" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@id/filter_tab_choose_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="45.0dip"
+                android:layout_height="45.0dip"
+                android:padding="10.0dip"
+                android:src="@drawable/icon_25_confirm"
+                android:tint="@color/colorWhite" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--<cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+        android:id="@id/filter_detail_set_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/fontRegular12" />
+
+    <!--<com.blink.academy.onetake.widgets.SeekBar.MyCustomSeekBar-->
+    <cn.nineton.onetake.widget.MyCustomSeekBar
+        android:id="@id/filter_custom_sk"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/filter_tab_choose_ll"
+        android:layout_below="@id/filter_detail_set_text"
+        android:layout_marginTop="10.0dip" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/filter_tab_choose_ll"
+        android:layout_below="@id/filter_detail_set_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5.0dip">
+
+        <HorizontalScrollView
+            android:id="@id/filter_effect_set_bts_hs"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <!--<com.blink.academy.onetake.widgets.RelativeLayout.FilterEffectSetRelativeLayout-->
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_zero"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="20.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_one"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_two"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_three"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_four"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_five"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_six"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    greason:is_show_circle_line="false" />
+
+                <cn.nineton.onetake.widget.FilterEffectSetRelativeLayout
+                    android:id="@id/filter_effect_set_seven"
+                    android:layout_width="44.0dip"
+                    android:layout_height="70.0dip"
+                    android:layout_marginLeft="10.0dip"
+                    android:layout_marginRight="20.0dip"
+                    greason:is_show_circle_line="false" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </RelativeLayout>
+</RelativeLayout>

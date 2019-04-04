@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@id/volume_bg"
+        android:layout_width="fill_parent"
+        android:layout_height="25.0dip"
+        android:background="@drawable/timeline_volume_bg" />
+
+    <ImageView
+        android:id="@id/iv"
+        android:layout_width="@dimen/_15dp"
+        android:layout_height="@dimen/_15dp"
+        android:layout_centerVertical="true"
+        android:layout_margin="5.0dip"
+        android:contentDescription="@null"
+        android:src="@drawable/icon_15_audio_off"
+        android:tint="@color/colorWhite" />
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextRegularTextView
+        android:id="@id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="25.0dip"
+        android:layout_marginRight="5.0dip"
+        android:layout_toRightOf="@id/iv"
+        android:gravity="center"
+        android:text="@string/BUTTON_PLAYER_TAP_FOR_SOUND"
+        android:textColor="#ffffffff"
+        android:textSize="@dimen/fontRegular12" />
+</RelativeLayout>

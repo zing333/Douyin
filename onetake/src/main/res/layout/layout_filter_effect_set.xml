@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="44.0dip"
+    android:layout_height="77.0dip"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+        android:id="@id/filter_effect_text"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/_20dp"
+        android:layout_above="@id/filter_effect_iv"
+        android:layout_marginBottom="6.0dip"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/colorDate"
+        android:textSize="@dimen/fontRegular12" />
+
+    <ImageView
+        android:id="@id/filter_effect_iv"
+        android:layout_width="44.0dip"
+        android:layout_height="44.0dip"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shape_filter_effect_gray666_1px"
+        android:padding="12.0dip"
+        android:src="@drawable/icon_20_effect_movies" />
+
+    <!--<com.blink.academy.onetake.widgets.ProgressBar.IMCameraProgressBar-->
+    <cn.nineton.onetake.widget.IMCameraProgressBar
+        android:id="@id/filter_effect_pb"
+        android:layout_width="@dimen/_44dp"
+        android:layout_height="@dimen/_44dp"
+        android:layout_alignParentBottom="true"
+        app:backColor="#ff888888"
+        app:borderWidth="0.5dip"
+        app:frontColor="@color/colorWhite"
+        app:maxValue="10" />
+</RelativeLayout>

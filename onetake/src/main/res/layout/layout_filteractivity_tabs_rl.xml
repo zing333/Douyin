@@ -85,15 +85,16 @@
 
     <LinearLayout
         android:id="@id/filter_tab_ll"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="50.0dip"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <RelativeLayout
             android:id="@id/filter_tag_filter_rl"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="50.0dip"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical">
 
             <ImageView
@@ -119,8 +120,9 @@
 
         <RelativeLayout
             android:id="@id/filter_tag_effect_rl"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="50.0dip"
+            android:layout_weight="1"
             android:layout_gravity="center_vertical">
 
             <ImageView
@@ -145,7 +147,8 @@
 
         <RelativeLayout
             android:id="@id/filter_tag_loop_rl"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="50.0dip"
             android:layout_gravity="center_vertical">
 
@@ -171,7 +174,8 @@
 
         <RelativeLayout
             android:id="@id/filter_tag_music_rl"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="50.0dip"
             android:layout_gravity="center_vertical">
 
@@ -238,7 +242,7 @@
         android:layout_width="6.0dip"
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <View
             android:id="@id/filter_tab_center_area"

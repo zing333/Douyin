@@ -8,40 +8,57 @@ import android.opengl.GLES20;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
-import com.blink.academy.onetake.VideoTools.FastStart.MalformedFileException;
-import com.blink.academy.onetake.VideoTools.FastStart.UnsupportedFileException;
-import com.blink.academy.onetake.VideoTools.FrameRenderer.HAlign;
-import com.blink.academy.onetake.VideoTools.FrameRenderer.RenderMode;
-import com.blink.academy.onetake.VideoTools.FrameRenderer.VAlign;
-import com.blink.academy.onetake.VideoTools.Player.AspectMode;
-import com.blink.academy.onetake.VideoTools.Playlist.Drawable;
-import com.blink.academy.onetake.VideoTools.Playlist.Entry;
-import com.blink.academy.onetake.VideoTools.Playlist.FileMedia;
-import com.blink.academy.onetake.VideoTools.Playlist.Rotation;
-import com.blink.academy.onetake.VideoTools.VidStabilizer.Transform;
-import com.blink.academy.onetake.bean.longvideo.LongVideosModel;
-import com.blink.academy.onetake.model.video.VideoBitmapsModel;
-import com.blink.academy.onetake.support.callbacks.VideoRotateCallback;
-import com.blink.academy.onetake.support.debug.LogUtil;
-import com.blink.academy.onetake.support.events.VideoPreviewEvent;
-import com.blink.academy.onetake.support.interfaces.LongVideoPlayCallback;
-import com.blink.academy.onetake.support.utils.FilterViewUtils;
-import com.blink.academy.onetake.ui.activity.video.VideoCoverActivity.VideoSeekCallback;
+//import com.blink.academy.onetake.VideoTools.FastStart.MalformedFileException;
+//import com.blink.academy.onetake.VideoTools.FastStart.UnsupportedFileException;
+//import com.blink.academy.onetake.VideoTools.FrameRenderer.HAlign;
+//import com.blink.academy.onetake.VideoTools.FrameRenderer.RenderMode;
+//import com.blink.academy.onetake.VideoTools.FrameRenderer.VAlign;
+//import com.blink.academy.onetake.VideoTools.Player.AspectMode;
+//import com.blink.academy.onetake.VideoTools.Playlist.Drawable;
+//import com.blink.academy.onetake.VideoTools.Playlist.Entry;
+//import com.blink.academy.onetake.VideoTools.Playlist.FileMedia;
+//import com.blink.academy.onetake.VideoTools.Playlist.Rotation;
+//import com.blink.academy.onetake.VideoTools.VidStabilizer.Transform;
+//import com.blink.academy.onetake.bean.longvideo.LongVideosModel;
+//import com.blink.academy.onetake.model.video.VideoBitmapsModel;
+//import com.blink.academy.onetake.support.callbacks.VideoRotateCallback;
+//import com.blink.academy.onetake.support.debug.LogUtil;
+//import com.blink.academy.onetake.support.events.VideoPreviewEvent;
+//import com.blink.academy.onetake.support.interfaces.LongVideoPlayCallback;
+//import com.blink.academy.onetake.support.utils.FilterViewUtils;
+//import com.blink.academy.onetake.ui.activity.video.VideoCoverActivity.VideoSeekCallback;
+
+import org.greenrobot.eventbus.EventBus;
 
 import cn.nineton.onetake.bean.LongVideosModel;
+import cn.nineton.onetake.bean.VideoBitmapsModel;
+import cn.nineton.onetake.event.VideoPreviewEvent;
+import cn.nineton.onetake.listener.VideoRotateCallback;
+import cn.nineton.onetake.listener.VideoSeekCallback;
 import cn.nineton.onetake.media.FrameRenderer;
+import cn.nineton.onetake.media.OutputSurfaceArray;
+import cn.nineton.onetake.media.Texture;
+import cn.nineton.onetake.media.VidStabilizer;
+import cn.nineton.onetake.media.gpuimage.EGL10Helper;
+import cn.nineton.onetake.media.gpuimage.EGLRunnable;
+import cn.nineton.onetake.media.gpuimage.EGLRunnableVoid;
+import cn.nineton.onetake.media.gpuimage.Framebuffer;
+import cn.nineton.onetake.media.gpuimage.FramebufferTexture;
 import cn.nineton.onetake.media.gpuimage.GPUImageFilter;
 import cn.nineton.onetake.media.interfaces.LongVideoPlayCallback;
-import de.greenrobot.event.EventBus;
+import cn.nineton.onetake.util.FilterViewUtils;
+import cn.nineton.onetake.util.LogUtil;
+import cn.nineton.onetake.util.ProgramLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import jp.co.cyberagent.android.gpuimage.Framebuffer;
-import jp.co.cyberagent.android.gpuimage.FramebufferTexture;
-import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+//import jp.co.cyberagent.android.gpuimage.Framebuffer;
+//import jp.co.cyberagent.android.gpuimage.FramebufferTexture;
+//import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 
 public class FilterView extends GLRenderView {
     private static final String TAG = "VideoSurfaceView";
@@ -71,7 +88,7 @@ public class FilterView extends GLRenderView {
     private Playlist pausePlaylist = null;
     private double playbackPercent;
     private long playlistTimeUs = 0;
-    private RenderMode renderMode;
+    private FrameRenderer.RenderMode renderMode;
     public boolean shouldInitPlayer = false;
     public boolean shouldPauseVideoFirst = true;
 
@@ -125,7 +142,7 @@ public class FilterView extends GLRenderView {
         super(context, attrs);
     }
 
-    public void setFrameRendererMode(RenderMode mode) {
+    public void setFrameRendererMode(FrameRenderer.RenderMode mode) {
         this.renderMode = mode;
     }
 
@@ -146,15 +163,15 @@ public class FilterView extends GLRenderView {
         queueRunnable(new Runnable() {
             public void run() {
                 FilterView.this.getFrameRenderer();
-                FilterView.this.mFrameRenderer.setOverlay(null, null, HAlign.LEFT, VAlign.BOTTOM, 0.0f);
+                FilterView.this.mFrameRenderer.setOverlay(null, null, FrameRenderer.HAlign.LEFT, FrameRenderer.VAlign.BOTTOM, 0.0f);
             }
         });
     }
 
-    public void setOverlayBitmap(Bitmap bitmap, HAlign hAlign, VAlign vAlign, float width) {
+    public void setOverlayBitmap(Bitmap bitmap, FrameRenderer.HAlign hAlign, FrameRenderer.VAlign vAlign, float width) {
         final Bitmap bitmap2 = bitmap;
-        final HAlign hAlign2 = hAlign;
-        final VAlign vAlign2 = vAlign;
+        final FrameRenderer.HAlign hAlign2 = hAlign;
+        final FrameRenderer.VAlign vAlign2 = vAlign;
         final float f = width;
         queueRunnable(new Runnable() {
             public void run() {
@@ -239,20 +256,20 @@ public class FilterView extends GLRenderView {
             queueRunnable(new Runnable() {
                 public void run() {
                     long t0 = System.nanoTime();
-                    final InterpolatedFloat rotateAnimator = InterpolatedFloat.create(t0, FilterView.this.currentRotate, t0 + 200000000, FilterView.this.currentRotate + 90.0f, Ease.Linear);
+                    final InterpolatedFloat rotateAnimator = InterpolatedFloat.create(t0, FilterView.this.currentRotate, t0 + 200000000, FilterView.this.currentRotate + 90.0f, InterpolatedFloat.Ease.Linear);
                     int size = playlist.size();
                     final int targetRotate = (((int) FilterView.this.currentRotate) + 90) % 360;
                     for (int i = 0; i < size; i++) {
-                        final Entry e = playlist.get(i);
+                        final Playlist.Entry e = playlist.get(i);
                         if (e.mMediaType != 1) {
-                            e.setDrawable(new Drawable() {
-                                public void draw(Instance instance, SourceTexture buffer) {
+                            e.setDrawable(new Playlist.Drawable() {
+                                public void draw(Playlist.Instance instance, Player.SourceTexture buffer) {
                                     long t = System.nanoTime();
                                     float w = rotateAnimator.getValue(t);
                                     if (FilterView.this.mRotateCallback != null) {
                                         FilterView.this.mRotateCallback.onRotate(FilterView.this.currentRotate % 360.0f, (FilterView.this.currentRotate + 90.0f) % 360.0f, w % 360.0f);
                                     }
-                                    Entry entry = instance.mEntry;
+                                    Playlist.Entry entry = instance.mEntry;
                                     instance.mOutputRotation = w;
                                     entry.mOutputRotation = w;
                                     FilterView.this.mPlayer.drawEffects(instance, buffer);
@@ -285,7 +302,7 @@ public class FilterView extends GLRenderView {
                     Playlist playlist = FilterView.this.mPlayer.getPlaylist();
                     int size = playlist.size();
                     for (int i = 0; i < size; i++) {
-                        Entry e = playlist.get(i);
+                        Playlist.Entry e = playlist.get(i);
                         if (e.mMediaType != 1) {
                             e.mOutCropX = 0.0f;
                             e.mOutCropW = 1.0f;
@@ -317,13 +334,13 @@ public class FilterView extends GLRenderView {
                         v0 = 1.0f;
                         v1 = 0.0f;
                     }
-                    final InterpolatedFloat cropAnimation = InterpolatedFloat.create(t0, v0, t1, v1, Ease.QuadIn);
+                    final InterpolatedFloat cropAnimation = InterpolatedFloat.create(t0, v0, t1, v1, InterpolatedFloat.Ease.QuadIn);
                     int size = playlist.size();
                     for (int i = 0; i < size; i++) {
-                        final Entry e = playlist.get(i);
+                        final Playlist.Entry e = playlist.get(i);
                         if (e.mMediaType != 1) {
-                            e.setDrawable(new Drawable() {
-                                public void draw(Instance instance, SourceTexture buffer) {
+                            e.setDrawable(new Playlist.Drawable() {
+                                public void draw(Playlist.Instance instance, Player.SourceTexture buffer) {
                                     int i = 2002;
                                     long t = System.nanoTime();
                                     float w = cropAnimation.getValue(t);
@@ -336,7 +353,7 @@ public class FilterView extends GLRenderView {
                                     instance.mEntry.mOutCropX = w;
                                     instance.mEntry.mOutCropW = 1.0f - w;
                                     instance.mEntry.copyIndex();
-                                    Entry entry = instance.mEntry;
+                                    Playlist.Entry entry = instance.mEntry;
                                     if (leftToRight) {
                                         i = instance.mEntry.getAnimationIndex();
                                     }
@@ -345,7 +362,8 @@ public class FilterView extends GLRenderView {
                                     if (cropAnimation.hasEnded(t)) {
                                         FilterView.this.animationFilter = null;
                                         Log.d(FilterView.TAG, "animation over");
-                                        AnonymousClass12.this.finalFilterSetting(instance, e, filterIndexList, filter);
+                                        //AnonymousClass12.this.finalFilterSetting(instance, e, filterIndexList, filter);
+                                        finalFilterSetting(instance, e, filterIndexList, filter);
                                     }
                                 }
                             });
@@ -353,13 +371,13 @@ public class FilterView extends GLRenderView {
                     }
                 }
 
-                private void finalFilterSetting(Instance instance, Entry e, List<Integer> filterIndexList, GPUImageFilter targetFilter) {
+                private void finalFilterSetting(Playlist.Instance instance, Playlist.Entry e, List<Integer> filterIndexList, GPUImageFilter targetFilter) {
                     instance.mEntry.mOutCropX = 0.0f;
                     instance.mEntry.mOutCropW = 1.0f;
                     e.setDrawable(null);
                     Iterator it = FilterView.this.mPlayer.getPlaylist().getEntries().iterator();
                     while (it.hasNext()) {
-                        ((Entry) it.next()).resetFilterIndex();
+                        ((Playlist.Entry) it.next()).resetFilterIndex();
                     }
                     int size = filterIndexList.size();
                     for (int i = 0; i < size; i++) {
@@ -393,11 +411,11 @@ public class FilterView extends GLRenderView {
         });
     }
 
-    public Transform[] getTransforms() {
+    public VidStabilizer.Transform[] getTransforms() {
         return this.mFrameRenderer == null ? null : this.mFrameRenderer.getTransforms();
     }
 
-    public void setTransforms(final Transform[] transforms) {
+    public void setTransforms(final VidStabilizer.Transform[] transforms) {
         queueRunnable(new Runnable() {
             public void run() {
                 FilterView.this.mFrameRenderer = FilterView.this.getFrameRenderer();
@@ -438,15 +456,15 @@ public class FilterView extends GLRenderView {
                 LongVideosModel model = (LongVideosModel) videos.get(i);
                 if (model.mediaType != 1) {
                     long currentDuration = model.getCurrentDuration();
-                    Rotation mRotation;
+                    Playlist.Rotation mRotation;
                     float[] cropParams;
                     if (model.mediaType == 0) {
                         long startTimeUs = model.getMediaStartTimeUs();
                         File file = new File(model.getPlaylistMediaPath());
                         if (file.exists()) {
-                            FileMedia fileMedia = FileMedia.create(file);
+                            Playlist.FileMedia fileMedia = Playlist.FileMedia.create(file);
                             model.setTimeLineStartTime(totalDuration);
-                            Entry entry = playlist.add(fileMedia, totalDuration, startTimeUs, currentDuration * 1000).setMediaType(0);
+                            Playlist.Entry entry = playlist.add(fileMedia, totalDuration, startTimeUs, currentDuration * 1000).setMediaType(0);
                             entry.setVolume(allVideoVolumeGone ? 0.0f : model.getVideoVolume());
                             entry.setFilterIndex(i);
                             entry.setSpeed(model.getVideoSpeed());
@@ -455,9 +473,9 @@ public class FilterView extends GLRenderView {
                             entry.setOutputRotation((float) model.getVideoRotate());
                             boolean shouldVertical = model.isShouldVertical();
                             if (model.isFrontCamera) {
-                                entry.setInputOrientation(Rotation.ROTATE_0, !shouldVertical, shouldVertical);
+                                entry.setInputOrientation(Playlist.Rotation.ROTATE_0, !shouldVertical, shouldVertical);
                             } else {
-                                entry.setInputOrientation(Rotation.ROTATE_0, shouldVertical, shouldVertical);
+                                entry.setInputOrientation(Playlist.Rotation.ROTATE_0, shouldVertical, shouldVertical);
                             }
                             cropParams = model.getInputCropParams();
                             entry.setInputCrop(cropParams[0], cropParams[1], cropParams[2], cropParams[3]);
@@ -474,16 +492,16 @@ public class FilterView extends GLRenderView {
                             cropParams = new float[4];
                             cropParams = new float[]{0.0f, 0.0f, 1.0f, 1.0f};
                         }
-                        Entry add = playlist.add(bitmap, totalDuration, 0, currentDuration * 1000, AspectMode.RENDER_CROP);
+                        Playlist.Entry add = playlist.add(bitmap, totalDuration, 0, currentDuration * 1000, Player.AspectMode.RENDER_CROP);
                         add.setSpeed(model.getVideoSpeed());
                         add.setFilterIndex(i);
                         add.setFramerate(model.getVideoFrameRate());
                         mRotation = FilterViewUtils.getVideoRotation(model.getVideoRotate());
                         add.setOutputRotation((float) model.getVideoRotate());
                         if (model.isFrontCamera) {
-                            add.setInputOrientation(Rotation.ROTATE_0, true, false);
+                            add.setInputOrientation(Playlist.Rotation.ROTATE_0, true, false);
                         } else {
-                            add.setInputOrientation(Rotation.ROTATE_0, false, false);
+                            add.setInputOrientation(Playlist.Rotation.ROTATE_0, false, false);
                         }
                         add.setInputCrop(cropParams[0], cropParams[1], cropParams[2], cropParams[3]);
                         add.setZoom(InterpolatedFloat.createLinear(0, model.getZoomStart(), model.getCurrentDuration() * 1000, model.getZoomEnd()));
@@ -660,7 +678,7 @@ public class FilterView extends GLRenderView {
                 int size = playlist.size();
                 while (i < size) {
                     if (!hasValue || !mList.contains(Integer.valueOf(i))) {
-                        Entry entry = playlist.get(i);
+                        Playlist.Entry entry = playlist.get(i);
                         if (entry.mMediaType == 1) {
                             entry.setVolume(musicModel.getAudioVolume());
                         }
@@ -715,9 +733,9 @@ public class FilterView extends GLRenderView {
                     long mediaStartTimeUs = model.getMediaStartTimeUs();
                     File file = new File(model.getPlaylistMediaPath());
                     if (file.exists()) {
-                        FileMedia fileMedia = FileMedia.create(file);
+                        Playlist.FileMedia fileMedia = Playlist.FileMedia.create(file);
                         model.setTimeLineStartTime(totalDuration);
-                        Entry entry = playlist.add(fileMedia, totalDuration, mediaStartTimeUs, currentDuration * 1000).setMediaType(0);
+                        Playlist.Entry entry = playlist.add(fileMedia, totalDuration, mediaStartTimeUs, currentDuration * 1000).setMediaType(0);
                         entry.setVolume(allVideoVolumeGone ? 0.0f : model.getVideoVolume());
                         entry.setFilterIndex(i);
                         entry.setSpeed(model.getVideoSpeed());
@@ -725,9 +743,9 @@ public class FilterView extends GLRenderView {
                         entry.setOutputRotation((float) model.getVideoRotate());
                         boolean shouldVertical = model.isShouldVertical();
                         if (model.isFrontCamera) {
-                            entry.setInputOrientation(Rotation.ROTATE_0, !shouldVertical, shouldVertical);
+                            entry.setInputOrientation(Playlist.Rotation.ROTATE_0, !shouldVertical, shouldVertical);
                         } else {
-                            entry.setInputOrientation(Rotation.ROTATE_0, shouldVertical, shouldVertical);
+                            entry.setInputOrientation(Playlist.Rotation.ROTATE_0, shouldVertical, shouldVertical);
                         }
                         cropParams = model.getInputCropParams();
                         entry.setInputCrop(cropParams[0], cropParams[1], cropParams[2], cropParams[3]);
@@ -746,15 +764,15 @@ public class FilterView extends GLRenderView {
                         cropParams = new float[4];
                         cropParams = new float[]{0.0f, 0.0f, 1.0f, 1.0f};
                     }
-                    Entry add = playlist.add(bitmap, totalDuration, 0, currentDuration * 1000, AspectMode.RENDER_CROP);
+                    Playlist.Entry add = playlist.add(bitmap, totalDuration, 0, currentDuration * 1000, Player.AspectMode.RENDER_CROP);
                     add.setSpeed(model.getVideoSpeed());
                     add.setFilterIndex(i);
                     add.setFramerate(model.getVideoFrameRate());
                     add.setOutputRotation((float) model.getVideoRotate());
                     if (model.isFrontCamera) {
-                        add.setInputOrientation(Rotation.ROTATE_0, true, false);
+                        add.setInputOrientation(Playlist.Rotation.ROTATE_0, true, false);
                     } else {
-                        add.setInputOrientation(Rotation.ROTATE_0, false, false);
+                        add.setInputOrientation(Playlist.Rotation.ROTATE_0, false, false);
                     }
                     add.setInputCrop(cropParams[0], cropParams[1], cropParams[2], cropParams[3]);
                     add.setZoom(InterpolatedFloat.createLinear(0, model.getZoomStart(), currentDuration * 1000, model.getZoomEnd()));
@@ -851,7 +869,7 @@ public class FilterView extends GLRenderView {
 
     /* JADX WARNING: Removed duplicated region for block: B:23:0x0040 A:{SYNTHETIC, Splitter: B:23:0x0040} */
     /* JADX WARNING: Removed duplicated region for block: B:17:0x0034 A:{SYNTHETIC, Splitter: B:17:0x0034} */
-    private void getLongVideoPreviewPicture(java.util.HashMap<java.util.HashMap<java.lang.Integer, jp.co.cyberagent.android.gpuimage.GPUImageFilter>, java.util.HashMap<java.lang.Integer, jp.co.cyberagent.android.gpuimage.GPUImageFilter>> r13, long r14, int r16, int r17, java.lang.String r18, com.blink.academy.onetake.VideoTools.Playlist r19) {
+    private void getLongVideoPreviewPicture(HashMap<HashMap<Integer, GPUImageFilter>, HashMap<Integer, GPUImageFilter>> r13, long r14, int r16, int r17, java.lang.String r18, Playlist r19) {
         /*
         r12 = this;
         r2 = r13;
@@ -921,7 +939,7 @@ public class FilterView extends GLRenderView {
 
     /* JADX WARNING: Removed duplicated region for block: B:17:0x002a A:{SYNTHETIC, Splitter: B:17:0x002a} */
     /* JADX WARNING: Removed duplicated region for block: B:23:0x0036 A:{SYNTHETIC, Splitter: B:23:0x0036} */
-    private void getLongVideoPreviewPicture(long r8, int r10, int r11, java.lang.String r12, com.blink.academy.onetake.VideoTools.Playlist r13) {
+    private void getLongVideoPreviewPicture(long r8, int r10, int r11, java.lang.String r12, Playlist r13) {
         /*
         r7 = this;
         r0 = com.blink.academy.onetake.VideoTools.Player.getBitmap(r13, r8, r10, r11);
@@ -1001,9 +1019,9 @@ public class FilterView extends GLRenderView {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (MalformedFileException e2) {
+        } catch (FastStart.MalformedFileException e2) {
             e2.printStackTrace();
-        } catch (UnsupportedFileException e3) {
+        } catch (FastStart.UnsupportedFileException e3) {
             e3.printStackTrace();
         }
         long t2 = System.currentTimeMillis();
@@ -1135,7 +1153,7 @@ public class FilterView extends GLRenderView {
         int outY = 0;
         int outWidth = this.mWidth;
         int outHeight = this.mHeight;
-        if (this.mFrameRenderer.mode == RenderMode.RENDER_CROP) {
+        if (this.mFrameRenderer.mode == FrameRenderer.RenderMode.RENDER_CROP) {
             if (this.mCaptureMode == 1) {
                 if (this.mWidth < this.mHeight) {
                     outX = 0;
@@ -1199,7 +1217,7 @@ public class FilterView extends GLRenderView {
     }
 
     public Framebuffer newFramebuffer(final int width, final int height) {
-        AnonymousClass1FBRunnable cmd = new Runnable() {
+        Runnable cmd = new Runnable() {
             Framebuffer fb = null;
 
             public void run() {
@@ -1210,7 +1228,8 @@ public class FilterView extends GLRenderView {
             }
         };
         queueRunnableSync("newFramebufferTexture", cmd);
-        return cmd.fb;
+        //return cmd.fb;
+        return null;
     }
 
     public void destroyFramebuffer(final Framebuffer fb) {
@@ -1266,12 +1285,24 @@ public class FilterView extends GLRenderView {
         });
     }
 
-    public FramebufferTexture newFramebufferTexture(int width, int height) {
-        return (FramebufferTexture) EGL10Helper.withContext("newFramebufferTexture", FilterView$$Lambda$1.lambdaFactory$(width, height));
+    public FramebufferTexture newFramebufferTexture(final int width, final int height) {
+//        return (FramebufferTexture) EGL10Helper.withContext("newFramebufferTexture", FilterView$$Lambda$1.lambdaFactory$(width, height));
+        return (FramebufferTexture) EGL10Helper.withContext("newFramebufferTexture", new EGLRunnable<FramebufferTexture>() {
+            @Override
+            public FramebufferTexture run(EGL10Helper eGL10Helper) {
+                return new FramebufferTexture(width, height, 6407);
+            }
+        });
     }
 
-    public void destroyFramebufferTexture(FramebufferTexture fb) {
-        EGL10Helper.withContext("destroyFramebufferTexture", FilterView$$Lambda$2.lambdaFactory$(fb));
+    public void destroyFramebufferTexture(final FramebufferTexture fb) {
+        //EGL10Helper.withContext("destroyFramebufferTexture", FilterView$$Lambda$2.lambdaFactory$(fb));
+        EGL10Helper.withContext("destroyFramebufferTexture", new EGLRunnableVoid() {
+            @Override
+            public void run(EGL10Helper eGL10Helper) {
+                fb.destroy();
+            }
+        });
     }
 
     public void updateLUT(final GPUImageFilter filter, final FramebufferTexture target) {

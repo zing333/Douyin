@@ -11,17 +11,21 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.StatFs;
 import android.util.Log;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -109,7 +113,6 @@ public class FileUtil {
     }
 
 
-
     public static String writeStoryOriginalJPGFile(Context context, File savePath, Bitmap originalBitmap) {
         if (savePath == null || originalBitmap == null) {
             return null;
@@ -195,145 +198,185 @@ public class FileUtil {
         return file;
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x0028 A:{SYNTHETIC, Splitter: B:18:0x0028} */
-    /* JADX WARNING: Removed duplicated region for block: B:24:0x0034 A:{SYNTHETIC, Splitter: B:24:0x0034} */
-    public static boolean writeInfoToFile(java.lang.String r6, java.lang.String r7) {
-        /*
-        r4 = 0;
-        r5 = com.blink.academy.onetake.support.utils.TextUtil.isNull(r7);
-        if (r5 == 0) goto L_0x0008;
-    L_0x0007:
-        return r4;
-    L_0x0008:
-        r3 = new java.io.File;
-        r3.<init>(r6);
-        r1 = 0;
-        r2 = new java.io.FileWriter;	 Catch:{ Exception -> 0x0022 }
-        r2.<init>(r3);	 Catch:{ Exception -> 0x0022 }
-        r2.write(r7);	 Catch:{ Exception -> 0x0040, all -> 0x003d }
-        r4 = 1;
-        if (r2 == 0) goto L_0x0007;
-    L_0x0019:
-        r2.close();	 Catch:{ IOException -> 0x001d }
-        goto L_0x0007;
-    L_0x001d:
-        r0 = move-exception;
-        r0.printStackTrace();
-        goto L_0x0007;
-    L_0x0022:
-        r0 = move-exception;
-    L_0x0023:
-        r0.printStackTrace();	 Catch:{ all -> 0x0031 }
-        if (r1 == 0) goto L_0x0007;
-    L_0x0028:
-        r1.close();	 Catch:{ IOException -> 0x002c }
-        goto L_0x0007;
-    L_0x002c:
-        r0 = move-exception;
-        r0.printStackTrace();
-        goto L_0x0007;
-    L_0x0031:
-        r4 = move-exception;
-    L_0x0032:
-        if (r1 == 0) goto L_0x0037;
-    L_0x0034:
-        r1.close();	 Catch:{ IOException -> 0x0038 }
-    L_0x0037:
-        throw r4;
-    L_0x0038:
-        r0 = move-exception;
-        r0.printStackTrace();
-        goto L_0x0037;
-    L_0x003d:
-        r4 = move-exception;
-        r1 = r2;
-        goto L_0x0032;
-    L_0x0040:
-        r0 = move-exception;
-        r1 = r2;
-        goto L_0x0023;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.support.utils.FileUtil.writeInfoToFile(java.lang.String, java.lang.String):boolean");
+    public static void writeInfoToFile(String filePath, String content) {
+        try {
+            File f = new File(filePath);
+            if (!f.exists()) {
+                Log.e("debug", "文件不存在,开始创建文件:" + filePath);
+                f.getParentFile().mkdirs();
+                f.createNewFile();// 不存在则创建
+            }
+            FileWriter fileWriter = new FileWriter(f);
+            fileWriter.write(content);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    /* JADX WARNING: Removed duplicated region for block: B:23:0x003c A:{SYNTHETIC, Splitter: B:23:0x003c} */
-    /* JADX WARNING: Removed duplicated region for block: B:15:0x002e A:{SYNTHETIC, Splitter: B:15:0x002e} */
-    /* JADX WARNING: Removed duplicated region for block: B:35:? A:{SYNTHETIC, RETURN} */
-    /* JADX WARNING: Removed duplicated region for block: B:18:0x0033 A:{SYNTHETIC, Splitter: B:18:0x0033} */
-    /* JADX WARNING: Removed duplicated region for block: B:21:0x0039 A:{PHI: r3 , Splitter: B:3:0x000e, ExcHandler: all (th java.lang.Throwable)} */
-    /* JADX WARNING: Failed to process nested try/catch */
-    /* JADX WARNING: Missing block: B:21:0x0039, code:
-            r7 = th;
-     */
-    /* JADX WARNING: Missing block: B:24:?, code:
-            r3.close();
-     */
-    public static java.lang.String readFile(java.lang.String r9, java.nio.charset.Charset r10) {
-        /*
-        r2 = new java.io.File;
-        r2.<init>(r9);
-        r5 = "";
-        r7 = r2.exists();
-        if (r7 == 0) goto L_0x0027;
-    L_0x000d:
-        r3 = 0;
-        r4 = new java.io.FileInputStream;	 Catch:{ Exception -> 0x002b, all -> 0x0039 }
-        r4.<init>(r2);	 Catch:{ Exception -> 0x002b, all -> 0x0039 }
-        r7 = r4.available();	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
-        r0 = new byte[r7];	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
-        r4.read(r0);	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
-        r6 = new java.lang.String;	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
-        r6.<init>(r0, r10);	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
-        if (r4 == 0) goto L_0x0026;
-    L_0x0023:
-        r4.close();	 Catch:{ IOException -> 0x0028 }
-    L_0x0026:
-        r5 = r6;
-    L_0x0027:
-        return r5;
-    L_0x0028:
-        r7 = move-exception;
-        r5 = r6;
-        goto L_0x0027;
-    L_0x002b:
-        r1 = move-exception;
-    L_0x002c:
-        if (r3 == 0) goto L_0x0031;
-    L_0x002e:
-        r3.close();	 Catch:{ IOException -> 0x0040, all -> 0x0039 }
-    L_0x0031:
-        if (r3 == 0) goto L_0x0027;
-    L_0x0033:
-        r3.close();	 Catch:{ IOException -> 0x0037 }
-        goto L_0x0027;
-    L_0x0037:
-        r7 = move-exception;
-        goto L_0x0027;
-    L_0x0039:
-        r7 = move-exception;
-    L_0x003a:
-        if (r3 == 0) goto L_0x003f;
-    L_0x003c:
-        r3.close();	 Catch:{ IOException -> 0x0042 }
-    L_0x003f:
-        throw r7;
-    L_0x0040:
-        r7 = move-exception;
-        goto L_0x0031;
-    L_0x0042:
-        r8 = move-exception;
-        goto L_0x003f;
-    L_0x0044:
-        r7 = move-exception;
-        r3 = r4;
-        goto L_0x003a;
-    L_0x0047:
-        r1 = move-exception;
-        r3 = r4;
-        goto L_0x002c;
-        */
-        throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.support.utils.FileUtil.readFile(java.lang.String, java.nio.charset.Charset):java.lang.String");
+    public static String readFile(String path, Charset charset) {
+        String result = "";
+        try {
+            File file = new File(path);
+            if (file.exists()) {
+                FileInputStream fis = new FileInputStream(path);
+                int count = fis.available();
+                byte[] b = new byte[count];
+                int length = 0;
+                while ((length = fis.read(b)) != -1) {
+                    result += new String(b, charset);
+                }
+            }
+        } catch (RuntimeException r) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e("debug", "读取文件:" + path+",结果:"+result);
+        return result;
     }
+
+//    /* JADX WARNING: Removed duplicated region for block: B:18:0x0028 A:{SYNTHETIC, Splitter: B:18:0x0028} */
+//    /* JADX WARNING: Removed duplicated region for block: B:24:0x0034 A:{SYNTHETIC, Splitter: B:24:0x0034} */
+//    public static boolean writeInfoToFile(java.lang.String r6, java.lang.String r7) {
+//        /*
+//        r4 = 0;
+//        r5 = com.blink.academy.onetake.support.utils.TextUtil.isNull(r7);
+//        if (r5 == 0) goto L_0x0008;
+//    L_0x0007:
+//        return r4;
+//    L_0x0008:
+//        r3 = new java.io.File;
+//        r3.<init>(r6);
+//        r1 = 0;
+//        r2 = new java.io.FileWriter;	 Catch:{ Exception -> 0x0022 }
+//        r2.<init>(r3);	 Catch:{ Exception -> 0x0022 }
+//        r2.write(r7);	 Catch:{ Exception -> 0x0040, all -> 0x003d }
+//        r4 = 1;
+//        if (r2 == 0) goto L_0x0007;
+//    L_0x0019:
+//        r2.close();	 Catch:{ IOException -> 0x001d }
+//        goto L_0x0007;
+//    L_0x001d:
+//        r0 = move-exception;
+//        r0.printStackTrace();
+//        goto L_0x0007;
+//    L_0x0022:
+//        r0 = move-exception;
+//    L_0x0023:
+//        r0.printStackTrace();	 Catch:{ all -> 0x0031 }
+//        if (r1 == 0) goto L_0x0007;
+//    L_0x0028:
+//        r1.close();	 Catch:{ IOException -> 0x002c }
+//        goto L_0x0007;
+//    L_0x002c:
+//        r0 = move-exception;
+//        r0.printStackTrace();
+//        goto L_0x0007;
+//    L_0x0031:
+//        r4 = move-exception;
+//    L_0x0032:
+//        if (r1 == 0) goto L_0x0037;
+//    L_0x0034:
+//        r1.close();	 Catch:{ IOException -> 0x0038 }
+//    L_0x0037:
+//        throw r4;
+//    L_0x0038:
+//        r0 = move-exception;
+//        r0.printStackTrace();
+//        goto L_0x0037;
+//    L_0x003d:
+//        r4 = move-exception;
+//        r1 = r2;
+//        goto L_0x0032;
+//    L_0x0040:
+//        r0 = move-exception;
+//        r1 = r2;
+//        goto L_0x0023;
+//        */
+//        throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.support.utils.FileUtil.writeInfoToFile(java.lang.String, java.lang.String):boolean");
+//    }
+
+//    /* JADX WARNING: Removed duplicated region for block: B:23:0x003c A:{SYNTHETIC, Splitter: B:23:0x003c} */
+//    /* JADX WARNING: Removed duplicated region for block: B:15:0x002e A:{SYNTHETIC, Splitter: B:15:0x002e} */
+//    /* JADX WARNING: Removed duplicated region for block: B:35:? A:{SYNTHETIC, RETURN} */
+//    /* JADX WARNING: Removed duplicated region for block: B:18:0x0033 A:{SYNTHETIC, Splitter: B:18:0x0033} */
+//    /* JADX WARNING: Removed duplicated region for block: B:21:0x0039 A:{PHI: r3 , Splitter: B:3:0x000e, ExcHandler: all (th java.lang.Throwable)} */
+//    /* JADX WARNING: Failed to process nested try/catch */
+//    /* JADX WARNING: Missing block: B:21:0x0039, code:
+//            r7 = th;
+//     */
+//    /* JADX WARNING: Missing block: B:24:?, code:
+//            r3.close();
+//     */
+//    public static java.lang.String readFile(java.lang.String r9, java.nio.charset.Charset r10) {
+//        /*
+//        r2 = new java.io.File;
+//        r2.<init>(r9);
+//        r5 = "";
+//        r7 = r2.exists();
+//        if (r7 == 0) goto L_0x0027;
+//    L_0x000d:
+//        r3 = 0;
+//        r4 = new java.io.FileInputStream;	 Catch:{ Exception -> 0x002b, all -> 0x0039 }
+//        r4.<init>(r2);	 Catch:{ Exception -> 0x002b, all -> 0x0039 }
+//        r7 = r4.available();	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
+//        r0 = new byte[r7];	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
+//        r4.read(r0);	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
+//        r6 = new java.lang.String;	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
+//        r6.<init>(r0, r10);	 Catch:{ Exception -> 0x0047, all -> 0x0044 }
+//        if (r4 == 0) goto L_0x0026;
+//    L_0x0023:
+//        r4.close();	 Catch:{ IOException -> 0x0028 }
+//    L_0x0026:
+//        r5 = r6;
+//    L_0x0027:
+//        return r5;
+//    L_0x0028:
+//        r7 = move-exception;
+//        r5 = r6;
+//        goto L_0x0027;
+//    L_0x002b:
+//        r1 = move-exception;
+//    L_0x002c:
+//        if (r3 == 0) goto L_0x0031;
+//    L_0x002e:
+//        r3.close();	 Catch:{ IOException -> 0x0040, all -> 0x0039 }
+//    L_0x0031:
+//        if (r3 == 0) goto L_0x0027;
+//    L_0x0033:
+//        r3.close();	 Catch:{ IOException -> 0x0037 }
+//        goto L_0x0027;
+//    L_0x0037:
+//        r7 = move-exception;
+//        goto L_0x0027;
+//    L_0x0039:
+//        r7 = move-exception;
+//    L_0x003a:
+//        if (r3 == 0) goto L_0x003f;
+//    L_0x003c:
+//        r3.close();	 Catch:{ IOException -> 0x0042 }
+//    L_0x003f:
+//        throw r7;
+//    L_0x0040:
+//        r7 = move-exception;
+//        goto L_0x0031;
+//    L_0x0042:
+//        r8 = move-exception;
+//        goto L_0x003f;
+//    L_0x0044:
+//        r7 = move-exception;
+//        r3 = r4;
+//        goto L_0x003a;
+//    L_0x0047:
+//        r1 = move-exception;
+//        r3 = r4;
+//        goto L_0x002c;
+//        */
+//        throw new UnsupportedOperationException("Method not decompiled: com.blink.academy.onetake.support.utils.FileUtil.readFile(java.lang.String, java.nio.charset.Charset):java.lang.String");
+//    }
 
     public static boolean deleteFile(String filePath) {
         if (TextUtil.isNull(filePath)) {
@@ -446,7 +489,6 @@ public class FileUtil {
         }
         file.delete();
     }
-
 
 
     public static long getSDFreeSize(File file) {

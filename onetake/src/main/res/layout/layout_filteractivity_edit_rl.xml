@@ -31,7 +31,8 @@
             android:src="@drawable/icon_20_loop_blend"
             android:tint="@color/colorWhite" />
 
-        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView
+        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+        <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
             android:id="@id/stack_frame_switch_rl_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +43,8 @@
             android:textSize="@dimen/fontRegular14" />
     </LinearLayout>
 
-    <com.blink.academy.onetake.widgets.RoundLinnearlayout
+    <!--<com.blink.academy.onetake.widgets.RoundLinnearlayout-->
+    <cn.nineton.onetake.widget.RoundLinnearlayout
         android:id="@id/filter_loop_preview_ll"
         android:layout_width="fill_parent"
         android:layout_height="44.0dip"
@@ -182,7 +184,8 @@
             android:src="@drawable/icon_20_loop_forward"
             android:tint="@color/colorWhite" />
 
-        <com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView
+        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+        <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
             android:id="@id/filter_loop_toggle_ancrt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/choose_speed_scroll_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_below="@id/capture_title_rl"
+    android:layout_marginTop="5.0dip"
+    android:background="@android:color/transparent">
+
+    <View
+        android:id="@id/transparent_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/speed_root"
+        android:background="@color/colorTransparent" />
+
+    <View
+        android:id="@id/speed_backgroud_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/transparent_view"
+        android:background="@color/colorTransparent" />
+
+    <LinearLayout
+        android:id="@id/speed_root"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_circular_black_10"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/_15dp">
+
+        <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+        <cn.nineton.onetake.widget.AvenirNextRegularTextView
+            android:id="@id/speed_dialog_title_tv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5dp"
+            android:layout_marginRight="@dimen/_15dp"
+            android:layout_marginTop="@dimen/_15dp"
+            android:alpha="0.4"
+            android:gravity="center"
+            android:text="@string/BUTTON_SPEED"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/fontRegular12" />
+
+        <RelativeLayout
+            android:id="@id/speed_stop_motion_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/speed_stop_motion_iv"
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_20_speed_mode_10_stop_motion"
+                android:tint="@color/colorWhite" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/speed_stop_motion_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/speed_stop_motion_iv"
+                android:maxLines="1"
+                android:text="@string/BUTTON_SPEED_STOPMOTION"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/speed_solmo_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/speed_solmo_iv"
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_20_speed_mode_20_slomo"
+                android:tint="@color/colorWhite" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/speed_solmo_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/speed_solmo_iv"
+                android:maxLines="1"
+                android:text="@string/BUTTON_SPEED_SLOMO"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/speed_normal_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/speed_normal_iv"
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_20_speed_mode_30_normal"
+                android:tint="@color/colorWhite" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/speed_normal_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/speed_normal_iv"
+                android:maxLines="1"
+                android:text="@string/BUTTON_SPEED_NORMAL"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/speed_fast_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_10dp">
+
+            <ImageView
+                android:id="@id/speed_fast_iv"
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_20_speed_mode_40_fast"
+                android:tint="@color/colorWhite" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/speed_fast_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/speed_fast_iv"
+                android:maxLines="1"
+                android:text="@string/BUTTON_SPEED_CHAPLIN"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@id/speed_time_lapse_ll"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/_10dp"
+            android:paddingTop="@dimen/_20dp">
+
+            <ImageView
+                android:id="@id/speed_time_lapse_iv"
+                android:layout_width="20.0dip"
+                android:layout_height="20.0dip"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/icon_20_speed_mode_50_time_lapse"
+                android:tint="@color/colorWhite" />
+
+            <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextRegularTextView-->
+            <cn.nineton.onetake.widget.AvenirNextRegularTextView
+                android:id="@id/speed_time_lapse_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_10dp"
+                android:layout_toRightOf="@id/speed_time_lapse_iv"
+                android:maxLines="1"
+                android:text="@string/BUTTON_SPEED_TIMELAPSE"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/fontRegular14" />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

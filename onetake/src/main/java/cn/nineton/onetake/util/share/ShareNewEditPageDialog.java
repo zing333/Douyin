@@ -17,6 +17,7 @@ import android.widget.FrameLayout.LayoutParams;
 //import com.blink.academy.onetake.widgets.dialog.ShareEditPageDialog.OnShareEditPageClickListener;
 //import com.blink.academy.onetake.widgets.dialog.ShareNewEditPageDialog$.Lambda.1;
 //import com.blink.academy.onetake.widgets.dialog.ShareNewEditPageDialog$.Lambda.2;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 import cn.nineton.onetake.util.LogUtil;
 import cn.nineton.onetake.widget.ShareActionSheetDialog;
@@ -40,7 +41,7 @@ public class ShareNewEditPageDialog implements OnClickListener {
 
     @SuppressLint({"RtlHardcoded", "SetTextI18n"})
     public ShareNewEditPageDialog builder(String videoLocation) {
-        View view = LayoutInflater.from(getContext()).inflate(R.lyout.dialog_share_edit_page, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_share_edit_page, null);
         View dialog_layout_ll = view.findViewById(R.id.dialog_layout_ll);
         this.send_conten_et = view.findViewById(R.id.send_conten_et);
         view.findViewById(R.id.cancel_layout_fl).setOnClickListener(this);

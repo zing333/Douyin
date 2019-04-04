@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.DensityUtil;
 import cn.nineton.onetake.util.FontsUtil;
 import cn.nineton.onetake.util.LogUtil;

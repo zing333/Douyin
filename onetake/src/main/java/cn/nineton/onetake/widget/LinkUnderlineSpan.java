@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import cn.nineton.onetake.App;
+import cn.nineton.onetake.R;
 import cn.nineton.onetake.util.SpannedUtil;
 import cn.nineton.onetake.util.TextUtil;
 

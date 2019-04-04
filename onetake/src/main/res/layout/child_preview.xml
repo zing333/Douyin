@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="50.0dip"
+    android:layout_height="76.0dip"
+    android:layout_gravity="center_vertical"
+    android:layout_marginLeft="0.0dip"
+    android:layout_marginRight="10.0dip">
+
+    <!--<com.blink.academy.onetake.widgets.TextView.AvenirNextCondensedRegularTextView-->
+    <cn.nineton.onetake.widget.AvenirNextCondensedRegularTextView
+        android:id="@id/child_label"
+        android:layout_width="fill_parent"
+        android:layout_height="20.0dip"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:gravity="center_horizontal"
+        android:textColor="@color/colorDate"
+        android:textSize="@dimen/fontRegular12" />
+
+    <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+    <cn.nineton.onetake.widget.RoundAngleImageView
+        android:id="@id/child_preview"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:background="@drawable/shape_filter_preview_corner_bg"
+        android:scaleType="centerCrop"
+        app:roundHeight="5.0dip"
+        app:roundWidth="5.0dip" />
+
+    <ImageView
+        android:id="@id/child_preview_stroke"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:background="@drawable/shape_filter_preview_corner"
+        android:padding="15.0dip"
+        android:tint="@color/colorWhite" />
+
+    <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+    <cn.nineton.onetake.widget.RoundAngleImageView
+        android:id="@id/child_lock"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:padding="15.0dip"
+        android:src="@drawable/icon_20_lock"
+        android:tint="@color/colorWhite"
+        android:visibility="gone"
+        app:roundHeight="5.0dip"
+        app:roundWidth="5.0dip" />
+
+    <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+    <cn.nineton.onetake.widget.RoundAngleImageView
+        android:id="@id/child_collect"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:padding="12.5dip"
+        android:src="@drawable/icon_25_favorite_preset_on"
+        android:tint="@color/colorWhite"
+        android:visibility="gone"
+        app:roundHeight="5.0dip"
+        app:roundWidth="5.0dip" />
+
+    <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+    <cn.nineton.onetake.widget.RoundAngleImageView
+        android:id="@id/child_cancel_collect"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:padding="12.5dip"
+        android:src="@drawable/icon_25_favorite_preset_off"
+        android:tint="@color/colorWhite"
+        android:visibility="gone"
+        app:roundHeight="5.0dip"
+        app:roundWidth="5.0dip" />
+
+    <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+    <cn.nineton.onetake.widget.RoundAngleImageView
+        android:id="@id/child_download"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:padding="12.5dip"
+        android:src="@drawable/icon_25_preset_store"
+        android:tint="@color/colorWhite"
+        android:visibility="gone"
+        app:roundHeight="5.0dip"
+        app:roundWidth="5.0dip" />
+
+    <!--<com.blink.academy.onetake.widgets.imageview.RoundAngleImageView-->
+    <cn.nineton.onetake.widget.RoundAngleImageView
+        android:id="@id/child_none"
+        android:layout_width="50.0dip"
+        android:layout_height="50.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="1.0px"
+        android:background="@drawable/shape_filter_collect"
+        android:padding="15.0dip"
+        android:visibility="gone"
+        app:roundHeight="5.0dip"
+        app:roundWidth="5.0dip" />
+</RelativeLayout>

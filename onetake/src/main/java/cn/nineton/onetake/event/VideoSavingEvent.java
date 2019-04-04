@@ -11,12 +11,13 @@ public class VideoSavingEvent {
     public VideoBean videoBean;
     public long videoProgressTag;
 
-    public class VideoBean {
+    public static class VideoBean {
         public int videoHeight;
         public String videoPath;
         public int videoWidth;
+        public VideoBean(){}
     }
-
+    public VideoSavingEvent(){}
     public VideoSavingEvent(int progress) {
         this.mProgress = progress;
     }
